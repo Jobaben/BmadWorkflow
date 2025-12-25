@@ -7,7 +7,7 @@ updated: 2025-12-25
 author: Analyst
 ---
 
-# Project Brief: 3D Animation Learning Foundation
+# Project Brief: Automated QA Run Check for BMAD Workflow
 
 > This document frames the problem space. It defines WHAT needs to be solved and WHY, never HOW.
 
@@ -15,7 +15,7 @@ author: Analyst
 
 ## Executive Summary
 
-A developer with no prior experience in browser-based 3D graphics needs to acquire foundational knowledge in particle systems, fluid physics, and object animation. This learning foundation will enable future development of a product involving realistic car physics with vibrant particle effects and environments. The timeline is approximately one year to build competency.
+The BMAD workflow's QA review process currently requires manual invocation via `/qa story-###`. This creates friction in the development process and risks QA being skipped or forgotten. A GitHub run check is needed that automatically performs QA review and provides pass/fail feedback directly in the pull request workflow.
 
 ---
 
@@ -23,23 +23,28 @@ A developer with no prior experience in browser-based 3D graphics needs to acqui
 
 ### What is the problem?
 
-There is a knowledge gap blocking the development of a future product that requires advanced 3D animation capabilities in the browser. Specifically, the developer lacks experience with particle systems, fluid physics simulation, and 3D object animation—all critical components for the envisioned product involving realistic car physics and dynamic environments.
+The BMAD workflow has a well-defined QA review process that evaluates story implementations against acceptance criteria, architecture alignment, and code quality. However, this process is entirely manual—developers must remember to invoke `/qa story-###` after completing implementation.
 
-Without a structured learning foundation, the future product cannot be built to the quality level required. A standalone demonstration application is needed that teaches these fundamentals through practical implementation while remaining simple enough for a beginner to understand.
+This manual step creates several issues:
+- QA review can be skipped or forgotten
+- There's no automated enforcement of quality gates before merging
+- The feedback loop is disconnected from the GitHub PR workflow
+- No visibility into QA status directly on the pull request
 
 ### Who is affected?
 
-- **Primary**: Developer (learner and future product owner)
-- **Secondary**: Future product users who will experience the car physics simulations
-- **Tertiary**: Potential collaborators or stakeholders in the future product
+- **Primary**: Developers using the BMAD workflow who want automated quality feedback
+- **Secondary**: Project maintainers who want to enforce QA gates before merging
+- **Tertiary**: Future contributors who need clear, automated feedback on their PRs
 
 ### What is the impact?
 
 | Impact Type | Current State | Measurement |
 |-------------|---------------|-------------|
-| Skill Gap | No browser 3D animation experience | Binary: Can/Cannot implement |
-| Product Readiness | Cannot begin future product | Months until foundation ready |
-| Learning Efficiency | No reference implementation exists | Time to competency |
+| Quality Risk | QA can be skipped | Binary: Enforced/Not Enforced |
+| Developer Experience | Manual QA invocation required | Steps to complete PR |
+| Visibility | QA status not visible in PR | Present/Absent in GitHub UI |
+| Consistency | Variable QA thoroughness | Standardized vs. ad-hoc |
 
 ---
 
@@ -47,12 +52,13 @@ Without a structured learning foundation, the future product cannot be built to 
 
 | Stakeholder | Role | Interest | Influence | Key Concerns |
 |-------------|------|----------|-----------|--------------|
-| Developer | Learner / Future Product Owner | Skill acquisition, reusable code patterns | High | Learning curve, foundational quality |
-| Future Users | End users of car physics product | Smooth, realistic, visually appealing experience | Medium | Performance, visual fidelity |
+| BMAD Workflow Users | Developers | Automated feedback, reduced manual steps | High | Speed, reliability, clear results |
+| Project Maintainers | Quality Gatekeepers | Enforce QA before merge | High | Preventing unreviewed code from merging |
+| Repository Owners | Infrastructure Owners | CI/CD integration | Medium | Cost, maintenance, security |
 
 ### Stakeholder Relationships
 
-The developer's learning quality directly impacts future user experience. Shortcuts in foundational learning will compound into technical debt in the future product.
+All stakeholders benefit from automated QA: developers get faster feedback, maintainers get enforcement, and owners get consistent quality.
 
 ---
 
@@ -60,21 +66,26 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 ### How is this handled today?
 
-1. No current approach exists
-2. No prior attempts at browser-based 3D animation
-3. Knowledge exists only as an aspiration
+1. Developer completes story implementation
+2. Developer creates pull request
+3. Developer (or reviewer) must manually run `/qa story-###`
+4. QA agent produces review document
+5. Story status is updated to QA Pass/Fail
+6. Manual merge if passed
 
 ### Why current approaches fall short
 
 | Approach | Limitation | Impact |
 |----------|------------|--------|
-| No approach | Complete knowledge gap | Cannot proceed to future product |
+| Manual `/qa` invocation | Easy to forget or skip | Unreviewed code can merge |
+| No GitHub integration | QA status not visible in PR | Poor developer experience |
+| Human-dependent triggering | Inconsistent timing | Delayed feedback |
 
 ### What has been tried before?
 
 | Attempt | When | Outcome | Why It Failed |
 |---------|------|---------|---------------|
-| Nothing | N/A | N/A | N/A |
+| Nothing | N/A | N/A | Feature not yet implemented |
 
 ---
 
@@ -84,17 +95,18 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 | ID | Criterion | Metric | Target | Current |
 |----|-----------|--------|--------|---------|
-| SC-1 | Understand 3D particle animation in browser | Working particle system demo | Functional | None |
-| SC-2 | Understand 3D object animation in browser | Working animated objects demo | Functional | None |
-| SC-3 | Understand fluid physics simulation | Working fluid/physics demo | Functional | None |
-| SC-4 | Foundation ready for car physics product | Code patterns reusable for future work | Documented patterns | None |
-| SC-5 | Beginner-friendly implementation | Code is readable and commented | Self-documenting | N/A |
+| SC-1 | QA review runs automatically on PR | PR triggers check | 100% of PRs | 0% |
+| SC-2 | Check status reflects QA verdict | PASS/FAIL matches story review | Accurate | N/A |
+| SC-3 | Review document created automatically | `review-story-{id}.md` exists | Created | Manual |
+| SC-4 | Failed QA blocks merge | Required check configured | Enforced | Not enforced |
+| SC-5 | QA results visible in GitHub UI | Check details viewable | Visible | Not visible |
 
 ### Validation Approach
 
-- Each demo component runs in browser without errors
-- Developer can explain how each animation technique works
-- Code structure supports extension for future product needs
+- Create a test PR with a passing story, verify check passes
+- Create a test PR with a failing story, verify check fails
+- Confirm review document is created in `bmad/04-qa/`
+- Verify merge is blocked when QA fails (if configured as required)
 
 ---
 
@@ -104,29 +116,26 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 > These items WILL be addressed by this effort
 
-- [ ] 3D particle system animations
-- [ ] Fluid physics visual effects
-- [ ] 3D object animation and movement
-- [ ] Interactive elements (mouse/input response)
-- [ ] Standalone single-page application
-- [ ] Foundational learning with practical examples
+- [ ] Automatic QA review triggered by pull request events
+- [ ] GitHub check status reflecting QA pass/fail verdict
+- [ ] Review document creation (`bmad/04-qa/review-story-{id}.md`)
+- [ ] Story status update based on QA verdict
+- [ ] Clear feedback visible in GitHub PR UI
 
 ### Out of Scope
 
 > These items will NOT be addressed (documented to prevent scope creep)
 
-- Car physics product itself — this is only the learning foundation
-- Backend services or databases
-- User authentication or accounts
-- Production deployment infrastructure
-- Mobile-specific optimizations
-- Multiplayer or networked features
+- Full Dev role automation (only QA is automated)
+- Cross-repository BMAD workflow (this repo only initially)
+- Custom QA rules per story (use standard QA process)
+- Integration with other CI/CD platforms (GitHub only)
 
 ### Boundaries
 
-- **Starts at**: Zero knowledge of browser 3D animation
-- **Ends at**: Working demos of particles, physics, and object animation
-- **Does not include**: The future car physics product
+- **Starts at**: PR created/updated with story implementation
+- **Ends at**: QA check complete, status reported, review document created
+- **Does not include**: Implementation fixes (that remains Dev role responsibility)
 
 ---
 
@@ -134,18 +143,19 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 ### Business Constraints
 
-- Solo developer: All learning and implementation done by one person
-- Timeline: ~1 year to reach future product development readiness
+- Must work within GitHub's check/action infrastructure
+- Should not require significant ongoing costs
 
 ### Technical Constraints
 
-- Must run in modern web browsers
-- Standalone SPA (no server-side dependencies for core functionality)
+- Must integrate with existing BMAD file structure
+- Must preserve the QA agent's review process logic
+- Cannot modify implementation code (QA is read-only)
 
 ### Resource Constraints
 
-- Single developer's time and attention
-- Learning curve for someone with no prior 3D graphics experience
+- Single repository focus initially
+- Must be maintainable without dedicated DevOps resources
 
 ### Regulatory/Compliance Constraints
 
@@ -159,9 +169,9 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 | ID | Assumption | Risk if Wrong | Validation Method |
 |----|------------|---------------|-------------------|
-| A-1 | Browser capabilities sufficient for fluid physics | May need to simplify visual fidelity | Early prototyping |
-| A-2 | 1 year is sufficient for foundational learning | Timeline may extend | Progress checkpoints |
-| A-3 | Skills transfer to future car physics product | May need additional specialized learning | Architecture review |
+| A-1 | GitHub Actions can run Claude-based QA | May need alternative approach | Prototype testing |
+| A-2 | Story ID can be extracted from PR context | May need naming conventions | Prototype testing |
+| A-3 | QA process can complete within GitHub timeout limits | May need optimization | Timing tests |
 
 ---
 
@@ -169,13 +179,17 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 > Questions requiring answers before or during solution design
 
-- [ ] Q1: What level of physics realism is needed for the future product?
-  - Owner: Developer
-  - Impact: Determines depth of physics learning required
+- [ ] Q1: How should the story ID be determined from the PR?
+  - Owner: Architect
+  - Impact: Determines automation trigger logic
 
-- [ ] Q2: What browsers/devices must be supported?
-  - Owner: Developer
-  - Impact: May constrain technical approaches
+- [ ] Q2: Should the check be required to pass before merge?
+  - Owner: Repository Owner
+  - Impact: Enforcement level
+
+- [ ] Q3: What happens if multiple stories are in one PR?
+  - Owner: Architect
+  - Impact: Check design complexity
 
 ---
 
@@ -183,18 +197,22 @@ The developer's learning quality directly impacts future user experience. Shortc
 
 ### Research Conducted
 
-- Initial problem framing session conducted 2025-12-25
+- Reviewed existing BMAD QA agent and workflow (2025-12-25)
+- Analyzed current manual process steps
 
 ### Interviews/Observations
 
 | Source | Date | Key Insights |
 |--------|------|--------------|
-| Developer (self) | 2025-12-25 | Future product = car physics with particles; no prior experience; 1 year timeline |
+| Operator | 2025-12-25 | Need: "QA as a run check that does the whole process in GitHub and passes if story passes" |
 
 ---
 
 ## Related Documents
 
+- `.claude/agents/qa.md` - Current QA agent definition
+- `.claude/commands/qa.md` - Current QA command
+- `bmad/04-qa/review-story-001.md` - Example QA review output
 - Future: PRD will be created by `/pm`
 - Future: Architecture will be created by `/architect`
 
