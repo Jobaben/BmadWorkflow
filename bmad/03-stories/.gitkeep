@@ -1,0 +1,7 @@
+# Stories Directory
+
+This directory contains user stories created by the Scrum Master.
+
+Story files follow the naming convention: story-###.md
+
+Use /scrum to generate stories from PRD and Architecture.
