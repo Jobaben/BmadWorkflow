@@ -2,20 +2,45 @@
  * 3D Animation Learning Foundation - Entry Point
  *
  * This is the main entry point for the application.
- * It initializes Three.js and sets up the basic rendering pipeline.
+ * It uses DemoRenderer and SceneManager for the rendering pipeline.
  */
 
 import './style.css';
 import * as THREE from 'three';
 import GUI from 'lil-gui';
+import {
+  DemoRenderer,
+  SceneManager,
+  isWebGLAvailable,
+  showWebGLFallback,
+} from './core';
 
 // Import types to verify they compile correctly
 import type { DemoType, Demo, ParameterSchema } from './types';
+
+/** Reference to the demo renderer for cleanup */
+let demoRenderer: DemoRenderer | null = null;
+
+/** Reference to the GUI for cleanup */
+let gui: GUI | null = null;
 
 /**
  * Initialize the application when the DOM is ready.
  */
 function init(): void {
+  // Get the app container
+  const appContainer = document.getElementById('app');
+  if (!appContainer) {
+    console.error('App container not found');
+    return;
+  }
+
+  // Check for WebGL support
+  if (!isWebGLAvailable()) {
+    showWebGLFallback(appContainer);
+    return;
+  }
+
   // Get the canvas element
   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
   if (!canvas) {
@@ -23,38 +48,33 @@ function init(): void {
     return;
   }
 
-  // Create the WebGL renderer
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: true,
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Initialize the renderer
+  try {
+    demoRenderer = new DemoRenderer(canvas);
+  } catch (error) {
+    console.error('Failed to initialize renderer:', error);
+    showWebGLFallback(appContainer);
+    return;
+  }
 
-  // Create a basic scene
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x1a1a2e);
+  // Initialize the scene manager
+  const sceneManager = new SceneManager();
 
-  // Create a perspective camera
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.z = 5;
+  // Connect camera to renderer for resize updates
+  demoRenderer.setCamera(sceneManager.getCamera());
 
-  // Add a simple cube to verify Three.js is working
+  // Add a simple cube to verify rendering is working
   const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshBasicMaterial({
+  const material = new THREE.MeshStandardMaterial({
     color: 0x4a90d9,
-    wireframe: true,
+    roughness: 0.5,
+    metalness: 0.5,
   });
   const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+  sceneManager.addObject(cube);
 
-  // Create a simple GUI to verify lil-gui is working
-  const gui = new GUI();
+  // Create a simple GUI to control the cube
+  gui = new GUI();
   const params = {
     rotationSpeed: 0.01,
     color: '#4a90d9',
@@ -64,23 +84,26 @@ function init(): void {
     material.color.set(value);
   });
 
-  // Handle window resize
-  function onWindowResize(): void {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-  window.addEventListener('resize', onWindowResize);
+  // Animation loop with delta time
+  let lastTime = performance.now();
 
-  // Animation loop
   function animate(): void {
     requestAnimationFrame(animate);
 
-    // Rotate the cube
-    cube.rotation.x += params.rotationSpeed;
-    cube.rotation.y += params.rotationSpeed;
+    // Calculate delta time
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+    lastTime = currentTime;
 
-    renderer.render(scene, camera);
+    // Rotate the cube (frame-rate independent)
+    const rotationAmount = params.rotationSpeed * deltaTime * 60;
+    cube.rotation.x += rotationAmount;
+    cube.rotation.y += rotationAmount;
+
+    // Render the scene
+    if (demoRenderer) {
+      demoRenderer.render(sceneManager.getScene());
+    }
   }
 
   // Start the animation loop
@@ -89,10 +112,28 @@ function init(): void {
   // Log success message
   console.log('3D Animation Learning Foundation initialized successfully');
   console.log('Three.js version:', THREE.REVISION);
+  console.log('Using DemoRenderer and SceneManager');
+}
+
+/**
+ * Cleanup resources on page unload.
+ */
+function cleanup(): void {
+  if (demoRenderer) {
+    demoRenderer.dispose();
+    demoRenderer = null;
+  }
+  if (gui) {
+    gui.destroy();
+    gui = null;
+  }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', cleanup);
 
 // Export types to verify they're accessible
 export type { DemoType, Demo, ParameterSchema };
