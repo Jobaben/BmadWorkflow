@@ -1,143 +1,236 @@
+---
+stepsCompleted: []
+inputDocuments: []
+status: Draft
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+author: PM
+brief_reference: bmad/00-brief/brief.md
+---
+
 # Product Requirements Document (PRD)
 
-## Document Info
-- **Created**: YYYY-MM-DD
-- **Author**: Product Manager
-- **Status**: Draft | Review | Approved
-- **Brief Reference**: `bmad/00-brief/brief.md`
+> This document defines WHAT the product should do and for WHOM. It contains no implementation details.
 
 ---
 
 ## Executive Summary
 
-_2-3 sentence overview of what this product/feature will do and why._
+[2-3 sentence overview of what this product/feature will do and why it matters]
 
 ---
 
 ## Problem Statement
 
-_Summarized from brief - the core problem being solved._
+> Summarized from brief - the core problem being solved
+
+[Reference the problem statement from the brief. This should be a direct traceability link.]
+
+**Brief Reference**: See `bmad/00-brief/brief.md` - Problem Statement section
 
 ---
 
 ## User Personas
 
 ### Persona 1: [Name]
-- **Role**: _Job title or user type_
-- **Goals**: _What they want to achieve_
-- **Pain Points**: _Current frustrations_
-- **Technical Proficiency**: Low | Medium | High
+
+| Attribute | Description |
+|-----------|-------------|
+| **Role** | [Job title or user type] |
+| **Goals** | [What they want to achieve] |
+| **Pain Points** | [Current frustrations from brief] |
+| **Context** | [How/when they use the product] |
+| **Technical Proficiency** | Low / Medium / High |
+
+**Behaviors**:
+- [Key behavior 1]
+- [Key behavior 2]
+
+**Quote**: "[Representative quote capturing their mindset]"
 
 ### Persona 2: [Name]
-_Repeat structure as needed_
+
+[Repeat structure - minimum 2 personas required]
 
 ---
 
-## Requirements
+## Functional Requirements
 
-### Functional Requirements
+> Each requirement must be traceable to a stakeholder need from the brief
 
-| ID | Requirement | Priority | Acceptance Criteria |
-|----|-------------|----------|---------------------|
-| FR-001 | _Description_ | Must | _How to verify_ |
-| FR-002 | _Description_ | Should | _How to verify_ |
-| FR-003 | _Description_ | Could | _How to verify_ |
+| ID | Requirement | User Story | Priority | Brief Trace |
+|----|-------------|------------|----------|-------------|
+| FR-001 | [Description] | As a [persona], I want [action] so that [benefit] | Must | SC-X |
+| FR-002 | [Description] | As a [persona], I want [action] so that [benefit] | Must | SC-X |
+| FR-003 | [Description] | As a [persona], I want [action] so that [benefit] | Should | SC-X |
+| FR-004 | [Description] | As a [persona], I want [action] so that [benefit] | Could | SC-X |
 
-### Non-Functional Requirements
+### FR-001: [Requirement Name]
 
-| ID | Category | Requirement | Target |
-|----|----------|-------------|--------|
-| NFR-001 | Performance | _Description_ | _Metric_ |
-| NFR-002 | Security | _Description_ | _Standard_ |
-| NFR-003 | Scalability | _Description_ | _Capacity_ |
-| NFR-004 | Availability | _Description_ | _SLA_ |
+**Description**: [Detailed description]
+
+**Acceptance Criteria**:
+```gherkin
+Given [precondition]
+When [action]
+Then [expected result]
+
+Given [precondition]
+When [alternative action]
+Then [expected result]
+```
+
+**Edge Cases**:
+- [Edge case 1]: [Expected behavior]
+- [Edge case 2]: [Expected behavior]
+
+### FR-002: [Requirement Name]
+
+[Repeat structure for each requirement]
 
 ---
 
-## User Stories (High Level)
+## Non-Functional Requirements
 
-_These will be broken down by Scrum Master into detailed stories._
-
-1. As a [persona], I want to [action] so that [benefit].
-2. As a [persona], I want to [action] so that [benefit].
+| ID | Category | Requirement | Target | Rationale |
+|----|----------|-------------|--------|-----------|
+| NFR-001 | Performance | [Description] | [Specific metric] | [Why this matters] |
+| NFR-002 | Security | [Description] | [Standard/compliance] | [Why this matters] |
+| NFR-003 | Scalability | [Description] | [Capacity target] | [Why this matters] |
+| NFR-004 | Availability | [Description] | [SLA target] | [Why this matters] |
+| NFR-005 | Usability | [Description] | [Accessibility standard] | [Why this matters] |
 
 ---
 
-## Acceptance Criteria
+## Prioritization Matrix
 
-### Feature: [Name]
+### MoSCoW Analysis
 
-**Given** _precondition_
-**When** _action_
-**Then** _expected result_
+| Priority | Requirements | Rationale |
+|----------|--------------|-----------|
+| **Must** | FR-001, FR-002, NFR-001, NFR-002 | Without these, product is not viable |
+| **Should** | FR-003, NFR-003 | Important but not critical for launch |
+| **Could** | FR-004 | Nice-to-have if resources permit |
+| **Won't** | [Explicitly excluded] | Documented for scope clarity |
+
+### Priority Justification
+
+- **FR-001 is Must because**: [Rationale]
+- **FR-003 is Should because**: [Rationale]
 
 ---
 
 ## Scope
 
 ### In Scope
-- _Feature/capability 1_
-- _Feature/capability 2_
+
+> These capabilities WILL be delivered
+
+- [ ] [Capability 1 - tied to FR-XXX]
+- [ ] [Capability 2 - tied to FR-XXX]
+- [ ] [Capability 3 - tied to FR-XXX]
 
 ### Out of Scope
-- _Explicitly excluded 1_
-- _Explicitly excluded 2_
+
+> These are explicitly EXCLUDED (prevents scope creep)
+
+- [Excluded item 1]: [Why excluded, potential future consideration]
+- [Excluded item 2]: [Why excluded]
 
 ### Future Considerations
-- _Potential future enhancement 1_
+
+> May be addressed in future phases
+
+- [Future item 1]: [Dependency or trigger for inclusion]
 
 ---
 
 ## Dependencies
 
-| Dependency | Type | Status | Impact if Unavailable |
-|------------|------|--------|----------------------|
-| _Dependency 1_ | Internal/External | Available/Pending | _Impact_ |
+| ID | Dependency | Type | Owner | Status | Impact if Unavailable |
+|----|------------|------|-------|--------|----------------------|
+| DEP-001 | [Dependency] | Internal/External | [Team/System] | Available/Pending | [Blocker/Degraded] |
 
 ---
 
 ## Constraints
 
-- _Constraint 1_
-- _Constraint 2_
+### Business Constraints
+- [Constraint 1]: [Impact on requirements]
+
+### Regulatory Constraints
+- [Constraint 1]: [Compliance requirement]
+
+### Timeline Constraints
+- [Constraint 1]: [Date-driven requirement]
 
 ---
 
 ## Assumptions
 
-- _Assumption 1_
-- _Assumption 2_
+| ID | Assumption | Impact if Wrong | Validation Plan |
+|----|------------|-----------------|-----------------|
+| A-001 | [Assumption] | [Risk] | [How to validate] |
 
 ---
 
 ## Risks
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| _Risk 1_ | H/M/L | H/M/L | _Strategy_ |
+| ID | Risk | Probability | Impact | Mitigation | Owner |
+|----|------|-------------|--------|------------|-------|
+| R-001 | [Risk description] | H/M/L | H/M/L | [Strategy] | [Who] |
 
 ---
 
 ## Success Metrics
 
-| Metric | Current | Target | Measurement Method |
-|--------|---------|--------|-------------------|
-| _Metric 1_ | _Baseline_ | _Goal_ | _How measured_ |
+> Tied to Success Criteria from brief
+
+| Metric | Baseline | Target | Measurement Method | Brief Trace |
+|--------|----------|--------|-------------------|-------------|
+| [Metric 1] | [Current] | [Goal] | [How measured] | SC-1 |
+| [Metric 2] | [Current] | [Goal] | [How measured] | SC-2 |
+
+---
+
+## Traceability Matrix
+
+| Brief Success Criterion | PRD Requirements | Coverage |
+|------------------------|------------------|----------|
+| SC-1 | FR-001, FR-002 | Full |
+| SC-2 | FR-003, NFR-001 | Full |
+| SC-3 | FR-004 | Partial |
 
 ---
 
 ## Open Questions
 
-- [ ] _Question requiring resolution_
+- [ ] Q1: [Question]
+  - Impact: [What decision it affects]
+  - Owner: [Who should answer]
+  - Due: [When needed]
 
 ---
 
 ## Approval
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Product Manager | | | |
-| Stakeholder | | | |
+| Role | Name | Date | Status |
+|------|------|------|--------|
+| Product Manager | | | Pending |
+| Primary Stakeholder | | | Pending |
+| Technical Lead | | | Pending |
+
+---
+
+## Workflow Checklist
+
+- [ ] All brief success criteria have requirements
+- [ ] Minimum 2 personas defined
+- [ ] All MUST requirements have acceptance criteria
+- [ ] Prioritization complete (MoSCoW applied)
+- [ ] No implementation details present
+- [ ] Traceability to brief established
+- [ ] Out of scope explicitly documented
 
 ---
 

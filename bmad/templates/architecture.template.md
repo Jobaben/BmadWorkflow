@@ -1,16 +1,34 @@
+---
+stepsCompleted: []
+inputDocuments: []
+status: Draft
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+author: Architect
+prd_reference: bmad/01-prd/PRD.md
+---
+
 # Architecture Document
 
-## Document Info
-- **Created**: YYYY-MM-DD
-- **Author**: Architect
-- **Status**: Draft | Review | Approved
-- **PRD Reference**: `bmad/01-prd/PRD.md`
+> This document defines HOW the system will be built. It implements requirements from the PRD without inventing new features.
 
 ---
 
 ## Executive Summary
 
-_Brief overview of the technical approach and key decisions._
+[2-3 sentence overview of the technical approach and key architectural decisions]
+
+---
+
+## Requirements Mapping
+
+> Every architectural element must trace to PRD requirements
+
+| PRD Requirement | Architectural Approach | Component(s) |
+|-----------------|----------------------|--------------|
+| FR-001 | [How addressed] | [Component] |
+| FR-002 | [How addressed] | [Component] |
+| NFR-001 | [How addressed] | [Pattern/Technology] |
 
 ---
 
@@ -21,18 +39,25 @@ _Brief overview of the technical approach and key decisions._
 ```mermaid
 graph TB
     subgraph External
-        A[External System A]
-        B[External System B]
+        U[Users]
+        EA[External System A]
+        EB[External System B]
     end
-    subgraph System Boundary
+
+    subgraph "System Boundary"
         S[Our System]
     end
-    A --> S
-    S --> B
+
+    U -->|uses| S
+    EA -->|provides data| S
+    S -->|sends to| EB
 ```
 
 ### System Boundaries
-_Define what's inside vs outside the system scope._
+
+| Inside System | Outside System | Integration Type |
+|---------------|----------------|------------------|
+| [Internal component] | [External system] | [API/Event/File] |
 
 ---
 
@@ -45,14 +70,17 @@ graph TB
     subgraph Presentation
         UI[User Interface]
     end
+
     subgraph Application
         API[API Layer]
-        SVC[Services]
+        SVC[Business Services]
     end
+
     subgraph Data
-        DB[(Database)]
+        DB[(Primary Database)]
         CACHE[(Cache)]
     end
+
     UI --> API
     API --> SVC
     SVC --> DB
@@ -60,140 +88,228 @@ graph TB
 ```
 
 ### Architecture Style
-_Describe the overall architectural approach (microservices, monolith, etc.)_
+
+**Pattern**: [Monolith / Microservices / Serverless / etc.]
+
+**Rationale**: [Why this pattern was chosen - reference ADR]
 
 ---
 
 ## Components
 
-### Component 1: [Name]
+### Component: [Name]
 
-**Purpose**: _What this component does_
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | [Single responsibility description] |
+| **PRD Requirements** | FR-001, FR-002 |
+| **Technology** | [Framework/Language] |
 
 **Responsibilities**:
-- _Responsibility 1_
-- _Responsibility 2_
+- [Responsibility 1]
+- [Responsibility 2]
 
 **Interfaces**:
-- Input: _Description_
-- Output: _Description_
+| Direction | Type | Contract |
+|-----------|------|----------|
+| Input | [REST/Event/etc.] | [Schema reference] |
+| Output | [REST/Event/etc.] | [Schema reference] |
 
 **Dependencies**:
-- _Dependency 1_
+- [Component X]: [Purpose of dependency]
 
-### Component 2: [Name]
-_Repeat structure_
+### Component: [Name 2]
+
+[Repeat structure for each component]
 
 ---
 
-## Data Models
+## Data Architecture
 
-### Entity: [Name]
+### Data Models
+
+#### Entity: [Name]
 
 ```
-Entity Name
+EntityName
 ├── id: UUID (PK)
-├── field1: String
-├── field2: Integer
+├── field1: String (required)
+├── field2: Integer (optional)
+├── status: Enum [active, inactive]
 ├── created_at: Timestamp
 └── updated_at: Timestamp
 ```
 
+**Constraints**:
+- [Constraint 1]
+- [Constraint 2]
+
 **Relationships**:
-- _Entity A_ has many _Entity B_
+```mermaid
+erDiagram
+    EntityA ||--o{ EntityB : "has many"
+    EntityB }|--|| EntityC : "belongs to"
+```
 
 ### Data Flow
 
 ```mermaid
 flowchart LR
-    A[Input] --> B[Process]
+    A[Input] --> B[Validate]
     B --> C[Transform]
-    C --> D[Store]
+    C --> D[Process]
+    D --> E[Store]
+    E --> F[Response]
 ```
 
 ---
 
-## Interfaces
+## Interface Specifications
 
 ### API Endpoints
 
-| Method | Endpoint | Purpose | Request | Response |
-|--------|----------|---------|---------|----------|
-| GET | /api/resource | List resources | - | `Resource[]` |
-| POST | /api/resource | Create resource | `CreateDTO` | `Resource` |
+| Method | Endpoint | Purpose | Request | Response | Auth |
+|--------|----------|---------|---------|----------|------|
+| GET | /api/v1/resource | List resources | Query params | `Resource[]` | Bearer |
+| POST | /api/v1/resource | Create resource | `CreateDTO` | `Resource` | Bearer |
+| GET | /api/v1/resource/:id | Get single | Path param | `Resource` | Bearer |
+| PUT | /api/v1/resource/:id | Update | `UpdateDTO` | `Resource` | Bearer |
+| DELETE | /api/v1/resource/:id | Delete | Path param | 204 | Bearer |
 
-### Events
+### Request/Response Schemas
+
+```json
+// CreateDTO
+{
+  "field1": "string (required)",
+  "field2": "number (optional)"
+}
+
+// Resource
+{
+  "id": "uuid",
+  "field1": "string",
+  "field2": "number",
+  "createdAt": "ISO8601",
+  "updatedAt": "ISO8601"
+}
+```
+
+### Events (if applicable)
 
 | Event | Publisher | Subscriber(s) | Payload |
 |-------|-----------|---------------|---------|
-| _event.name_ | _Component_ | _Component(s)_ | _Schema_ |
+| resource.created | ResourceService | NotificationService | `{ id, field1 }` |
 
 ---
 
-## Technical Decisions
+## Architecture Decision Records
 
 ### ADR-001: [Decision Title]
 
-**Status**: Proposed | Accepted | Deprecated | Superseded
+| Attribute | Value |
+|-----------|-------|
+| **Status** | Proposed / Accepted / Deprecated |
+| **Date** | YYYY-MM-DD |
+| **Deciders** | [Who made this decision] |
 
-**Context**: _Why this decision was needed_
+**Context**: [Why this decision was needed]
 
-**Decision**: _What was decided_
+**Decision**: [What was decided]
 
 **Consequences**:
-- Positive: _Benefit_
-- Negative: _Tradeoff_
+- ✅ [Positive consequence]
+- ⚠️ [Trade-off or negative consequence]
 
 **Alternatives Considered**:
-1. _Alternative 1_: Rejected because _reason_
+| Alternative | Rejected Because |
+|-------------|------------------|
+| [Option A] | [Reason] |
+| [Option B] | [Reason] |
+
+### ADR-002: [Decision Title]
+
+[Repeat structure - minimum 3 ADRs required]
 
 ---
 
 ## Technology Stack
 
-| Layer | Technology | Version | Purpose |
-|-------|------------|---------|---------|
-| Runtime | _e.g., Node.js_ | _e.g., 18.x_ | _Purpose_ |
-| Framework | _e.g., Express_ | _e.g., 4.x_ | _Purpose_ |
-| Database | _e.g., PostgreSQL_ | _e.g., 15_ | _Purpose_ |
+| Layer | Technology | Version | Purpose | License |
+|-------|------------|---------|---------|---------|
+| Runtime | [e.g., Node.js] | [e.g., 20.x LTS] | [Purpose] | [MIT] |
+| Framework | [e.g., Express] | [e.g., 4.x] | [Purpose] | [MIT] |
+| Database | [e.g., PostgreSQL] | [e.g., 15] | [Purpose] | [PostgreSQL] |
+| Cache | [e.g., Redis] | [e.g., 7.x] | [Purpose] | [BSD] |
 
 ---
 
 ## Non-Functional Requirements Implementation
 
-### Performance
-_How NFRs for performance will be met_
+### Performance (NFR-001)
 
-### Security
-_Security measures and patterns_
+| Requirement | Approach | Verification |
+|-------------|----------|--------------|
+| [Response time < Xms] | [Caching, query optimization] | [Load test] |
 
-### Scalability
-_How the system will scale_
+### Security (NFR-002)
 
-### Reliability
-_Fault tolerance and recovery_
+| Requirement | Approach | Verification |
+|-------------|----------|--------------|
+| [Authentication] | [JWT/OAuth] | [Security audit] |
+| [Data encryption] | [AES-256 at rest] | [Compliance check] |
+
+### Scalability (NFR-003)
+
+| Requirement | Approach | Verification |
+|-------------|----------|--------------|
+| [Handle X users] | [Horizontal scaling] | [Load test] |
+
+### Availability (NFR-004)
+
+| Requirement | Approach | Verification |
+|-------------|----------|--------------|
+| [99.9% uptime] | [Multi-AZ deployment] | [Monitoring] |
 
 ---
 
 ## Integration Points
 
-| System | Direction | Protocol | Authentication |
-|--------|-----------|----------|----------------|
-| _External API_ | Outbound | REST/HTTPS | API Key |
+| System | Direction | Protocol | Auth | Data Format | Error Handling |
+|--------|-----------|----------|------|-------------|----------------|
+| [External API] | Outbound | REST/HTTPS | API Key | JSON | Retry with backoff |
 
 ---
 
 ## Risks and Mitigations
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| _Technical risk 1_ | H/M/L | H/M/L | _Strategy_ |
+| ID | Risk | Probability | Impact | Score | Mitigation |
+|----|------|-------------|--------|-------|------------|
+| TR-001 | [Technical risk] | H/M/L | H/M/L | [P×I] | [Strategy] |
 
 ---
 
-## Open Questions
+## Coding Standards
 
-- [ ] _Technical question requiring resolution_
+### File Structure
+```
+src/
+├── components/     # [Purpose]
+├── services/       # [Purpose]
+├── models/         # [Purpose]
+├── utils/          # [Purpose]
+└── tests/          # [Purpose]
+```
+
+### Naming Conventions
+- Files: [convention]
+- Classes: [convention]
+- Functions: [convention]
+- Variables: [convention]
+
+### Patterns to Follow
+- [Pattern 1]: [When to use]
+- [Pattern 2]: [When to use]
 
 ---
 
@@ -201,16 +317,39 @@ _Fault tolerance and recovery_
 
 | Term | Definition |
 |------|------------|
-| _Term_ | _Definition_ |
+| [Term] | [Definition] |
+
+---
+
+## Open Questions
+
+- [ ] Q1: [Technical question]
+  - Impact: [What it affects]
+  - Owner: [Who decides]
 
 ---
 
 ## Approval
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Architect | | | |
-| Tech Lead | | | |
+| Role | Name | Date | Status |
+|------|------|------|--------|
+| Architect | | | Pending |
+| Tech Lead | | | Pending |
+| Security | | | Pending |
+
+---
+
+## Workflow Checklist
+
+- [ ] All FR requirements have architectural approach
+- [ ] All NFR requirements have implementation strategy
+- [ ] System context diagram exists
+- [ ] Component diagram with clear boundaries
+- [ ] Data models specified
+- [ ] At least 3 ADRs documented
+- [ ] Technology choices justified
+- [ ] Risks identified with mitigations
+- [ ] Zero implementation code present
 
 ---
 
