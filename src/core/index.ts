@@ -8,3 +8,4 @@ export { DemoRenderer, isWebGLAvailable, showWebGLFallback } from './DemoRendere
 export { SceneManager } from './SceneManager';
 export { AnimationLoop, type FrameCallback } from './AnimationLoop';
 export { FPSMonitor } from './FPSMonitor';
+export { InputManager } from './InputManager';
