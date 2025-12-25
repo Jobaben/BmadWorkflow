@@ -2,7 +2,7 @@
  * 3D Animation Learning Foundation - Entry Point
  *
  * This is the main entry point for the application.
- * It uses DemoRenderer and SceneManager for the rendering pipeline.
+ * It uses DemoRenderer, SceneManager, AnimationLoop, and FPS monitoring.
  */
 
 import './style.css';
@@ -11,9 +11,12 @@ import GUI from 'lil-gui';
 import {
   DemoRenderer,
   SceneManager,
+  AnimationLoop,
+  FPSMonitor,
   isWebGLAvailable,
   showWebGLFallback,
 } from './core';
+import { FPSDisplay } from './ui';
 
 // Import types to verify they compile correctly
 import type { DemoType, Demo, ParameterSchema } from './types';
@@ -23,6 +26,12 @@ let demoRenderer: DemoRenderer | null = null;
 
 /** Reference to the GUI for cleanup */
 let gui: GUI | null = null;
+
+/** Reference to the animation loop for cleanup */
+let animationLoop: AnimationLoop | null = null;
+
+/** Reference to the FPS display for cleanup */
+let fpsDisplay: FPSDisplay | null = null;
 
 /**
  * Initialize the application when the DOM is ready.
@@ -73,27 +82,38 @@ function init(): void {
   const cube = new THREE.Mesh(geometry, material);
   sceneManager.addObject(cube);
 
+  // Create FPS monitor and display
+  const fpsMonitor = new FPSMonitor();
+  fpsDisplay = new FPSDisplay(fpsMonitor);
+  fpsDisplay.show();
+
+  // Create the animation loop
+  animationLoop = new AnimationLoop();
+
   // Create a simple GUI to control the cube
   gui = new GUI();
   const params = {
     rotationSpeed: 0.01,
     color: '#4a90d9',
+    showFPS: true,
   };
   gui.add(params, 'rotationSpeed', 0, 0.1).name('Rotation Speed');
   gui.addColor(params, 'color').name('Color').onChange((value: string) => {
     material.color.set(value);
   });
+  gui.add(params, 'showFPS').name('Show FPS').onChange((value: boolean) => {
+    if (value) {
+      fpsDisplay?.show();
+    } else {
+      fpsDisplay?.hide();
+    }
+  });
 
-  // Animation loop with delta time
-  let lastTime = performance.now();
-
-  function animate(): void {
-    requestAnimationFrame(animate);
-
-    // Calculate delta time
-    const currentTime = performance.now();
-    const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
-    lastTime = currentTime;
+  // Register the frame callback
+  animationLoop.onFrame((deltaTime: number) => {
+    // Update FPS monitor
+    fpsMonitor.frame(deltaTime);
+    fpsDisplay?.update();
 
     // Rotate the cube (frame-rate independent)
     const rotationAmount = params.rotationSpeed * deltaTime * 60;
@@ -104,21 +124,30 @@ function init(): void {
     if (demoRenderer) {
       demoRenderer.render(sceneManager.getScene());
     }
-  }
+  });
 
   // Start the animation loop
-  animate();
+  animationLoop.start();
 
   // Log success message
   console.log('3D Animation Learning Foundation initialized successfully');
   console.log('Three.js version:', THREE.REVISION);
-  console.log('Using DemoRenderer and SceneManager');
+  console.log('Using DemoRenderer, SceneManager, and AnimationLoop');
+  console.log('Animation loop running:', animationLoop.isRunning());
 }
 
 /**
  * Cleanup resources on page unload.
  */
 function cleanup(): void {
+  if (animationLoop) {
+    animationLoop.stop();
+    animationLoop = null;
+  }
+  if (fpsDisplay) {
+    fpsDisplay.dispose();
+    fpsDisplay = null;
+  }
   if (demoRenderer) {
     demoRenderer.dispose();
     demoRenderer = null;
