@@ -1,11 +1,11 @@
 ---
 id: story-006
 title: "Object Pool Utility"
-status: Ready
+status: In Review
 priority: P1
 estimate: S
 created: 2025-12-25
-updated: 2025-12-25
+updated: 2025-12-26
 assignee:
 pr_link:
 epic: Utilities
@@ -28,27 +28,27 @@ prd_requirement: NFR-001
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Pool provides objects without allocation
+- [x] **AC1**: Pool provides objects without allocation
   - Given: A pool is initialized with objects
   - When: I call acquire()
   - Then: An object is returned without new allocation
 
-- [ ] **AC2**: Released objects are recycled
+- [x] **AC2**: Released objects are recycled
   - Given: An object has been acquired
   - When: I call release(object)
   - Then: The object is returned to the pool for reuse
 
-- [ ] **AC3**: Pool grows when exhausted
+- [x] **AC3**: Pool grows when exhausted
   - Given: All pool objects are in use
   - When: I call acquire()
   - Then: The pool grows and provides a new object
 
-- [ ] **AC4**: Objects are reset on release
+- [x] **AC4**: Objects are reset on release
   - Given: An object has been modified during use
   - When: I release it
   - Then: A reset function is called to clean its state
 
-- [ ] **AC5**: Pool reports statistics
+- [x] **AC5**: Pool reports statistics
   - Given: A pool is in use
   - When: I check pool stats
   - Then: I can see active count, available count, total size
@@ -61,41 +61,41 @@ prd_requirement: NFR-001
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create ObjectPool class (AC: 1, 2)
-  - [ ] Subtask 1.1: Create `src/utils/ObjectPool.ts`
-  - [ ] Subtask 1.2: Implement generic pool with factory function
-  - [ ] Subtask 1.3: Implement acquire() method
-  - [ ] Subtask 1.4: Implement release() method
-  - [ ] Subtask 1.5: Use array-based storage for efficiency
+- [x] **Task 1**: Create ObjectPool class (AC: 1, 2)
+  - [x] Subtask 1.1: Create `src/utils/ObjectPool.ts`
+  - [x] Subtask 1.2: Implement generic pool with factory function
+  - [x] Subtask 1.3: Implement acquire() method
+  - [x] Subtask 1.4: Implement release() method
+  - [x] Subtask 1.5: Use array-based storage for efficiency
 
-- [ ] **Task 2**: Implement pool growth (AC: 3)
-  - [ ] Subtask 2.1: Add grow() method
-  - [ ] Subtask 2.2: Create batch of new objects when exhausted
-  - [ ] Subtask 2.3: Make batch size configurable
+- [x] **Task 2**: Implement pool growth (AC: 3)
+  - [x] Subtask 2.1: Add grow() method
+  - [x] Subtask 2.2: Create batch of new objects when exhausted
+  - [x] Subtask 2.3: Make batch size configurable
 
-- [ ] **Task 3**: Implement object reset (AC: 4)
-  - [ ] Subtask 3.1: Accept reset function in constructor
-  - [ ] Subtask 3.2: Call reset on release
-  - [ ] Subtask 3.3: Make reset optional (default no-op)
+- [x] **Task 3**: Implement object reset (AC: 4)
+  - [x] Subtask 3.1: Accept reset function in constructor
+  - [x] Subtask 3.2: Call reset on release
+  - [x] Subtask 3.3: Make reset optional (default no-op)
 
-- [ ] **Task 4**: Add pool statistics (AC: 5)
-  - [ ] Subtask 4.1: Track active count
-  - [ ] Subtask 4.2: Track available count
-  - [ ] Subtask 4.3: Track total pool size
-  - [ ] Subtask 4.4: Add getStats() method
+- [x] **Task 4**: Add pool statistics (AC: 5)
+  - [x] Subtask 4.1: Track active count
+  - [x] Subtask 4.2: Track available count
+  - [x] Subtask 4.3: Track total pool size
+  - [x] Subtask 4.4: Add getStats() method
 
-- [ ] **Task 5**: Create unit tests
-  - [ ] Subtask 5.1: Test acquire returns object
-  - [ ] Subtask 5.2: Test release makes object available
-  - [ ] Subtask 5.3: Test pool growth
-  - [ ] Subtask 5.4: Test reset function is called
+- [x] **Task 5**: Create unit tests
+  - [x] Subtask 5.1: Test acquire returns object
+  - [x] Subtask 5.2: Test release makes object available
+  - [x] Subtask 5.3: Test pool growth
+  - [x] Subtask 5.4: Test reset function is called
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify no allocations during steady-state usage
-- [ ] **Test Task 2**: Verify released objects are reused
-- [ ] **Test Task 3**: Verify stats reflect actual pool state
-- [ ] **Test Task 4**: Verify reset function modifies objects
+- [x] **Test Task 1**: Verify no allocations during steady-state usage
+- [x] **Test Task 2**: Verify released objects are reused
+- [x] **Test Task 3**: Verify stats reflect actual pool state
+- [x] **Test Task 4**: Verify reset function modifies objects
 
 ---
 
@@ -144,14 +144,14 @@ class ObjectPool<T> {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -184,16 +184,19 @@ class ObjectPool<T> {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5 (claude-opus-4-5-20251101)
+- **Session Date**: 2025-12-26
+- **Tasks Completed**: All 5 implementation tasks and 4 testing tasks
+- **Implementation Notes**: Implemented a generic ObjectPool<T> class with factory pattern, optional reset function, configurable initial size and batch growth, and comprehensive statistics tracking.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used Set for active object tracking: Provides O(1) lookup for release validation and prevents double-release issues
+- Used array as stack for available objects: O(1) push/pop operations for maximum performance
+- Added batchSize constructor parameter: Allows tuning of growth behavior for different use cases
+- Made reset function optional with no-op default: Simpler API when objects don't need explicit reset
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- None encountered during implementation
 
 ---
 
@@ -202,10 +205,12 @@ class ObjectPool<T> {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/utils/ObjectPool.ts` - Main ObjectPool<T> class implementation with acquire/release/getStats
+- `src/utils/index.ts` - Module exports for utils package
+- `tests/utils/ObjectPool.test.ts` - Comprehensive unit tests (35 test cases)
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/types/index.ts` - Added PoolStats interface
 
 ---
 
@@ -214,6 +219,8 @@ class ObjectPool<T> {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-25 | - | Ready | Scrum | Created |
+| 2025-12-26 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-26 | In Progress | In Review | Dev | Implementation complete, 35 tests passing |
 
 ---
 
