@@ -1,7 +1,7 @@
 ---
 id: story-008
 title: "Object Demo"
-status: QA Pass
+status: Done
 priority: P1
 estimate: M
 created: 2025-12-25
@@ -237,6 +237,7 @@ interface ObjectParams {
 | 2025-12-26 | Ready | In Progress | claude-opus-4-5 | Started implementation |
 | 2025-12-26 | In Progress | In Review | claude-opus-4-5 | Implementation complete, all 56 tests passing |
 | 2025-12-26 | In Review | QA Pass | claude-opus-4-5 | All acceptance criteria verified, code quality excellent |
+| 2025-12-26 | QA Pass | Done | claude-opus-4-5 | Story completed and merged |
 
 ---
 
