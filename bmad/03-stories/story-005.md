@@ -1,7 +1,7 @@
 ---
 id: story-005
 title: "UI Shell & Demo Selector"
-status: In Review
+status: Done
 priority: P1
 estimate: S
 created: 2025-12-25
@@ -222,6 +222,7 @@ class DemoSelector {
 | 2025-12-25 | - | Ready | Scrum | Created |
 | 2025-12-26 | Ready | In Progress | Dev | Started implementation |
 | 2025-12-26 | In Progress | In Review | Dev | Implementation complete, 25 unit tests passing |
+| 2025-12-26 | In Review | Done | QA | All acceptance criteria verified, PASS |
 
 ---
 
