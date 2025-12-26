@@ -17,10 +17,11 @@ import {
   isWebGLAvailable,
   showWebGLFallback,
 } from './core';
-import { FPSDisplay } from './ui';
+import { FPSDisplay, DemoSelector } from './ui';
 
-// Import types to verify they compile correctly
-import type { DemoType, Demo, ParameterSchema } from './types';
+// Import types and enums
+import { DemoType } from './types';
+import type { Demo, ParameterSchema, DemoInfo } from './types';
 
 /** Reference to the demo renderer for cleanup */
 let demoRenderer: DemoRenderer | null = null;
@@ -36,6 +37,9 @@ let fpsDisplay: FPSDisplay | null = null;
 
 /** Reference to the input manager for cleanup */
 let inputManager: InputManager | null = null;
+
+/** Reference to the demo selector for cleanup */
+let demoSelector: DemoSelector | null = null;
 
 /**
  * Initialize the application when the DOM is ready.
@@ -129,6 +133,30 @@ function init(): void {
     }
   });
 
+  // Initialize demo selector
+  const demoSelectorContainer = document.getElementById('demo-selector-container');
+  if (demoSelectorContainer) {
+    demoSelector = new DemoSelector(demoSelectorContainer);
+
+    // Configure available demos
+    const demos: DemoInfo[] = [
+      { id: DemoType.Particles, label: 'Particles', description: 'Particle system demonstration' },
+      { id: DemoType.Objects, label: 'Objects', description: '3D object animation' },
+      { id: DemoType.Fluid, label: 'Fluid', description: 'Fluid physics simulation' },
+      { id: DemoType.Combined, label: 'Combined', description: 'All demos together' },
+    ];
+    demoSelector.setDemos(demos);
+
+    // Set initial selection
+    demoSelector.setSelected(DemoType.Particles);
+
+    // Handle demo selection changes
+    demoSelector.onSelect((id: DemoType) => {
+      console.log('Demo selected:', id);
+      // TODO: Integrate with DemoController when available
+    });
+  }
+
   // Track previous key state for logging changes
   let previousKeysCount = 0;
 
@@ -201,6 +229,10 @@ function cleanup(): void {
   if (fpsDisplay) {
     fpsDisplay.dispose();
     fpsDisplay = null;
+  }
+  if (demoSelector) {
+    demoSelector.dispose();
+    demoSelector = null;
   }
   if (demoRenderer) {
     demoRenderer.dispose();

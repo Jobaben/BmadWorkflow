@@ -150,10 +150,22 @@ export interface InputState {
  * Available demo types in the application.
  */
 export enum DemoType {
-  Particle = 'particle',
-  Object = 'object',
+  Particles = 'particles',
+  Objects = 'objects',
   Fluid = 'fluid',
   Combined = 'combined',
+}
+
+/**
+ * Information about a demo for the selector UI.
+ */
+export interface DemoInfo {
+  /** Unique identifier for this demo */
+  id: DemoType;
+  /** Display label for the demo button */
+  label: string;
+  /** Optional description shown as tooltip */
+  description?: string;
 }
 
 /**

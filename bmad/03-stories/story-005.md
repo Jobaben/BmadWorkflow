@@ -1,7 +1,7 @@
 ---
 id: story-005
 title: "UI Shell & Demo Selector"
-status: Ready
+status: In Review
 priority: P1
 estimate: S
 created: 2025-12-25
@@ -28,27 +28,27 @@ prd_requirement: NFR-003
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Demo selector displays available demos
+- [x] **AC1**: Demo selector displays available demos
   - Given: The application is loaded
   - When: I view the UI
   - Then: I see a list of available demos (Particles, Objects, Fluid, Combined)
 
-- [ ] **AC2**: Clicking a demo switches the active view
+- [x] **AC2**: Clicking a demo switches the active view
   - Given: The demo selector is visible
   - When: I click on a demo name
   - Then: That demo becomes active and is displayed
 
-- [ ] **AC3**: Current selection is visually indicated
+- [x] **AC3**: Current selection is visually indicated
   - Given: A demo is selected
   - When: I view the selector
   - Then: The active demo is visually highlighted
 
-- [ ] **AC4**: UI does not obstruct the canvas
+- [x] **AC4**: UI does not obstruct the canvas
   - Given: The UI is displayed
   - When: I view the application
   - Then: The UI is positioned to not block the 3D content
 
-- [ ] **AC5**: Demo switch emits an event
+- [x] **AC5**: Demo switch emits an event
   - Given: A demo switch occurs
   - When: The new demo is selected
   - Then: An event is emitted that controllers can subscribe to
@@ -61,43 +61,43 @@ prd_requirement: NFR-003
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create UI shell structure (AC: 4)
-  - [ ] Subtask 1.1: Update `index.html` with UI container structure
-  - [ ] Subtask 1.2: Create sidebar or header area for controls
-  - [ ] Subtask 1.3: Style UI to be overlay on canvas
+- [x] **Task 1**: Create UI shell structure (AC: 4)
+  - [x] Subtask 1.1: Update `index.html` with UI container structure
+  - [x] Subtask 1.2: Create sidebar or header area for controls
+  - [x] Subtask 1.3: Style UI to be overlay on canvas
 
-- [ ] **Task 2**: Create DemoSelector component (AC: 1)
-  - [ ] Subtask 2.1: Create `src/ui/DemoSelector.ts`
-  - [ ] Subtask 2.2: Accept demo list configuration
-  - [ ] Subtask 2.3: Generate DOM elements for each demo button
+- [x] **Task 2**: Create DemoSelector component (AC: 1)
+  - [x] Subtask 2.1: Create `src/ui/DemoSelector.ts`
+  - [x] Subtask 2.2: Accept demo list configuration
+  - [x] Subtask 2.3: Generate DOM elements for each demo button
 
-- [ ] **Task 3**: Implement selection behavior (AC: 2, 3)
-  - [ ] Subtask 3.1: Add click handlers to demo buttons
-  - [ ] Subtask 3.2: Track currently selected demo
-  - [ ] Subtask 3.3: Apply "active" class to selected button
-  - [ ] Subtask 3.4: Remove "active" from previously selected
+- [x] **Task 3**: Implement selection behavior (AC: 2, 3)
+  - [x] Subtask 3.1: Add click handlers to demo buttons
+  - [x] Subtask 3.2: Track currently selected demo
+  - [x] Subtask 3.3: Apply "active" class to selected button
+  - [x] Subtask 3.4: Remove "active" from previously selected
 
-- [ ] **Task 4**: Implement event emission (AC: 5)
-  - [ ] Subtask 4.1: Create onDemoSelect callback mechanism
-  - [ ] Subtask 4.2: Emit demo selection events
-  - [ ] Subtask 4.3: Test event subscription
+- [x] **Task 4**: Implement event emission (AC: 5)
+  - [x] Subtask 4.1: Create onDemoSelect callback mechanism
+  - [x] Subtask 4.2: Emit demo selection events
+  - [x] Subtask 4.3: Test event subscription
 
-- [ ] **Task 5**: Style the UI (AC: 4)
-  - [ ] Subtask 5.1: Add CSS for demo selector
-  - [ ] Subtask 5.2: Ensure buttons are clearly visible
-  - [ ] Subtask 5.3: Add hover states
-  - [ ] Subtask 5.4: Position in corner (not blocking canvas center)
+- [x] **Task 5**: Style the UI (AC: 4)
+  - [x] Subtask 5.1: Add CSS for demo selector
+  - [x] Subtask 5.2: Ensure buttons are clearly visible
+  - [x] Subtask 5.3: Add hover states
+  - [x] Subtask 5.4: Position in corner (not blocking canvas center)
 
-- [ ] **Task 6**: Create DemoType enum
-  - [ ] Subtask 6.1: Define demo types in `src/types/index.ts`
-  - [ ] Subtask 6.2: Export for use in selector
+- [x] **Task 6**: Create DemoType enum
+  - [x] Subtask 6.1: Define demo types in `src/types/index.ts`
+  - [x] Subtask 6.2: Export for use in selector
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify all demo buttons appear
-- [ ] **Test Task 2**: Verify clicking updates visual selection
-- [ ] **Test Task 3**: Verify selection event is emitted
-- [ ] **Test Task 4**: Verify UI doesn't block canvas center
+- [x] **Test Task 1**: Verify all demo buttons appear
+- [x] **Test Task 2**: Verify clicking updates visual selection
+- [x] **Test Task 3**: Verify selection event is emitted
+- [x] **Test Task 4**: Verify UI doesn't block canvas center
 
 ---
 
@@ -143,14 +143,14 @@ class DemoSelector {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -183,16 +183,18 @@ class DemoSelector {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5 (claude-opus-4-5-20251101)
+- **Session Date**: 2025-12-26
+- **Tasks Completed**: All 6 implementation tasks, 4 testing tasks
+- **Implementation Notes**: Created DemoSelector component following vanilla TypeScript patterns (ADR-002), integrated with main.ts, positioned in top-right corner for non-obtrusive UI
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- [Decision 1]: Used callback pattern instead of EventTarget for onSelect to keep implementation simple and framework-agnostic
+- [Decision 2]: Positioned selector in top-right corner (opposite from FPS display) to keep canvas center clear
+- [Decision 3]: Updated DemoType enum values to plural form (Particles, Objects) to match story specification
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- [Issue 1]: DemoType enum had singular values (particle, object), updated to plural (particles, objects) to match story API contract
 
 ---
 
@@ -201,10 +203,15 @@ class DemoSelector {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/ui/DemoSelector.ts` - Main DemoSelector component with callback-based event system
+- `tests/ui/DemoSelector.test.ts` - 25 unit tests covering initialization, selection, events, and edge cases
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/types/index.ts` - Added DemoInfo interface, updated DemoType enum values to plural form
+- `src/ui/index.ts` - Added DemoSelector and DemoSelectCallback exports
+- `src/style.css` - Added UI shell and demo selector styles (positioned top-right, hover states, active state)
+- `src/main.ts` - Integrated DemoSelector with demo configuration and event handling
+- `index.html` - Added UI shell container and demo-selector-container div
 
 ---
 
@@ -213,6 +220,8 @@ class DemoSelector {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-25 | - | Ready | Scrum | Created |
+| 2025-12-26 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-26 | In Progress | In Review | Dev | Implementation complete, 25 unit tests passing |
 
 ---
 

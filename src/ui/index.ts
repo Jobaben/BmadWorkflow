@@ -5,3 +5,5 @@
  */
 
 export { FPSDisplay } from './FPSDisplay';
+export { DemoSelector } from './DemoSelector';
+export type { DemoSelectCallback } from './DemoSelector';
