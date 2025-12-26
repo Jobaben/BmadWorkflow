@@ -13,6 +13,7 @@ import {
   SceneManager,
   AnimationLoop,
   FPSMonitor,
+  InputManager,
   isWebGLAvailable,
   showWebGLFallback,
 } from './core';
@@ -32,6 +33,9 @@ let animationLoop: AnimationLoop | null = null;
 
 /** Reference to the FPS display for cleanup */
 let fpsDisplay: FPSDisplay | null = null;
+
+/** Reference to the input manager for cleanup */
+let inputManager: InputManager | null = null;
 
 /**
  * Initialize the application when the DOM is ready.
@@ -82,6 +86,22 @@ function init(): void {
   const cube = new THREE.Mesh(geometry, material);
   sceneManager.addObject(cube);
 
+  // Initialize the input manager
+  inputManager = new InputManager(canvas, sceneManager.getCamera());
+
+  // Add a helper cube that follows the mouse world position
+  const helperGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+  const helperMaterial = new THREE.MeshStandardMaterial({
+    color: 0xff6b6b,
+    roughness: 0.3,
+    metalness: 0.7,
+    transparent: true,
+    opacity: 0.8,
+  });
+  const helperCube = new THREE.Mesh(helperGeometry, helperMaterial);
+  helperCube.position.z = 0; // On the z=0 plane
+  sceneManager.addObject(helperCube);
+
   // Create FPS monitor and display
   const fpsMonitor = new FPSMonitor();
   fpsDisplay = new FPSDisplay(fpsMonitor);
@@ -109,11 +129,38 @@ function init(): void {
     }
   });
 
+  // Track previous key state for logging changes
+  let previousKeysCount = 0;
+
   // Register the frame callback
   animationLoop.onFrame((deltaTime: number) => {
     // Update FPS monitor
     fpsMonitor.frame(deltaTime);
     fpsDisplay?.update();
+
+    // Get input state and update helper cube
+    if (inputManager) {
+      const inputState = inputManager.getInputState();
+
+      // Update helper cube position to follow mouse world position
+      helperCube.position.x = inputState.mouseWorldPosition.x;
+      helperCube.position.y = inputState.mouseWorldPosition.y;
+
+      // Change color based on mouse button state
+      if (inputState.isMouseDown) {
+        helperMaterial.color.setHex(0x4ecdc4);
+      } else {
+        helperMaterial.color.setHex(0xff6b6b);
+      }
+
+      // Log keyboard state changes (only when keys change)
+      if (inputState.keysPressed.size !== previousKeysCount) {
+        if (inputState.keysPressed.size > 0) {
+          console.log('Keys pressed:', Array.from(inputState.keysPressed).join(', '));
+        }
+        previousKeysCount = inputState.keysPressed.size;
+      }
+    }
 
     // Rotate the cube (frame-rate independent)
     const rotationAmount = params.rotationSpeed * deltaTime * 60;
@@ -132,8 +179,11 @@ function init(): void {
   // Log success message
   console.log('3D Animation Learning Foundation initialized successfully');
   console.log('Three.js version:', THREE.REVISION);
-  console.log('Using DemoRenderer, SceneManager, and AnimationLoop');
+  console.log('Using DemoRenderer, SceneManager, AnimationLoop, and InputManager');
   console.log('Animation loop running:', animationLoop.isRunning());
+  console.log('Move mouse over canvas - red cube follows mouse position');
+  console.log('Click mouse - cube turns teal');
+  console.log('Press keys - watch console for key events');
 }
 
 /**
@@ -143,6 +193,10 @@ function cleanup(): void {
   if (animationLoop) {
     animationLoop.stop();
     animationLoop = null;
+  }
+  if (inputManager) {
+    inputManager.dispose();
+    inputManager = null;
   }
   if (fpsDisplay) {
     fpsDisplay.dispose();
