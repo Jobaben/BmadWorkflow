@@ -6,3 +6,4 @@
 
 export { ParticleDemo } from './ParticleDemo';
 export { ObjectDemo } from './ObjectDemo';
+export { FluidDemo } from './FluidDemo';
