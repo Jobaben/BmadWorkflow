@@ -5,3 +5,4 @@
  */
 
 export { ParticleDemo } from './ParticleDemo';
+export { ObjectDemo } from './ObjectDemo';
