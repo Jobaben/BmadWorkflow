@@ -45,3 +45,80 @@ body {
   z-index: 1000;
   user-select: none;
 }
+
+/* UI Shell - Container for overlay controls */
+#ui-shell {
+  position: fixed;
+  top: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Demo Selector Container */
+#demo-selector-container {
+  pointer-events: auto;
+}
+
+/* Demo Selector Component */
+.demo-selector {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 140px;
+  user-select: none;
+}
+
+.demo-selector__title {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.demo-selector__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.demo-selector__button {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.demo-selector__button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.demo-selector__button:active {
+  transform: scale(0.98);
+}
+
+.demo-selector__button--active {
+  background-color: rgba(74, 144, 217, 0.6);
+  border-color: rgba(74, 144, 217, 0.9);
+}
+
+.demo-selector__button--active:hover {
+  background-color: rgba(74, 144, 217, 0.7);
+  border-color: rgba(74, 144, 217, 1);
+}
