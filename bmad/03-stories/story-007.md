@@ -1,7 +1,7 @@
 ---
 id: story-007
 title: "Particle Demo"
-status: QA Pass
+status: Done
 priority: P1
 estimate: L
 created: 2025-12-25

@@ -1,7 +1,7 @@
 ---
 id: story-001
 title: "Project Setup & Core Types"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-25

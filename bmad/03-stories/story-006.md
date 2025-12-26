@@ -1,7 +1,7 @@
 ---
 id: story-006
 title: "Object Pool Utility"
-status: QA Pass
+status: Done
 priority: P1
 estimate: S
 created: 2025-12-25
