@@ -1,7 +1,7 @@
 ---
 id: story-010
 title: "Control Panel"
-status: In Review
+status: QA Pass
 priority: P2
 estimate: M
 created: 2025-12-25
@@ -234,6 +234,7 @@ class ControlPanel {
 | 2025-12-25 | - | Ready | Scrum | Created |
 | 2025-12-26 | Ready | In Progress | Dev | Started implementation |
 | 2025-12-26 | In Progress | In Review | Dev | Implementation complete |
+| 2025-12-26 | In Review | QA Pass | QA | All acceptance criteria verified |
 
 ---
 
