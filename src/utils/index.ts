@@ -5,3 +5,4 @@
  */
 
 export { ObjectPool } from './ObjectPool';
+export { SpatialHash } from './SpatialHash';
