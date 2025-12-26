@@ -238,3 +238,20 @@ export interface ParameterSchema {
   /** Default value */
   default: unknown;
 }
+
+// =============================================================================
+// Utility Types
+// =============================================================================
+
+/**
+ * Statistics about an object pool's current state.
+ * Used for monitoring pool health and debugging.
+ */
+export interface PoolStats {
+  /** Number of objects currently in use */
+  active: number;
+  /** Number of objects ready to be acquired */
+  available: number;
+  /** Total number of objects created by the pool */
+  total: number;
+}
