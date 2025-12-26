@@ -1,7 +1,7 @@
 ---
 id: story-003
 title: "Animation Loop & FPS Monitor"
-status: QA Pass
+status: Done
 priority: P0
 estimate: S
 created: 2025-12-25

@@ -1,7 +1,7 @@
 ---
 id: story-002
 title: "Demo Renderer & Scene Manager"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-25
