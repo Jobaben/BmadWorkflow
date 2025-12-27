@@ -16,3 +16,29 @@ export {
 
 // Registry
 export { ConceptRegistry } from './ConceptRegistry';
+
+// Snippet Extraction
+export {
+  extractLines,
+  snippetToString,
+  getSnippetLineCount,
+  isLineFocused,
+  detectMinIndent,
+} from './SnippetExtractor';
+export type { ExtractedSnippet, ExtractOptions } from './SnippetExtractor';
+
+// Syntax Highlighting
+export {
+  highlightCode,
+  initializeHighlighter,
+  disposeHighlighter,
+  isHighlighterReady,
+} from './SyntaxHighlighter';
+export type { HighlightOptions, HighlightResult } from './SyntaxHighlighter';
+
+// Code Snippet Engine
+export { CodeSnippetEngine, SourceNotFoundError } from './CodeSnippetEngine';
+export type { HighlightedCode } from './CodeSnippetEngine';
+
+// Source Registry
+export { sourceRegistry, getSourceFile, hasSourceFile, getAvailableSourceFiles } from './sourceRegistry';
