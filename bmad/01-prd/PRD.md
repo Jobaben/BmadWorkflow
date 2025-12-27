@@ -1,11 +1,12 @@
 ---
-stepsCompleted: [1, 2, 3, 4, 5, 6, 7]
+stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9]
 inputDocuments: [bmad/00-brief/brief.md]
 status: Draft
 created: 2025-12-25
-updated: 2025-12-25
+updated: 2025-12-27
 author: PM
 brief_reference: bmad/00-brief/brief.md
+version: 2.0
 ---
 
 # Product Requirements Document (PRD)
@@ -16,7 +17,9 @@ brief_reference: bmad/00-brief/brief.md
 
 ## Executive Summary
 
-This product is a standalone learning application that teaches browser-based 3D animation fundamentals through interactive demonstrations. It addresses a developer's need to acquire practical skills in particle systems, fluid physics simulation, and 3D object animation—foundational competencies required for a future car physics product. The application serves as both an educational tool and a reusable reference for patterns that will transfer to production work.
+Transform the existing 3D animation demo application from a passive observation tool into a **guided wizard learning experience** that systematically teaches 3D animation techniques. The wizard will progress learners from micro-concepts to advanced topics, displaying annotated code snippets from the actual running demos and connecting parameter adjustments to their underlying code implementations. This addresses the core problem that users can currently see results but cannot answer "How would I build this myself?"
+
+**Context**: Working demos already exist (particles, fluid physics, object animation, combined). This PRD defines the educational layer that makes them teachable.
 
 ---
 
@@ -24,7 +27,12 @@ This product is a standalone learning application that teaches browser-based 3D 
 
 > Summarized from brief - the core problem being solved
 
-A developer with no prior experience in browser-based 3D graphics needs to build foundational knowledge in particle systems, fluid physics, and object animation. Without this foundation, a future product involving realistic car physics with dynamic visual effects cannot be developed to the required quality level. A practical, hands-on learning application is needed that demonstrates these concepts in an understandable way.
+The existing demo application successfully renders particles, fluid physics, and 3D objects, but it fails as a **learning tool**. The connection between visual output and source code is invisible, framework patterns are unexplained, and there is no structured path from basic concepts to advanced techniques.
+
+Users can observe the results but gain no understanding of:
+1. **How the code works** — The connection between visual output and source code is invisible
+2. **Framework patterns** — The framework usage patterns are not explained
+3. **Conceptual progression** — There is no structured path from basic concepts to advanced techniques
 
 **Brief Reference**: See `bmad/00-brief/brief.md` - Problem Statement section
 
@@ -32,39 +40,41 @@ A developer with no prior experience in browser-based 3D graphics needs to build
 
 ## User Personas
 
-### Persona 1: Alex the Aspiring 3D Developer
+### Persona 1: Alex the Aspiring Developer
 
 | Attribute | Description |
 |-----------|-------------|
-| **Role** | Solo Developer / Learner |
-| **Goals** | Acquire practical 3D animation skills; build reusable code patterns; prepare for car physics product |
-| **Pain Points** | No prior 3D graphics experience; learning curve is steep; needs practical examples not just theory |
-| **Context** | Self-directed learning over ~1 year; works alone; needs to understand concepts deeply enough to extend them |
-| **Technical Proficiency** | High (general programming) / Low (3D graphics specifically) |
+| **Role** | Solo developer learning 3D animation fundamentals |
+| **Goals** | Master 3D animation techniques to build a car physics product within ~1 year |
+| **Pain Points** | Current demos show results but don't explain how they work; cannot connect visual output to code; no clear learning path |
+| **Context** | Uses the application during focused learning sessions; wants to understand deeply, not just copy-paste |
+| **Technical Proficiency** | Medium - understands programming but new to 3D frameworks |
 
 **Behaviors**:
-- Learns by doing—needs working examples to modify and experiment with
-- Values clean, readable code over clever optimizations
-- Will reference this application repeatedly while building future product
+- Prefers structured learning over random exploration
+- Wants to understand "why" not just "what"
+- Values seeing actual code over simplified examples
+- Needs to build confidence before tackling complex projects
 
-**Quote**: "I need to understand how this works well enough to build something bigger with it later."
+**Quote**: "I can see the particles moving, but I have no idea how I'd recreate this in my own project."
 
-### Persona 2: Future Product User (Proxy Persona)
+### Persona 2: Sam the Secondary Learner
 
 | Attribute | Description |
 |-----------|-------------|
-| **Role** | End user of future car physics product |
-| **Goals** | Experience smooth, visually appealing car physics simulations |
-| **Pain Points** | Poor performance ruins immersion; unrealistic physics breaks suspension of disbelief |
-| **Context** | Will interact with the eventual car physics product in a browser |
-| **Technical Proficiency** | Low - expects things to "just work" |
+| **Role** | Future user of this educational resource |
+| **Goals** | Learn 3D animation concepts through a well-structured tutorial |
+| **Pain Points** | Existing tutorials often use contrived examples that don't match real code |
+| **Context** | Discovers this as an educational resource; may have varying skill levels |
+| **Technical Proficiency** | Low to Medium |
 
 **Behaviors**:
-- Judges quality by visual smoothness and responsiveness
-- Has no tolerance for laggy or stuttering animations
-- Expects intuitive interactions
+- May follow the recommended path or jump to specific topics
+- Values clear explanations alongside working examples
+- Needs progressive complexity to avoid overwhelm
+- Benefits from seeing concepts in context of a real application
 
-**Quote**: "I don't care how it works, I just want it to look and feel real."
+**Quote**: "I want to learn from real code, not dumbed-down examples that don't work in practice."
 
 ---
 
@@ -74,214 +84,189 @@ A developer with no prior experience in browser-based 3D graphics needs to build
 
 | ID | Requirement | User Story | Priority | Brief Trace |
 |----|-------------|------------|----------|-------------|
-| FR-001 | Particle System Demonstration | As Alex, I want to see and interact with a working particle system so that I understand how particles are created, animated, and destroyed | Must | SC-1 |
-| FR-002 | 3D Object Animation Demonstration | As Alex, I want to see 3D objects animate with various motion types so that I understand transformation and animation principles | Must | SC-2 |
-| FR-003 | Fluid Physics Demonstration | As Alex, I want to see fluid-like physics behavior so that I understand simulation principles for dynamic effects | Must | SC-3 |
-| FR-004 | Interactive Controls | As Alex, I want to interact with demonstrations using mouse/keyboard so that I can experiment and learn through manipulation | Must | SC-1, SC-2, SC-3 |
-| FR-005 | Readable Code Structure | As Alex, I want the code to be self-documenting and well-commented so that I can learn patterns for my future product | Must | SC-4, SC-5 |
-| FR-006 | Standalone Operation | As Alex, I want the application to run entirely in my browser so that I can use it without server dependencies | Must | Scope |
-| FR-007 | Combined Demo Scene | As Alex, I want to see particles, objects, and physics working together so that I understand how to integrate multiple animation types | Should | SC-4 |
-| FR-008 | Parameter Adjustment | As Alex, I want to adjust animation parameters in real-time so that I can see how changes affect behavior | Should | SC-1, SC-2, SC-3 |
-| FR-009 | Visual Reset Capability | As Alex, I want to reset any demonstration to its initial state so that I can re-observe behaviors | Could | SC-1, SC-2, SC-3 |
+| FR-001 | Wizard Navigation System | As Alex, I want a guided wizard that leads me through concepts in order so that I build understanding progressively | Must | SC-3 |
+| FR-002 | Code Snippet Display | As Alex, I want to see the actual code that produces each visual effect so that I understand how it works | Must | SC-4 |
+| FR-003 | Explanatory Annotations | As Alex, I want code snippets annotated with explanations so that I understand framework patterns | Must | SC-2 |
+| FR-004 | Flexible Navigation | As Sam, I want to jump to specific topics when needed so that I can focus on what I need to learn | Should | SC-3 |
+| FR-005 | Live Parameter Connection | As Alex, I want to adjust parameters and see both the visual change AND the related code so that I understand the connection | Must | SC-5 |
+| FR-006 | Concept Categorization | As Sam, I want concepts organized by complexity level so that I can gauge my progress | Should | SC-3 |
+| FR-007 | Integrated Demo Rendering | As Alex, I want the demo to render alongside explanations so that I see concepts in action | Must | SC-4 |
 
-### FR-001: Particle System Demonstration
+---
 
-**Description**: The application displays a functioning particle system where individual particles are generated, animated through their lifecycle, and removed. The user can observe particle behavior including emission, movement patterns, and decay.
+### FR-001: Wizard Navigation System
+
+**Description**: A guided, step-by-step navigation system that presents learning content in a recommended progressive order from micro-concepts to advanced techniques.
 
 **Acceptance Criteria**:
 ```gherkin
-Given the particle demonstration is loaded
-When I view the display
-Then I see multiple particles being generated continuously
+Given I am on any wizard step
+When I complete the current step
+Then I can proceed to the next recommended step
 
-Given particles are being generated
-When I observe over time
-Then particles move according to defined patterns and eventually disappear
+Given I am viewing the wizard
+When I look at the navigation
+Then I can see my current position in the overall learning path
 
-Given the particle system is running
-When I interact with the designated input area
-Then particle behavior responds to my input
+Given I am on a step other than the first
+When I want to review previous content
+Then I can navigate backwards in the wizard
 ```
 
 **Edge Cases**:
-- Large particle counts: System should remain responsive
-- Rapid input: Should handle quick successive interactions gracefully
+- First step: No "previous" navigation available
+- Last step: Clear indication that learning path is complete
+- Re-entry: Wizard should work if user refreshes or returns
 
-### FR-002: 3D Object Animation Demonstration
+---
 
-**Description**: The application displays 3D objects undergoing various animation types including rotation, translation, scaling, and combined transformations. Objects are clearly visible and animations are smooth.
+### FR-002: Code Snippet Display
+
+**Description**: Display actual source code snippets from the running demos, showing the real implementation that produces the visible effects.
 
 **Acceptance Criteria**:
 ```gherkin
-Given the object animation demonstration is loaded
-When I view the display
-Then I see 3D objects with visible depth and dimensionality
+Given I am viewing a concept explanation
+When the concept involves code
+Then I see the actual code snippet from the demo source
 
-Given 3D objects are displayed
-When animations are running
-Then objects move smoothly without stuttering or jumping
+Given I am viewing a code snippet
+When I compare it to the source files
+Then the snippet matches the actual implementation
 
-Given multiple animation types exist
-When I navigate between them
-Then I can observe rotation, movement, and scaling independently
+Given I am viewing a code snippet
+When I look at the display
+Then the code is syntax-highlighted and readable
 ```
 
 **Edge Cases**:
-- Multiple objects: Should handle several animated objects simultaneously
-- Continuous animation: Should run indefinitely without degradation
+- Long code blocks: Should be scrollable or collapsible
+- Code updates: Snippets should remain accurate if demo code changes
 
-### FR-003: Fluid Physics Demonstration
+---
 
-**Description**: The application displays a simulation exhibiting fluid-like physics behavior—elements that flow, respond to forces, and interact with boundaries or obstacles.
+### FR-003: Explanatory Annotations
+
+**Description**: Code snippets include annotations that explain framework patterns, key concepts, and the purpose of each significant code section.
 
 **Acceptance Criteria**:
 ```gherkin
-Given the fluid physics demonstration is loaded
-When I view the display
-Then I see elements exhibiting fluid-like motion patterns
+Given I am viewing a code snippet
+When the code uses framework patterns
+Then annotations explain what those patterns do
 
-Given the fluid simulation is running
-When elements encounter boundaries
-Then they respond realistically (bouncing, pooling, or flowing around)
+Given I am viewing annotations
+When I read them
+Then they explain "why" not just "what" the code does
 
-Given the simulation is active
-When I apply input (if interactive)
-Then the fluid responds to the applied force or disturbance
+Given I am learning about a concept
+When I view its code
+Then key lines or sections are highlighted with explanations
 ```
 
 **Edge Cases**:
-- High element counts: Should maintain acceptable performance
-- Edge boundaries: Elements should not escape or get stuck at screen edges
+- Dense code: Annotations should not obscure readability
+- Simple code: May have fewer annotations without feeling incomplete
 
-### FR-004: Interactive Controls
+---
 
-**Description**: Users can interact with demonstrations through standard input methods (mouse movement, clicks, keyboard). Interactions produce visible, immediate responses in the animations.
+### FR-004: Flexible Navigation
+
+**Description**: While a recommended path exists, users can jump to any concept at any time without being locked into linear progression.
 
 **Acceptance Criteria**:
 ```gherkin
-Given any demonstration is active
-When I move my mouse within the display area
-Then the demonstration responds to mouse position
+Given I am viewing the wizard
+When I want to skip to a specific topic
+Then I can navigate directly to that topic
 
-Given any demonstration is active
-When I click or press designated keys
-Then a corresponding action occurs in the demonstration
+Given I have jumped to an advanced topic
+When I realize I need foundational knowledge
+Then I can easily navigate to prerequisite concepts
 
-Given I am interacting with a demonstration
-When I stop providing input
-Then the demonstration continues running in its default state
+Given I am browsing available topics
+When I view the topic list
+Then I can see all topics with their complexity levels
 ```
 
 **Edge Cases**:
-- Input outside bounds: Should be handled gracefully without errors
-- No input device: Should still display and run demonstrations
+- Deep linking: Should support direct navigation to specific concepts
+- Context switching: Demo should update appropriately when jumping between topics
 
-### FR-005: Readable Code Structure
+---
 
-**Description**: The application's source code is organized clearly with meaningful names, appropriate comments explaining non-obvious logic, and patterns that can be extracted for reuse.
+### FR-005: Live Parameter Connection
 
-**Acceptance Criteria**:
-```gherkin
-Given I am reviewing the source code
-When I read a function or component
-Then its purpose is clear from naming and structure
-
-Given I want to understand a specific technique
-When I locate the relevant code section
-Then comments or documentation explain the approach
-
-Given I want to reuse a pattern in future work
-When I extract code from this application
-Then it can be adapted without requiring complete rewrite
-```
-
-**Edge Cases**:
-- Complex algorithms: Must have explanatory comments
-- Third-party patterns: Sources or references should be noted
-
-### FR-006: Standalone Operation
-
-**Description**: The application runs entirely within a web browser without requiring a backend server, database, or external services for core functionality.
+**Description**: When users adjust parameters via controls, they see both the visual effect change AND the code that controls that parameter, connecting interaction to implementation.
 
 **Acceptance Criteria**:
 ```gherkin
-Given I have the application files locally
-When I open the application in a browser
-Then all demonstrations function without network connectivity
-
-Given the application is running
-When I use any feature
-Then no server requests are required for core functionality
-```
-
-**Edge Cases**:
-- Offline mode: Should work identically offline and online
-- Asset loading: All required assets are bundled or inline
-
-### FR-007: Combined Demo Scene
-
-**Description**: A demonstration scene that integrates particles, animated objects, and physics elements working together, showing how these systems can coexist and interact.
-
-**Acceptance Criteria**:
-```gherkin
-Given the combined demonstration is loaded
-When I view the display
-Then I see particles, 3D objects, and physics elements simultaneously
-
-Given all systems are running together
-When I observe the scene
-Then each system operates correctly without interfering with others
-
-Given the combined scene is active
-When I interact with the scene
-Then appropriate elements respond to my input
-```
-
-**Edge Cases**:
-- Performance: Combined scene should maintain acceptable frame rate
-- Visual clarity: Elements should be distinguishable from each other
-
-### FR-008: Parameter Adjustment
-
-**Description**: Users can modify animation parameters (speed, quantity, size, etc.) in real-time and observe how changes affect the demonstration behavior.
-
-**Acceptance Criteria**:
-```gherkin
-Given a demonstration is running
-When I access parameter controls
-Then I see adjustable values for relevant properties
+Given I am viewing a concept with adjustable parameters
+When I adjust a parameter control
+Then I see the visual effect change in real-time
 
 Given I am adjusting a parameter
-When I change a value
-Then the demonstration immediately reflects the change
+When I look at the code display
+Then the relevant code section is highlighted or indicated
 
-Given I have modified parameters
-When I want to compare to defaults
-Then I can see or restore original values
+Given I am viewing parameter controls
+When I see a control
+Then I understand which code variable it affects
 ```
 
 **Edge Cases**:
-- Extreme values: Should handle min/max bounds gracefully
-- Rapid changes: Should not cause instability
+- Multiple parameters: Each should clearly map to its code
+- Extreme values: Demo should handle edge cases gracefully
 
-### FR-009: Visual Reset Capability
+---
 
-**Description**: Users can reset any demonstration to its initial state to re-observe behaviors from the beginning.
+### FR-006: Concept Categorization
+
+**Description**: Concepts are organized into complexity tiers (micro, medium, advanced) so learners can understand the progression and choose appropriate starting points.
 
 **Acceptance Criteria**:
 ```gherkin
-Given a demonstration has been running and/or modified
-When I activate the reset function
-Then the demonstration returns to its initial state
+Given I am viewing the concept list
+When I look at any concept
+Then I can see its complexity level clearly indicated
 
-Given I have reset a demonstration
-When I observe the display
-Then it appears exactly as it did on first load
+Given I am a beginner
+When I start learning
+Then micro-concepts are presented first in the recommended path
+
+Given I want to see advanced topics
+When I browse the concept list
+Then I can filter or identify advanced concepts
 ```
 
 **Edge Cases**:
-- During interaction: Reset should work even while actively manipulating
-- Modified parameters: Should reset parameters to defaults as well
+- Concepts spanning levels: Should be categorized by primary complexity
+- Empty categories: Handle gracefully if a level has no concepts
+
+---
+
+### FR-007: Integrated Demo Rendering
+
+**Description**: The active demo renders alongside the wizard content so users can see concepts demonstrated in real-time.
+
+**Acceptance Criteria**:
+```gherkin
+Given I am on a wizard step about particles
+When I view the step
+Then I see a live particle demo rendering
+
+Given I am learning about a specific technique
+When I view that step
+Then the demo shows that technique in action
+
+Given I am viewing the wizard interface
+When I look at the layout
+Then both explanation content and demo are visible simultaneously
+```
+
+**Edge Cases**:
+- Performance: Demo rendering should not degrade learning experience
+- Demo context: Should switch appropriately between particle/fluid/object demos
 
 ---
 
@@ -289,12 +274,12 @@ Then it appears exactly as it did on first load
 
 | ID | Category | Requirement | Target | Rationale |
 |----|----------|-------------|--------|-----------|
-| NFR-001 | Performance | Animations run smoothly in browser | 30+ FPS sustained | Smooth animation is core to learning and future product quality (SC-1, SC-2, SC-3) |
-| NFR-002 | Compatibility | Runs in modern web browsers | Latest Chrome, Firefox, Safari, Edge | Brief constraint: must run in modern browsers |
-| NFR-003 | Usability | Beginner-friendly interface | No prior 3D knowledge required to use | Developer is learning; interface must not add cognitive load |
-| NFR-004 | Maintainability | Code suitable for learning reference | Self-documenting with clear patterns | SC-4, SC-5: Code patterns must be reusable |
-| NFR-005 | Portability | No external runtime dependencies | Zero server-side requirements | Brief constraint: standalone SPA |
-| NFR-006 | Responsiveness | Immediate feedback to user input | <100ms input response | Interactivity is meaningless if laggy |
+| NFR-001 | Performance | Demo rendering must maintain smooth frame rate during learning | 30+ FPS minimum | Choppy rendering distracts from learning |
+| NFR-002 | Compatibility | Must run in modern web browsers | Chrome, Firefox, Safari, Edge (latest 2 versions) | Standalone SPA constraint from brief |
+| NFR-003 | Usability | Learning interface must be intuitive without training | First-time user can navigate wizard within 30 seconds | Solo developer has no support team |
+| NFR-004 | Maintainability | Must integrate with existing demo architecture | No restructuring of core demo code required | Technical constraint from brief |
+| NFR-005 | Accessibility | Text content must be readable | Minimum 16px font, sufficient contrast | Educational content must be legible |
+| NFR-006 | Responsiveness | Interface must work on desktop browsers | 1024px minimum viewport width | Out of scope excludes mobile optimization |
 
 ---
 
@@ -304,19 +289,20 @@ Then it appears exactly as it did on first load
 
 | Priority | Requirements | Rationale |
 |----------|--------------|-----------|
-| **Must** | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, NFR-001, NFR-002, NFR-003, NFR-004, NFR-005, NFR-006 | These directly address the 5 success criteria and core constraints from the brief. Without any of these, the learning foundation is incomplete. |
-| **Should** | FR-007, FR-008 | Integration and parameter adjustment enhance learning but aren't strictly required for foundational understanding |
-| **Could** | FR-009 | Quality-of-life feature; demonstrations can be refreshed via page reload |
-| **Won't** | Backend services, user accounts, mobile optimization, multiplayer | Explicitly out of scope per brief |
+| **Must** | FR-001, FR-002, FR-003, FR-005, FR-007, NFR-001, NFR-002, NFR-004 | Core wizard experience - without these, learning goals cannot be met |
+| **Should** | FR-004, FR-006, NFR-003, NFR-005 | Enhance usability but wizard works without them |
+| **Could** | NFR-006 | Nice for varied setups but not critical |
+| **Won't** | Copy/paste functionality, quizzes, progress persistence, mobile optimization | Explicitly out of scope per brief |
 
 ### Priority Justification
 
-- **FR-001, FR-002, FR-003 are Must because**: They directly satisfy SC-1, SC-2, SC-3—the core learning objectives
-- **FR-004 is Must because**: The brief explicitly includes interactive elements in scope
-- **FR-005 is Must because**: SC-4 and SC-5 require reusable patterns and beginner-friendly code
-- **FR-006 is Must because**: Standalone SPA is an explicit brief constraint
-- **FR-007 is Should because**: Integration knowledge is valuable but can be learned after mastering individual systems
-- **FR-008 is Should because**: Enhances experimentation but manual code changes achieve the same learning goal
+- **FR-001 is Must because**: Without guided navigation, users face the same unstructured experience as current playground
+- **FR-002 is Must because**: Visible code is the core differentiator - SC-4 requires code to be visible and explained
+- **FR-003 is Must because**: Code alone isn't enough; annotations address SC-2 (framework pattern understanding)
+- **FR-005 is Must because**: Connecting parameters to code addresses SC-5 and deepens understanding
+- **FR-007 is Must because**: Visual learning requires seeing the demo alongside explanations
+- **FR-004 is Should because**: Linear-only would work for learning; flexibility enhances but isn't essential
+- **FR-006 is Should because**: Implicit ordering works; explicit categories improve experience
 
 ---
 
@@ -326,34 +312,32 @@ Then it appears exactly as it did on first load
 
 > These capabilities WILL be delivered
 
-- [x] Particle system animation demonstration - FR-001
-- [x] 3D object animation demonstration - FR-002
-- [x] Fluid physics simulation demonstration - FR-003
-- [x] Mouse/keyboard interactive controls - FR-004
-- [x] Clean, commented, reusable code structure - FR-005
-- [x] Standalone single-page application - FR-006
-- [ ] Combined demonstration scene - FR-007 (Should)
-- [ ] Real-time parameter adjustment - FR-008 (Should)
-- [ ] Reset functionality - FR-009 (Could)
+- [x] Guided wizard experience for learning 3D animation concepts — FR-001
+- [x] Progressive concept ordering (micro → medium → advanced) — FR-006
+- [x] Code snippet display from actual running demo — FR-002
+- [x] Explanatory annotations for framework usage patterns — FR-003
+- [x] Flexible navigation (recommended path with ability to jump) — FR-004
+- [x] Live parameter adjustment tied to visible code — FR-005
+- [x] Integrated demo rendering alongside explanations — FR-007
 
 ### Out of Scope
 
 > These are explicitly EXCLUDED (prevents scope creep)
 
-- **Car physics product**: This is only the learning foundation, not the eventual product
-- **Backend services**: No servers, APIs, or databases
-- **User accounts**: No authentication or personalization
-- **Production deployment**: No CI/CD, hosting, or DevOps
-- **Mobile optimization**: Desktop browser focus only
-- **Multiplayer/networking**: Single-user local experience only
+- **Car physics product**: This is only the learning foundation, not the end product
+- **Backend services or databases**: Standalone SPA with no server dependencies
+- **User accounts or progress persistence**: Session-only experience
+- **Copy/paste functionality**: Focus is on understanding, not code extraction
+- **Quiz or assessment features**: Learning is self-directed, not tested
+- **Mobile-specific optimizations**: Desktop browser focus only
 
 ### Future Considerations
 
 > May be addressed in future phases
 
-- **Car physics product**: Will build upon patterns learned here (post-foundation)
-- **Advanced physics**: More complex simulations may be needed for car product
-- **Performance optimization**: Production-grade optimization for car product
+- **Progress persistence**: Could add local storage for session continuity
+- **Additional demos**: New animation techniques could extend the wizard
+- **Export/sharing**: After learning foundation is solid
 
 ---
 
@@ -361,23 +345,23 @@ Then it appears exactly as it did on first load
 
 | ID | Dependency | Type | Owner | Status | Impact if Unavailable |
 |----|------------|------|-------|--------|----------------------|
-| DEP-001 | Modern browser with graphics capabilities | External | User environment | Available | Blocker - cannot run application |
-| DEP-002 | Brief document completion | Internal | Analyst | Complete | Blocker - requirements undefined |
+| DEP-001 | Existing demo code (ParticleDemo, ObjectDemo, FluidDemo, CombinedDemo) | Internal | Developer | Available | Blocker - no content to teach |
+| DEP-002 | Existing UI components (DemoSelector, ControlPanel) | Internal | Developer | Available | Degraded - would need new controls |
+| DEP-003 | Demo code must be readable/extractable for display | Internal | Developer | Assumed (A-1) | Blocker - may need refactoring |
 
 ---
 
 ## Constraints
 
 ### Business Constraints
-- **Solo developer**: All implementation done by one person, limiting parallelization
-- **Learning context**: Code must be understandable, not just functional
+- **Solo developer**: All design and implementation done by one person - impacts scope and timeline flexibility
 
-### Timeline Constraints
-- **~1 year horizon**: Foundation must be complete in time for future product development
+### Technical Constraints
+- **Browser-only**: Must run in modern web browsers with no server dependencies
+- **Existing architecture**: Must work with current demo structure without major refactoring
 
 ### Resource Constraints
-- **Single developer's time**: Must balance learning with implementation
-- **Beginner skill level**: Cannot assume 3D graphics knowledge in implementation
+- **Single developer**: Must balance building the tool with using it to learn
 
 ---
 
@@ -385,9 +369,9 @@ Then it appears exactly as it did on first load
 
 | ID | Assumption | Impact if Wrong | Validation Plan |
 |----|------------|-----------------|-----------------|
-| A-001 | Modern browsers can handle required graphics performance | May need to reduce visual fidelity or complexity | Early prototype testing |
-| A-002 | Particle, physics, and object animation skills transfer to car product | May need additional specialized learning phase | Architecture review before car product |
-| A-003 | One year is sufficient for foundational learning | Timeline extends, delaying future product | Progress checkpoints every 3 months |
+| A-001 | Existing demo code is readable enough to display as educational content | May require refactoring before display | Code review during architecture phase |
+| A-002 | Micro → macro concept ordering exists naturally in the demos | May need to restructure or add intermediate concepts | Content analysis during architecture |
+| A-003 | Explanatory annotations add value beyond code alone | Could simplify to code-only if annotations don't help | User testing with first concepts |
 
 ---
 
@@ -395,9 +379,10 @@ Then it appears exactly as it did on first load
 
 | ID | Risk | Probability | Impact | Mitigation | Owner |
 |----|------|-------------|--------|------------|-------|
-| R-001 | Performance issues in browser-based physics | Medium | High | Start with simple simulations; scale complexity based on results | Developer |
-| R-002 | Learning curve steeper than anticipated | Medium | Medium | Build incrementally; celebrate small wins; adjust scope if needed | Developer |
-| R-003 | Patterns don't transfer well to car product | Low | High | Periodic architecture review; design for extensibility | Developer |
+| R-001 | Demo code too complex to explain in bite-sized concepts | Medium | High | Break into smaller functions if needed; simplify before display | Developer |
+| R-002 | Wizard UI competes with demo for screen space | Medium | Medium | Design layout that balances both; may need collapsible panels | Developer |
+| R-003 | Maintaining code snippets as demos evolve | Low | Medium | Architecture should define snippet extraction strategy | Architect |
+| R-004 | Annotations become stale or inaccurate | Low | Medium | Keep annotations close to code; review when code changes | Developer |
 
 ---
 
@@ -407,11 +392,11 @@ Then it appears exactly as it did on first load
 
 | Metric | Baseline | Target | Measurement Method | Brief Trace |
 |--------|----------|--------|-------------------|-------------|
-| Particle system functional | None exists | Working demo in browser | Demo runs without errors | SC-1 |
-| Object animation functional | None exists | Working demo in browser | Demo runs without errors | SC-2 |
-| Fluid physics functional | None exists | Working demo in browser | Demo runs without errors | SC-3 |
-| Code patterns documented | None exists | Patterns extractable for reuse | Code review; successful extraction test | SC-4 |
-| Code readability | N/A | Self-documenting with comments | Developer can explain any section | SC-5 |
+| Concept explanation ability | Cannot explain particle emitter | Accurate verbal description of lifecycle | Self-assessment after wizard completion | SC-1 |
+| Framework pattern recognition | Patterns invisible to learner | Can identify scene/mesh/material pattern | Code review exercise | SC-2 |
+| Learning path clarity | No ordering exists | Clear micro → medium → advanced progression | Wizard structure review | SC-3 |
+| Code visibility | No code visible in app | Every technique has code + explanation | Feature verification | SC-4 |
+| Parameter understanding | Parameters work but unexplained | Can explain what code variable controls each slider | Interactive testing | SC-5 |
 
 ---
 
@@ -419,27 +404,29 @@ Then it appears exactly as it did on first load
 
 | Brief Success Criterion | PRD Requirements | Coverage |
 |------------------------|------------------|----------|
-| SC-1: Understand 3D particle animation | FR-001, FR-004, FR-008, NFR-001 | Full |
-| SC-2: Understand 3D object animation | FR-002, FR-004, FR-008, NFR-001 | Full |
-| SC-3: Understand fluid physics simulation | FR-003, FR-004, FR-008, NFR-001 | Full |
-| SC-4: Foundation ready for car physics | FR-005, FR-007, NFR-004 | Full |
-| SC-5: Beginner-friendly implementation | FR-005, NFR-003, NFR-004 | Full |
+| SC-1: Explain particle concepts | FR-002, FR-003 | Full |
+| SC-2: Understand framework patterns | FR-003 | Full |
+| SC-3: Progressive concept building | FR-001, FR-004, FR-006 | Full |
+| SC-4: Code visible and explained | FR-002, FR-003, FR-007 | Full |
+| SC-5: Parameter modification with understanding | FR-005 | Full |
 
 ---
 
 ## Open Questions
 
-- [ ] Q1: What level of physics realism is needed for the future product?
-  - Impact: Determines depth of physics simulation in learning demos
-  - Owner: Developer
-  - Due: Before architecture phase
-  - Note: Carried forward from brief
+- [x] Q1: Strict linear progression or flexible jumping?
+  - **Answer**: Both — recommended path exists but jumping allowed (FR-001 + FR-004)
 
-- [ ] Q2: What browsers/devices must be supported?
-  - Impact: May constrain graphics capabilities used
-  - Owner: Developer
-  - Due: Before architecture phase
-  - Note: Carried forward from brief
+- [x] Q2: Code snippets from actual code or simplified examples?
+  - **Answer**: Actual running demo code with explanatory annotations (FR-002 + FR-003)
+
+- [x] Q3: Need copy/paste functionality?
+  - **Answer**: No — explicitly out of scope; focus on understanding
+
+- [ ] Q4: How many micro-concepts exist in current demos?
+  - Impact: Determines wizard length and number of steps
+  - Owner: Architect (will analyze during technical design)
+  - Due: Before story creation
 
 ---
 
@@ -447,7 +434,7 @@ Then it appears exactly as it did on first load
 
 | Role | Name | Date | Status |
 |------|------|------|--------|
-| Product Manager | John | 2025-12-25 | Complete |
+| Product Manager | John | 2025-12-27 | Complete |
 | Primary Stakeholder | | | Pending |
 | Technical Lead | | | Pending |
 
@@ -456,11 +443,11 @@ Then it appears exactly as it did on first load
 ## Workflow Checklist
 
 - [x] All brief success criteria have requirements (SC-1 through SC-5 mapped)
-- [x] Minimum 2 personas defined (Alex, Future User)
-- [x] All MUST requirements have acceptance criteria (FR-001 through FR-006)
+- [x] Minimum 2 personas defined (Alex, Sam)
+- [x] All MUST requirements have acceptance criteria
 - [x] Prioritization complete (MoSCoW applied)
-- [x] No implementation details present (no technology mentions)
-- [x] Traceability to brief established (matrix complete)
+- [x] No implementation details present
+- [x] Traceability to brief established
 - [x] Out of scope explicitly documented
 
 ---
