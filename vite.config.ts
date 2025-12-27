@@ -22,4 +22,8 @@ export default defineConfig({
     // Open browser on server start
     open: true,
   },
+
+  // Enable raw imports for source code extraction (ADR-002)
+  // Use: import code from './file.ts?raw'
+  assetsInclude: ['**/*.ts'],
 });
