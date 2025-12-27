@@ -153,3 +153,41 @@ body {
   border-radius: 8px;
   overflow: hidden;
 }
+
+/* Wizard Mode Container */
+#wizard-app {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Mode Toggle Button */
+.mode-toggle {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.mode-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.mode-toggle:focus {
+  outline: 2px solid rgba(74, 144, 217, 0.9);
+  outline-offset: 2px;
+}
+
+.mode-toggle:focus:not(:focus-visible) {
+  outline: none;
+}
