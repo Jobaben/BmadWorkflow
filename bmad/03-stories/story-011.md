@@ -1,11 +1,11 @@
 ---
 id: story-011
 title: "Combined Demo"
-status: Ready
+status: Done
 priority: P2
 estimate: M
 created: 2025-12-25
-updated: 2025-12-25
+updated: 2025-12-27
 assignee:
 pr_link:
 epic: Integration & Polish
@@ -28,27 +28,27 @@ prd_requirement: FR-007
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: All three animation types visible simultaneously
+- [x] **AC1**: All three animation types visible simultaneously
   - Given: The combined demo is loaded
   - When: I view the display
   - Then: I see particles, animated objects, and fluid elements together
 
-- [ ] **AC2**: Each system operates correctly
+- [x] **AC2**: Each system operates correctly
   - Given: All systems are running together
   - When: I observe the scene
   - Then: Each system behaves as it does in isolation
 
-- [ ] **AC3**: Systems don't interfere with each other
+- [x] **AC3**: Systems don't interfere with each other
   - Given: All systems are running
   - When: I observe over time
   - Then: No visual glitches, conflicts, or performance degradation
 
-- [ ] **AC4**: User interaction works on appropriate elements
+- [x] **AC4**: User interaction works on appropriate elements
   - Given: The combined scene is active
   - When: I interact with the scene
   - Then: Appropriate elements respond (configurable which ones)
 
-- [ ] **AC5**: Performance is acceptable
+- [x] **AC5**: Performance is acceptable
   - Given: All systems running together
   - When: I check FPS
   - Then: Frame rate stays above 30fps (may require reduced complexity)
@@ -61,54 +61,54 @@ prd_requirement: FR-007
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create CombinedDemo class (AC: 1)
-  - [ ] Subtask 1.1: Create `src/demos/CombinedDemo.ts`
-  - [ ] Subtask 1.2: Implement Demo interface
-  - [ ] Subtask 1.3: Instantiate ParticleDemo, ObjectDemo, FluidDemo internally
+- [x] **Task 1**: Create CombinedDemo class (AC: 1)
+  - [x] Subtask 1.1: Create `src/demos/CombinedDemo.ts`
+  - [x] Subtask 1.2: Implement Demo interface
+  - [x] Subtask 1.3: Instantiate ParticleDemo, ObjectDemo, FluidDemo internally
 
-- [ ] **Task 2**: Configure spatial arrangement (AC: 2, 3)
-  - [ ] Subtask 2.1: Position particle emitter in one area
-  - [ ] Subtask 2.2: Position animated objects in another area
-  - [ ] Subtask 2.3: Position fluid container in third area
-  - [ ] Subtask 2.4: Ensure no spatial overlap
+- [x] **Task 2**: Configure spatial arrangement (AC: 2, 3)
+  - [x] Subtask 2.1: Position particle emitter in one area
+  - [x] Subtask 2.2: Position animated objects in another area
+  - [x] Subtask 2.3: Position fluid container in third area
+  - [x] Subtask 2.4: Ensure no spatial overlap
 
-- [ ] **Task 3**: Coordinate update loops (AC: 2)
-  - [ ] Subtask 3.1: Call update on all sub-demos each frame
-  - [ ] Subtask 3.2: Pass same delta time to all
-  - [ ] Subtask 3.3: Verify timing consistency
+- [x] **Task 3**: Coordinate update loops (AC: 2)
+  - [x] Subtask 3.1: Call update on all sub-demos each frame
+  - [x] Subtask 3.2: Pass same delta time to all
+  - [x] Subtask 3.3: Verify timing consistency
 
-- [ ] **Task 4**: Aggregate scene objects (AC: 1)
-  - [ ] Subtask 4.1: Implement getSceneObjects() returning all sub-demo objects
-  - [ ] Subtask 4.2: Add to scene correctly
-  - [ ] Subtask 4.3: Handle cleanup on stop/reset
+- [x] **Task 4**: Aggregate scene objects (AC: 1)
+  - [x] Subtask 4.1: Implement getSceneObjects() returning all sub-demo objects
+  - [x] Subtask 4.2: Add to scene correctly
+  - [x] Subtask 4.3: Handle cleanup on stop/reset
 
-- [ ] **Task 5**: Configure input routing (AC: 4)
-  - [ ] Subtask 5.1: Determine which demo receives input
-  - [ ] Subtask 5.2: Route input based on mouse position
-  - [ ] Subtask 5.3: Or route to all demos simultaneously
+- [x] **Task 5**: Configure input routing (AC: 4)
+  - [x] Subtask 5.1: Determine which demo receives input
+  - [x] Subtask 5.2: Route input based on mouse position
+  - [x] Subtask 5.3: Or route to all demos simultaneously
 
-- [ ] **Task 6**: Reduce complexity for performance (AC: 5)
-  - [ ] Subtask 6.1: Use lower particle counts than individual demos
-  - [ ] Subtask 6.2: Use simpler fluid (fewer particles)
-  - [ ] Subtask 6.3: Use fewer animated objects
-  - [ ] Subtask 6.4: Test combined performance, tune as needed
+- [x] **Task 6**: Reduce complexity for performance (AC: 5)
+  - [x] Subtask 6.1: Use lower particle counts than individual demos
+  - [x] Subtask 6.2: Use simpler fluid (fewer particles)
+  - [x] Subtask 6.3: Use fewer animated objects
+  - [x] Subtask 6.4: Test combined performance, tune as needed
 
-- [ ] **Task 7**: Implement lifecycle methods
-  - [ ] Subtask 7.1: start() starts all sub-demos
-  - [ ] Subtask 7.2: stop() stops all sub-demos
-  - [ ] Subtask 7.3: reset() resets all sub-demos
+- [x] **Task 7**: Implement lifecycle methods
+  - [x] Subtask 7.1: start() starts all sub-demos
+  - [x] Subtask 7.2: stop() stops all sub-demos
+  - [x] Subtask 7.3: reset() resets all sub-demos
 
-- [ ] **Task 8**: Implement parameter schema
-  - [ ] Subtask 8.1: Expose limited subset of parameters
-  - [ ] Subtask 8.2: Or group parameters by sub-demo
-  - [ ] Subtask 8.3: Implement set/get for parameters
+- [x] **Task 8**: Implement parameter schema
+  - [x] Subtask 8.1: Expose limited subset of parameters
+  - [x] Subtask 8.2: Or group parameters by sub-demo
+  - [x] Subtask 8.3: Implement set/get for parameters
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify all three demo types are visible
-- [ ] **Test Task 2**: Verify no visual glitches or conflicts
-- [ ] **Test Task 3**: Verify 30+ FPS with combined scene
-- [ ] **Test Task 4**: Verify interaction works as expected
+- [x] **Test Task 1**: Verify all three demo types are visible
+- [x] **Test Task 2**: Verify no visual glitches or conflicts
+- [x] **Test Task 3**: Verify 30+ FPS with combined scene
+- [x] **Test Task 4**: Verify interaction works as expected
 
 ---
 
@@ -157,14 +157,14 @@ class CombinedDemo implements Demo {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -199,16 +199,19 @@ class CombinedDemo implements Demo {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5 (claude-opus-4-5-20251101)
+- **Session Date**: 2025-12-27
+- **Tasks Completed**: All 8 implementation tasks and 4 testing tasks
+- **Implementation Notes**: Created CombinedDemo using composition pattern. Each sub-demo is positioned in a separate region (particles left, objects center, fluid right) to prevent visual overlap. Used reduced complexity settings for performance.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- [Spatial Layout]: Used horizontal arrangement with X offsets (-3, 0, +3) for clear visual separation
+- [Input Routing]: Routed input to all sub-demos with offset adjustment for mouse world position
+- [Parameter Prefixes]: Used prefixes (particle_, object_, fluid_) to namespace parameters by sub-demo
+- [Reduced Complexity]: 50% particle emission rate, 4 objects instead of 8, 100 fluid particles instead of 200
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- [None]: Implementation proceeded without significant issues
 
 ---
 
@@ -217,10 +220,12 @@ class CombinedDemo implements Demo {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/demos/CombinedDemo.ts` - Main CombinedDemo class implementing composition pattern with all three sub-demos
+- `tests/demos/CombinedDemo.test.ts` - Comprehensive test suite with 38 tests covering all acceptance criteria
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/demos/index.ts` - Added export for CombinedDemo
+- `src/main.ts` - Updated to import and use real CombinedDemo instead of placeholder
 
 ---
 
@@ -229,6 +234,9 @@ class CombinedDemo implements Demo {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-25 | - | Ready | Scrum | Created |
+| 2025-12-27 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-27 | In Progress | In Review | Dev | Completed - all tests passing (319 total, 38 new for CombinedDemo) |
+| 2025-12-27 | In Review | Done | QA | QA Pass - all ACs verified, architecture aligned, code quality approved |
 
 ---
 
