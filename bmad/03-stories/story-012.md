@@ -1,7 +1,7 @@
 ---
 id: story-012
 title: "Reset Capability & Final Polish"
-status: In Review
+status: QA Pass
 priority: P3
 estimate: S
 created: 2025-12-25
@@ -232,6 +232,7 @@ class DemoController {
 | 2025-12-25 | - | Ready | Scrum | Created |
 | 2025-12-27 | Ready | In Progress | dev-agent | Started implementation |
 | 2025-12-27 | In Progress | In Review | dev-agent | Implementation complete |
+| 2025-12-27 | In Review | QA Pass | qa-agent | All criteria verified |
 
 ---
 
