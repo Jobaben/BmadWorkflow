@@ -1,7 +1,7 @@
 ---
 id: story-014
 title: "Code Snippet Engine with Syntax Highlighting"
-status: In Review
+status: QA Pass
 priority: P0
 estimate: M
 created: 2025-12-27
@@ -253,6 +253,7 @@ const sourceRegistry = new Map<string, string>([
 | 2025-12-27 | - | Ready | Scrum | Created |
 | 2025-12-27 | Ready | In Progress | Dev (Claude Opus 4.5) | Started implementation |
 | 2025-12-27 | In Progress | In Review | Dev (Claude Opus 4.5) | All tasks complete, 113 new tests passing |
+| 2025-12-27 | In Review | QA Pass | QA (Claude Opus 4.5) | All AC verified, ready for merge |
 
 ---
 
