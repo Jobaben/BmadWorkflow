@@ -43,11 +43,56 @@ let demoSelector: DemoSelector | null = null;
 /** Reference to the scene manager */
 let sceneManager: SceneManager | null = null;
 
+/** Bound keyboard handler for cleanup */
+let boundKeyHandler: ((e: KeyboardEvent) => void) | null = null;
+
 /** Map of available demos */
 const demos: Map<DemoType, Demo> = new Map();
 
 /** Currently active demo */
 let activeDemo: Demo | null = null;
+
+/**
+ * Resets the current demo to its initial state.
+ * Also resets control panel parameters to their default values.
+ * This is called when pressing the R key or clicking Reset in control panel.
+ */
+function resetCurrentDemo(): void {
+  if (controlPanel) {
+    // resetToDefaults will reset UI values and call the registered reset callbacks
+    controlPanel.resetToDefaults();
+  } else if (activeDemo) {
+    // Fallback if no control panel
+    activeDemo.reset();
+  }
+}
+
+/**
+ * Handles global keyboard events for application-wide shortcuts.
+ * - R key: Reset current demo
+ * - F key: Toggle FPS display
+ * @param event - The keyboard event
+ */
+function handleKeyDown(event: KeyboardEvent): void {
+  // Don't trigger shortcuts if user is typing in an input field
+  const target = event.target as HTMLElement;
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+    return;
+  }
+
+  switch (event.key.toLowerCase()) {
+    case 'r':
+      // R key triggers reset
+      resetCurrentDemo();
+      break;
+    case 'f':
+      // F key toggles FPS display
+      if (fpsDisplay) {
+        fpsDisplay.toggle();
+      }
+      break;
+  }
+}
 
 /**
  * Switches to a new demo.
@@ -86,8 +131,6 @@ function switchDemo(demoType: DemoType): void {
   if (controlPanel) {
     controlPanel.setParameters(activeDemo.getParameterSchema());
   }
-
-  console.log(`Switched to demo: ${demoType}`);
 }
 
 /**
@@ -216,17 +259,26 @@ function init(): void {
   // Start the animation loop
   animationLoop.start();
 
+  // Register global keyboard shortcut handler for reset (R key)
+  boundKeyHandler = handleKeyDown;
+  window.addEventListener('keydown', boundKeyHandler);
+
   // Log success message
   console.log('3D Animation Learning Foundation initialized successfully');
   console.log('Animation loop running:', animationLoop.isRunning());
-  console.log('Use the demo selector to switch between demos');
-  console.log('Adjust parameters in the control panel');
+  console.log('Keyboard shortcuts: R = Reset, F = Toggle FPS');
 }
 
 /**
  * Cleanup resources on page unload.
  */
 function cleanup(): void {
+  // Remove global keyboard handler
+  if (boundKeyHandler) {
+    window.removeEventListener('keydown', boundKeyHandler);
+    boundKeyHandler = null;
+  }
+
   if (animationLoop) {
     animationLoop.stop();
     animationLoop = null;

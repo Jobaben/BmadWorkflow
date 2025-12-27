@@ -113,6 +113,15 @@ body {
   transform: scale(0.98);
 }
 
+.demo-selector__button:focus {
+  outline: 2px solid rgba(74, 144, 217, 0.9);
+  outline-offset: 2px;
+}
+
+.demo-selector__button:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .demo-selector__button--active {
   background-color: rgba(74, 144, 217, 0.6);
   border-color: rgba(74, 144, 217, 0.9);
