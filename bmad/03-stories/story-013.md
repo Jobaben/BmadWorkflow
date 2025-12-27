@@ -1,7 +1,7 @@
 ---
 id: story-013
 title: "Wizard Core Types & Concept Registry"
-status: In Review
+status: QA Pass
 priority: P0
 estimate: M
 created: 2025-12-27
@@ -250,6 +250,7 @@ interface ParameterBinding {
 | 2025-12-27 | - | Ready | Scrum | Created |
 | 2025-12-27 | Ready | In Progress | Dev (Claude Opus 4.5) | Started implementation |
 | 2025-12-27 | In Progress | In Review | Dev (Claude Opus 4.5) | All tasks complete, 32 tests passing |
+| 2025-12-27 | In Review | QA Pass | QA (Claude Opus 4.5) | All AC verified, code quality approved |
 
 ---
 
