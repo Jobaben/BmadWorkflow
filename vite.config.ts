@@ -22,4 +22,9 @@ export default defineConfig({
     // Open browser on server start
     open: true,
   },
+
+  // Enable ?raw imports for source file bundling (ADR-002)
+  // Vite supports ?raw imports natively - no additional config needed
+  // Example: import demoSource from './demos/ParticleDemo.ts?raw'
+  assetsInclude: [],
 });
