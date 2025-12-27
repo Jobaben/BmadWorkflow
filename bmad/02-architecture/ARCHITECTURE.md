@@ -3,44 +3,43 @@ stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 inputDocuments: [bmad/01-prd/PRD.md]
 status: Draft
 created: 2025-12-25
-updated: 2025-12-25
+updated: 2025-12-27
 author: Architect
 prd_reference: bmad/01-prd/PRD.md
+version: 2.0
 ---
 
-# Architecture Document
+# Architecture Document - Wizard Learning Experience
 
-> This document defines HOW the system will be built. It implements requirements from the PRD without inventing new features.
+> This document defines HOW the wizard learning system will be built on top of the existing demo infrastructure. It implements requirements from PRD v2.0 without inventing new features.
 
 ---
 
 ## Executive Summary
 
-The 3D Animation Learning Foundation is designed as a standalone single-page application (SPA) using Three.js for WebGL-based 3D rendering. The architecture emphasizes educational clarity over production optimization, with a modular component structure that isolates each demonstration type (particles, objects, physics) while sharing a common rendering and interaction framework. The codebase prioritizes readability and pattern extraction for future reuse in a car physics product.
+The Wizard Learning Experience is an educational layer built atop the existing 3D animation demo application. The architecture introduces a **WizardController** that orchestrates step-by-step learning content, a **CodeSnippetEngine** that extracts and displays annotated code from the running demos, and a **ConceptRegistry** that organizes learning content by complexity tier. The existing demo infrastructure (ParticleDemo, ObjectDemo, FluidDemo, CombinedDemo) remains unchanged and is consumed by the wizard layer through well-defined interfaces. This separation of concerns allows the educational features to be developed independently while leveraging the proven demo implementations.
 
 ---
 
 ## Requirements Mapping
 
-> Every architectural element must trace to PRD requirements
+> Every architectural element must trace to PRD v2.0 requirements
 
 | PRD Requirement | Architectural Approach | Component(s) |
 |-----------------|----------------------|--------------|
-| FR-001 (Particle System) | Dedicated ParticleDemo module with particle lifecycle management | ParticleSystem, DemoRenderer |
-| FR-002 (3D Object Animation) | ObjectDemo module with transform animation engine | ObjectAnimator, DemoRenderer |
-| FR-003 (Fluid Physics) | FluidDemo module with simplified SPH-like simulation | FluidSimulation, DemoRenderer |
-| FR-004 (Interactive Controls) | Centralized InputManager handling mouse/keyboard events | InputManager, DemoController |
-| FR-005 (Readable Code) | TypeScript with JSDoc, clear module boundaries, design patterns | All components |
-| FR-006 (Standalone Operation) | Static SPA with bundled assets, no runtime dependencies | Build configuration, asset bundling |
-| FR-007 (Combined Demo) | CombinedDemo orchestrating multiple subsystems | CombinedDemo, DemoController |
-| FR-008 (Parameter Adjustment) | ControlPanel component with dat.gui-style interface | ControlPanel, DemoController |
-| FR-009 (Visual Reset) | Reset capability in each demo module | DemoController, individual demos |
-| NFR-001 (Performance) | Object pooling, efficient render loops, FPS monitoring | AnimationLoop, object pools |
-| NFR-002 (Compatibility) | WebGL with fallback detection, modern ES modules | Core renderer, feature detection |
-| NFR-003 (Usability) | Simple navigation, visual feedback, clear demo labels | UI components, DemoSelector |
-| NFR-004 (Maintainability) | Modular architecture, consistent patterns, documentation | All modules |
-| NFR-005 (Portability) | Zero server dependencies, static file serving | Build output |
-| NFR-006 (Responsiveness) | Event-driven input handling, decoupled from render loop | InputManager |
+| FR-001 (Wizard Navigation) | Step-based state machine with navigation controls | WizardController, WizardNavigator, StepRenderer |
+| FR-002 (Code Snippet Display) | Source extraction from demo files with syntax highlighting | CodeSnippetEngine, SnippetExtractor, SyntaxHighlighter |
+| FR-003 (Explanatory Annotations) | Annotation metadata linked to code regions | AnnotationSystem, ConceptRegistry |
+| FR-004 (Flexible Navigation) | Non-linear step access with prerequisite awareness | WizardNavigator, ConceptMap |
+| FR-005 (Live Parameter Connection) | Parameter binding with code highlighting | ParameterCodeLinker, ControlPanel integration |
+| FR-006 (Concept Categorization) | Three-tier complexity classification | ConceptRegistry, ComplexityTier enum |
+| FR-007 (Integrated Demo Rendering) | Split-view layout with synchronized demo | WizardLayout, DemoViewport |
+| NFR-001 (30+ FPS) | Lightweight UI, efficient updates | Existing demo optimization, DOM batching |
+| NFR-002 (Browser Compatibility) | Standard HTML/CSS/JS, no experimental APIs | All components |
+| NFR-003 (Intuitive UI) | Clear visual hierarchy, progress indicators | WizardLayout, StepRenderer |
+| NFR-004 (Maintainability) | Modular architecture, typed interfaces | All components via TypeScript |
+| NFR-005 (Accessibility) | Semantic HTML, sufficient contrast | WizardLayout, typography standards |
+| NFR-006 (Desktop Responsiveness) | Flexible split-view layout, min 1024px | WizardLayout |
 
 ---
 
@@ -51,32 +50,71 @@ The 3D Animation Learning Foundation is designed as a standalone single-page app
 ```mermaid
 graph TB
     subgraph External
-        U[Developer/Learner]
+        U[Learner]
         B[Modern Web Browser]
     end
 
     subgraph "System Boundary"
-        SPA[3D Animation Learning App]
+        subgraph "Wizard Layer"
+            WL[Wizard Learning Experience]
+        end
+        subgraph "Demo Layer"
+            DL[Existing Demo Application]
+        end
     end
 
-    U -->|Interacts via| B
-    B -->|Loads & Runs| SPA
-    B -->|Provides| WebGL[WebGL Context]
-    B -->|Provides| Events[DOM Events]
-
-    SPA -->|Renders to| Canvas[HTML5 Canvas]
-    SPA -->|Reads| Events
-    Canvas -->|Displays in| B
+    U -->|Navigates wizard steps| B
+    B -->|Loads & Runs| WL
+    WL -->|Controls & Displays| DL
+    DL -->|Renders 3D| Canvas[HTML5 Canvas]
+    WL -->|Displays content| UIPanel[Learning Panel]
+    Canvas -->|Shows in| B
+    UIPanel -->|Shows in| B
 ```
 
 ### System Boundaries
 
 | Inside System | Outside System | Integration Type |
 |---------------|----------------|------------------|
-| Demo components (Particle, Object, Fluid) | Web Browser | DOM/Canvas API |
-| Animation and rendering logic | WebGL Driver | WebGL API via Three.js |
-| Input handling | User input devices | DOM Event API |
-| UI controls | Browser DOM | HTML/CSS |
+| Wizard navigation and content | Web Browser | DOM API |
+| Code snippet extraction | Source files (bundled) | Static import |
+| Demo control and rendering | WebGL via Three.js | Existing Demo interface |
+| Annotation content | Bundled JSON/TS | Static data |
+
+### Layer Architecture
+
+The system consists of two distinct layers:
+
+1. **Demo Layer** (Existing): The proven 3D animation demos remain unchanged
+2. **Wizard Layer** (New): Educational UI and content management built on top
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     Wizard Layer (New)                       │
+│  ┌──────────┐ ┌───────────────┐ ┌─────────────────────────┐ │
+│  │  Wizard  │ │ CodeSnippet   │ │     Concept Registry    │ │
+│  │Controller│ │   Engine      │ │  (Steps, Annotations)   │ │
+│  └────┬─────┘ └───────┬───────┘ └───────────┬─────────────┘ │
+│       │               │                     │               │
+│  ┌────┴───────────────┴─────────────────────┴────────────┐  │
+│  │               WizardLayout (Split View)                │  │
+│  └────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+                              │ uses
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Demo Layer (Existing)                     │
+│  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌─────────────┐  │
+│  │ Particle  │ │  Object   │ │   Fluid   │ │  Combined   │  │
+│  │   Demo    │ │   Demo    │ │   Demo    │ │    Demo     │  │
+│  └─────┬─────┘ └─────┬─────┘ └─────┬─────┘ └──────┬──────┘  │
+│        └─────────────┴─────────────┴───────────────┘        │
+│                         │                                    │
+│  ┌──────────────────────┴────────────────────────────────┐  │
+│  │  Core (DemoRenderer, SceneManager, AnimationLoop)     │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -86,493 +124,341 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph Presentation["Presentation Layer"]
-        UI[UI Shell]
-        DS[Demo Selector]
-        CP[Control Panel]
-        Canvas[Canvas Display]
+    subgraph WizardUI["Wizard Presentation"]
+        WN[Wizard Navigator]
+        LP[Learning Panel]
+        DV[Demo Viewport]
+        PC[Progress Compass]
     end
 
-    subgraph Core["Core Layer"]
-        AC[App Controller]
-        DC[Demo Controller]
-        AL[Animation Loop]
+    subgraph WizardCore["Wizard Core"]
+        WC[Wizard Controller]
+        CR[Concept Registry]
+        CSE[Code Snippet Engine]
+        PCL[Parameter Code Linker]
     end
 
-    subgraph Demos["Demo Modules"]
-        PD[Particle Demo]
-        OD[Object Demo]
-        FD[Fluid Demo]
-        CD[Combined Demo]
+    subgraph Content["Content Layer"]
+        ST[Step Templates]
+        AN[Annotations]
+        CM[Concept Map]
     end
 
-    subgraph Foundation["Foundation Layer"]
-        IM[Input Manager]
-        DR[Demo Renderer]
-        SM[Scene Manager]
+    subgraph DemoIntegration["Demo Integration"]
+        DA[Demo Adapter]
+        Demos[Existing Demos]
     end
 
-    subgraph Utilities["Utilities"]
-        VP[Vector/Physics Utils]
-        OP[Object Pool]
-        FPS[FPS Monitor]
-    end
-
-    UI --> AC
-    DS --> DC
-    CP --> DC
-    AC --> DC
-    DC --> AL
-    DC --> PD
-    DC --> OD
-    DC --> FD
-    DC --> CD
-    AL --> DR
-    PD --> DR
-    OD --> DR
-    FD --> DR
-    CD --> DR
-    DR --> SM
-    DR --> Canvas
-    IM --> DC
-    PD --> VP
-    FD --> VP
-    PD --> OP
-    FD --> OP
-    AL --> FPS
+    WN --> WC
+    LP --> WC
+    PC --> WC
+    WC --> CR
+    WC --> CSE
+    WC --> DA
+    CR --> ST
+    CR --> AN
+    CR --> CM
+    CSE --> PCL
+    DA --> Demos
+    DV --> DA
 ```
 
 ### Architecture Style
 
-**Pattern**: Modular SPA with Component-Based Architecture
+**Pattern**: Layered Architecture with Adapter Pattern
 
 **Rationale**:
-- A modular approach allows each demo type to be self-contained and independently understandable
-- Component-based design supports the learning goal by providing clear boundaries between concepts
-- Single-page architecture satisfies the standalone, no-server requirement (FR-006)
-- Avoids framework complexity (React, Vue) to keep the codebase beginner-accessible
+- **Layered**: Clear separation between wizard (educational) layer and demo (rendering) layer
+- **Adapter**: Demo Adapter provides clean interface for wizard to control existing demos without modification
+- Preserves existing demo investment while adding educational features
 - See ADR-001 for detailed rationale
 
 ---
 
 ## Components
 
-### Component: App Controller
+### Component: Wizard Controller
 
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Application entry point, initialization, and lifecycle management |
-| **PRD Requirements** | FR-006 (Standalone) |
+| **Purpose** | Central orchestrator for wizard state, step transitions, and component coordination |
+| **PRD Requirements** | FR-001, FR-004 |
 | **Technology** | TypeScript |
 
 **Responsibilities**:
-- Bootstrap application on page load
-- Initialize Three.js renderer and scene
-- Coordinate between UI and Demo Controller
-- Handle application-level errors gracefully
+- Manage current step state and history
+- Coordinate navigation between steps
+- Signal step changes to dependent components
+- Track learning progress within session
 
 **Interfaces**:
 | Direction | Type | Contract |
 |-----------|------|----------|
-| Input | DOM Event | DOMContentLoaded |
-| Output | Method Call | DemoController.initialize() |
+| Input | Method Call | goToStep(stepId: string) |
+| Input | Method Call | nextStep(), previousStep() |
+| Output | Event | onStepChange(step: WizardStep) |
+| Output | Method Call | getCurrentStep(): WizardStep |
 
 **Dependencies**:
-- DemoController: Manages active demo
-- DemoRenderer: Provides rendering context
+- ConceptRegistry: Provides step definitions and ordering
+- DemoAdapter: Controls demo based on current step
+- CodeSnippetEngine: Retrieves code for current step
 
 ---
 
-### Component: Demo Controller
+### Component: Concept Registry
 
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Manages demo lifecycle, switching, and parameter updates |
-| **PRD Requirements** | FR-001-003 (Demos), FR-007 (Combined), FR-008 (Parameters), FR-009 (Reset) |
+| **Purpose** | Central repository of learning concepts, steps, and their metadata |
+| **PRD Requirements** | FR-001, FR-003, FR-006 |
+| **Technology** | TypeScript, Static data structures |
+
+**Responsibilities**:
+- Store all wizard step definitions
+- Categorize concepts by complexity tier (micro, medium, advanced)
+- Provide recommended learning path ordering
+- Store annotation content linked to code regions
+
+**Interfaces**:
+| Direction | Type | Contract |
+|-----------|------|----------|
+| Input | Method Call | getStep(stepId: string): WizardStep |
+| Input | Method Call | getStepsByTier(tier: ComplexityTier): WizardStep[] |
+| Output | Data | Ordered list of all steps |
+| Output | Data | Concept prerequisites map |
+
+**Data Structures**:
+```typescript
+enum ComplexityTier {
+  Micro = 'micro',       // Single concept, < 10 lines
+  Medium = 'medium',     // Combined concepts, patterns
+  Advanced = 'advanced'  // Full feature integration
+}
+
+interface WizardStep {
+  id: string;
+  title: string;
+  tier: ComplexityTier;
+  demoType: DemoType;
+  description: string;
+  codeSnippets: CodeSnippetRef[];
+  annotations: Annotation[];
+  parameters?: ParameterBinding[];
+  order: number;
+  prerequisites?: string[];
+}
+
+interface Annotation {
+  id: string;
+  lineStart: number;
+  lineEnd: number;
+  content: string;  // Markdown supported
+  highlightType: 'concept' | 'pattern' | 'warning' | 'tip';
+}
+```
+
+---
+
+### Component: Code Snippet Engine
+
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Extracts, processes, and displays code snippets from demo source files |
+| **PRD Requirements** | FR-002, FR-003, FR-005 |
+| **Technology** | TypeScript, PrismJS or Shiki for syntax highlighting |
+
+**Responsibilities**:
+- Extract code regions from bundled source files
+- Apply syntax highlighting for TypeScript/JavaScript
+- Overlay annotations on code display
+- Highlight code sections linked to parameters
+
+**Interfaces**:
+| Direction | Type | Contract |
+|-----------|------|----------|
+| Input | Method Call | getSnippet(ref: CodeSnippetRef): HighlightedCode |
+| Input | Method Call | highlightLines(lineStart, lineEnd) |
+| Output | DOM | Rendered code element with annotations |
+
+**Data Structures**:
+```typescript
+interface CodeSnippetRef {
+  sourceFile: string;     // e.g., 'ParticleDemo.ts'
+  startLine: number;
+  endLine: number;
+  highlightLines?: number[];
+}
+
+interface HighlightedCode {
+  html: string;           // Syntax-highlighted HTML
+  plainText: string;      // For accessibility
+  lineCount: number;
+  annotations: Annotation[];
+}
+```
+
+---
+
+### Component: Parameter Code Linker
+
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Connects UI parameter controls to their corresponding code locations |
+| **PRD Requirements** | FR-005 |
 | **Technology** | TypeScript |
 
 **Responsibilities**:
-- Load and unload demo modules
-- Pass input events to active demo
-- Apply parameter changes from Control Panel
-- Execute reset commands
+- Map parameter keys to code locations
+- Highlight relevant code when parameter is adjusted
+- Show code variable names alongside UI controls
+- Animate code highlighting on parameter change
 
 **Interfaces**:
 | Direction | Type | Contract |
 |-----------|------|----------|
-| Input | Method Call | switchDemo(demoId: DemoType) |
-| Input | Method Call | updateParameter(key: string, value: number) |
-| Input | Method Call | reset() |
-| Output | Method Call | Demo.start(), Demo.stop(), Demo.update() |
-
-**Dependencies**:
-- All Demo modules
-- InputManager: Receives input state
-- ControlPanel: Receives parameter updates
-
----
-
-### Component: Animation Loop
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Manages the render/update cycle using requestAnimationFrame |
-| **PRD Requirements** | NFR-001 (30+ FPS), NFR-006 (Responsiveness) |
-| **Technology** | TypeScript, requestAnimationFrame API |
-
-**Responsibilities**:
-- Maintain consistent update timing using delta time
-- Call active demo's update method each frame
-- Trigger render after update
-- Track and report FPS metrics
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | start(), stop() |
-| Output | Callback | onFrame(deltaTime: number) |
-
-**Dependencies**:
-- DemoRenderer: Triggers render
-- FPS Monitor: Reports timing data
-
----
-
-### Component: Particle Demo
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Demonstrates particle system concepts: emission, lifecycle, forces |
-| **PRD Requirements** | FR-001, FR-004, FR-008, FR-009 |
-| **Technology** | TypeScript, Three.js Points/BufferGeometry |
-
-**Responsibilities**:
-- Emit particles from configurable source
-- Apply forces (gravity, wind, attractors)
-- Manage particle lifecycle (spawn, age, die)
-- Respond to user input (mouse position affects emission/forces)
-- Support parameter adjustment (emission rate, lifetime, size)
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | start(), stop(), update(dt), reset() |
-| Input | Method Call | setParameter(key, value) |
-| Input | Method Call | onInput(inputState) |
-| Output | Object3D | Three.js Points object for rendering |
-
-**Dependencies**:
-- Object Pool: Efficient particle recycling
-- Vector Utils: Physics calculations
+| Input | Event | onParameterFocus(key: string) |
+| Input | Event | onParameterChange(key: string, value: any) |
+| Output | Method Call | highlightCodeForParameter(key: string) |
 
 **Data Structures**:
 ```typescript
-interface Particle {
-  position: Vector3;
-  velocity: Vector3;
-  age: number;
-  lifetime: number;
-  size: number;
-  color: Color;
-  alive: boolean;
-}
-
-interface ParticleParams {
-  emissionRate: number;      // particles per second
-  lifetime: number;          // seconds
-  initialSpeed: number;      // units per second
-  gravity: Vector3;          // acceleration
-  size: number;              // world units
-  color: Color;
+interface ParameterBinding {
+  parameterKey: string;   // e.g., 'emissionRate'
+  codeLocation: CodeSnippetRef;
+  variableName: string;   // e.g., 'this.params.emissionRate'
+  explanation: string;    // What this parameter controls
 }
 ```
 
 ---
 
-### Component: Object Demo
+### Component: Demo Adapter
 
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Demonstrates 3D object transformations: rotation, translation, scaling |
-| **PRD Requirements** | FR-002, FR-004, FR-008, FR-009 |
-| **Technology** | TypeScript, Three.js Mesh/Geometry |
-
-**Responsibilities**:
-- Create and display 3D primitive objects (cubes, spheres, etc.)
-- Apply animated transformations
-- Support multiple animation types (orbital, bounce, wave)
-- Respond to user input (rotation control, animation triggers)
-- Support parameter adjustment (speed, amplitude, object count)
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | start(), stop(), update(dt), reset() |
-| Input | Method Call | setParameter(key, value) |
-| Input | Method Call | setAnimationType(type) |
-| Output | Object3D | Three.js Group containing meshes |
-
-**Dependencies**:
-- Scene Manager: Object placement
-
-**Data Structures**:
-```typescript
-type AnimationType = 'rotate' | 'orbit' | 'bounce' | 'wave' | 'scale';
-
-interface AnimatedObject {
-  mesh: Mesh;
-  animationType: AnimationType;
-  phase: number;           // animation phase offset
-  speed: number;
-  amplitude: number;
-}
-
-interface ObjectParams {
-  objectCount: number;
-  animationSpeed: number;
-  amplitude: number;
-  showAxes: boolean;
-}
-```
-
----
-
-### Component: Fluid Demo
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Demonstrates fluid-like physics with particle-based simulation |
-| **PRD Requirements** | FR-003, FR-004, FR-008, FR-009 |
-| **Technology** | TypeScript, Three.js InstancedMesh |
-
-**Responsibilities**:
-- Simulate fluid behavior using simplified SPH-like approach
-- Handle boundary collisions (container walls)
-- Apply forces (gravity, user interaction)
-- Visualize fluid particles with appropriate rendering
-- Support parameter adjustment (viscosity, particle count, gravity)
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | start(), stop(), update(dt), reset() |
-| Input | Method Call | setParameter(key, value) |
-| Input | Method Call | applyForce(position, force) |
-| Output | Object3D | Three.js InstancedMesh for rendering |
-
-**Dependencies**:
-- Object Pool: Particle management
-- Vector Utils: Physics calculations
-
-**Data Structures**:
-```typescript
-interface FluidParticle {
-  position: Vector3;
-  velocity: Vector3;
-  density: number;
-  pressure: number;
-}
-
-interface FluidParams {
-  particleCount: number;
-  gravity: number;
-  viscosity: number;
-  restDensity: number;
-  boundaryDamping: number;
-}
-```
-
----
-
-### Component: Combined Demo
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Orchestrates multiple demo systems working together |
+| **Purpose** | Provides clean interface for wizard to control existing demos |
 | **PRD Requirements** | FR-007 |
-| **Technology** | TypeScript |
+| **Technology** | TypeScript, Adapter Pattern |
 
 **Responsibilities**:
-- Run particles, objects, and physics elements simultaneously
-- Manage shared scene space without conflicts
-- Demonstrate integration patterns
+- Abstract demo lifecycle management for wizard use
+- Switch between demo types based on current step
+- Forward parameter changes to active demo
+- Ensure demo state aligns with wizard step
 
 **Interfaces**:
 | Direction | Type | Contract |
 |-----------|------|----------|
-| Input | Method Call | start(), stop(), update(dt), reset() |
-| Output | Object3D[] | Combined scene elements |
+| Input | Method Call | loadDemoForStep(step: WizardStep) |
+| Input | Method Call | setParameter(key: string, value: any) |
+| Input | Method Call | resetDemo() |
+| Output | Object3D[] | Demo scene objects for rendering |
 
 **Dependencies**:
-- ParticleDemo: Embedded instance
-- ObjectDemo: Embedded instance
-- FluidDemo: Embedded instance
+- All existing Demo implementations (ParticleDemo, ObjectDemo, etc.)
+- DemoRenderer, SceneManager (existing core components)
 
 ---
 
-### Component: Input Manager
+### Component: Wizard Navigator
 
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Centralizes input handling for mouse and keyboard |
-| **PRD Requirements** | FR-004, NFR-006 |
-| **Technology** | TypeScript, DOM Events |
-
-**Responsibilities**:
-- Listen for mouse events (move, click, drag)
-- Listen for keyboard events (keydown, keyup)
-- Normalize input coordinates to scene space
-- Provide input state to consumers
-- Handle edge cases (mouse leaving window, etc.)
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | DOM Events | mousemove, mousedown, mouseup, keydown, keyup |
-| Output | Observable | InputState changes |
-| Output | Method Call | getInputState(): InputState |
-
-**Dependencies**:
-- Canvas element: Event target
-
-**Data Structures**:
-```typescript
-interface InputState {
-  mousePosition: Vector2;       // normalized -1 to 1
-  mouseWorldPosition: Vector3;  // projected to scene
-  isMouseDown: boolean;
-  keysPressed: Set<string>;
-}
-```
-
----
-
-### Component: Demo Renderer
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Wraps Three.js rendering with consistent configuration |
-| **PRD Requirements** | NFR-001, NFR-002 |
-| **Technology** | TypeScript, Three.js WebGLRenderer |
-
-**Responsibilities**:
-- Initialize WebGL renderer with optimal settings
-- Manage camera (perspective, controls)
-- Handle window resize
-- Execute render passes
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | render(scene: Scene) |
-| Input | DOM Event | resize |
-| Output | Canvas | Rendered frame |
-
-**Dependencies**:
-- Scene Manager: Provides scene to render
-
----
-
-### Component: Control Panel
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Provides UI controls for adjusting demo parameters |
-| **PRD Requirements** | FR-008 |
-| **Technology** | TypeScript, HTML/CSS (or lightweight lil-gui library) |
-
-**Responsibilities**:
-- Display parameter controls based on active demo
-- Emit parameter change events
-- Show current values
-- Provide reset button
-
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | setParameters(schema: ParameterSchema[]) |
-| Output | Event | onParameterChange(key, value) |
-| Output | Event | onReset() |
-
-**Data Structures**:
-```typescript
-interface ParameterSchema {
-  key: string;
-  label: string;
-  type: 'number' | 'boolean' | 'select';
-  min?: number;
-  max?: number;
-  step?: number;
-  options?: string[];
-  default: any;
-}
-```
-
----
-
-### Component: Demo Selector
-
-| Attribute | Value |
-|-----------|-------|
-| **Purpose** | Navigation UI for switching between demos |
-| **PRD Requirements** | FR-001, FR-002, FR-003, FR-007, NFR-003 |
+| **Purpose** | UI component for step navigation and concept browsing |
+| **PRD Requirements** | FR-001, FR-004, FR-006 |
 | **Technology** | TypeScript, HTML/CSS |
 
 **Responsibilities**:
-- Display available demos
-- Indicate current selection
-- Emit selection events
+- Display current position in learning path
+- Provide next/previous navigation controls
+- Show concept list with complexity indicators
+- Allow direct navigation to any step (FR-004)
 
 **Interfaces**:
 | Direction | Type | Contract |
 |-----------|------|----------|
-| Input | Method Call | setDemos(demos: DemoInfo[]) |
-| Output | Event | onDemoSelect(demoId: DemoType) |
+| Input | Method Call | setCurrentStep(step: WizardStep) |
+| Input | Method Call | setSteps(steps: WizardStep[]) |
+| Output | Event | onNavigate(stepId: string) |
 
 ---
 
-### Component: Object Pool
+### Component: Learning Panel
 
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Reuses objects to avoid garbage collection pauses |
-| **PRD Requirements** | NFR-001 (Performance) |
-| **Technology** | TypeScript |
+| **Purpose** | Displays educational content: explanations, code, annotations |
+| **PRD Requirements** | FR-002, FR-003 |
+| **Technology** | TypeScript, HTML/CSS |
 
 **Responsibilities**:
-- Pre-allocate objects
-- Provide acquire/release interface
-- Grow pool if needed
-- Reset object state on release
+- Render step title and description
+- Display code snippets with syntax highlighting
+- Show annotations inline or as overlays
+- Integrate parameter controls with code highlighting
 
 **Interfaces**:
 | Direction | Type | Contract |
 |-----------|------|----------|
-| Input | Method Call | acquire(): T |
-| Input | Method Call | release(obj: T) |
-| Output | Object | Pooled object instances |
+| Input | Method Call | renderStep(step: WizardStep, code: HighlightedCode) |
+| Input | Method Call | highlightParameter(key: string) |
+| Output | DOM | Rendered learning content |
 
 ---
 
-### Component: FPS Monitor
+### Component: Wizard Layout
 
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Tracks frame rate for performance validation |
-| **PRD Requirements** | NFR-001 |
-| **Technology** | TypeScript |
+| **Purpose** | Manages the split-view layout between demo and learning content |
+| **PRD Requirements** | FR-007, NFR-006 |
+| **Technology** | TypeScript, CSS Grid/Flexbox |
 
 **Responsibilities**:
-- Calculate rolling FPS average
-- Detect frame drops
-- Optionally display FPS overlay
+- Provide responsive split-view layout
+- Balance demo viewport and learning panel
+- Handle resizing and layout adjustments
+- Ensure both views are visible simultaneously
 
-**Interfaces**:
-| Direction | Type | Contract |
-|-----------|------|----------|
-| Input | Method Call | frame(deltaTime: number) |
-| Output | Property | currentFPS: number |
-| Output | Property | averageFPS: number |
+**Layout Structure**:
+```
+┌─────────────────────────────────────────────────────────────┐
+│  [◀ Prev]   Step 3 of 15: Particle Emission    [Next ▶]     │
+├───────────────────────────────┬─────────────────────────────┤
+│                               │                             │
+│                               │   Particle Emission Rate    │
+│                               │   ─────────────────────     │
+│      3D Demo Viewport         │   When particles spawn,     │
+│      (Canvas + Controls)      │   the emission rate...      │
+│                               │                             │
+│                               │   ```typescript             │
+│                               │   this.params.emissionRate  │
+│                               │   ```                       │
+│                               │                             │
+│                               │   [Slider: Emission Rate]   │
+│                               │   ───────●──────────        │
+│                               │                             │
+├───────────────────────────────┴─────────────────────────────┤
+│  ● Micro Concepts    ○ Medium Concepts    ○ Advanced        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Component: Demo Viewport
+
+| Attribute | Value |
+|-----------|-------|
+| **Purpose** | Container for the 3D demo rendering within wizard layout |
+| **PRD Requirements** | FR-007 |
+| **Technology** | TypeScript, HTML Canvas |
+
+**Responsibilities**:
+- Size canvas appropriately within split layout
+- Forward input events to demo
+- Display FPS and demo status (optional)
+- Handle viewport resize events
 
 ---
 
@@ -580,54 +466,26 @@ interface ParameterSchema {
 
 ### Data Models
 
-This application is stateless beyond runtime memory. No persistent storage is required.
+The wizard layer primarily uses static configuration data and runtime state. No persistent storage is required (per PRD: out of scope).
 
-#### Entity: Particle
-
-```
-Particle
-  position: Vector3
-  velocity: Vector3
-  acceleration: Vector3
-  age: number
-  lifetime: number
-  size: number
-  color: Color
-  alive: boolean
-```
-
-#### Entity: AnimatedObject
+#### Entity: WizardState
 
 ```
-AnimatedObject
-  mesh: Three.Mesh
-  initialTransform: Matrix4
-  animationType: AnimationType
-  phase: number
-  speed: number
-  amplitude: number
+WizardState
+├── currentStepId: string
+├── stepHistory: string[]         // For back navigation
+├── parameterOverrides: Map       // User's parameter adjustments
+└── demoState: DemoType           // Currently active demo
 ```
 
-#### Entity: FluidParticle
+#### Entity: ConceptData (Static)
 
 ```
-FluidParticle
-  position: Vector3
-  velocity: Vector3
-  acceleration: Vector3
-  density: number
-  pressure: number
-  mass: number
-```
-
-#### Entity: DemoState
-
-```
-DemoState
-  id: DemoType
-  isRunning: boolean
-  parameters: Map<string, any>
-  objects: Object3D[]
+ConceptData
+├── steps: WizardStep[]
+├── conceptMap: Map<stepId, prerequisiteIds[]>
+├── tierCounts: { micro: number, medium: number, advanced: number }
+└── totalSteps: number
 ```
 
 ### Data Flow
@@ -635,215 +493,228 @@ DemoState
 ```mermaid
 flowchart LR
     subgraph Input
-        Mouse[Mouse Events]
-        Keys[Keyboard Events]
+        Nav[Navigation Click]
+        Param[Parameter Adjust]
     end
 
-    subgraph Processing
-        IM[Input Manager]
-        DC[Demo Controller]
+    subgraph WizardProcessing
+        WC[Wizard Controller]
+        CR[Concept Registry]
+        CSE[Code Snippet Engine]
+    end
+
+    subgraph DemoProcessing
+        DA[Demo Adapter]
         Demo[Active Demo]
-        AL[Animation Loop]
     end
 
     subgraph Output
-        Scene[Three.js Scene]
-        Renderer[WebGL Renderer]
-        Canvas[Canvas]
+        LP[Learning Panel]
+        DV[Demo Viewport]
     end
 
-    Mouse --> IM
-    Keys --> IM
-    IM --> DC
-    DC --> Demo
-    AL -->|deltaTime| Demo
-    Demo -->|update objects| Scene
-    AL -->|trigger| Renderer
-    Renderer -->|draw| Canvas
+    Nav --> WC
+    Param --> WC
+    WC -->|get step| CR
+    WC -->|get code| CSE
+    WC -->|load demo| DA
+    DA --> Demo
+    CR --> LP
+    CSE --> LP
+    Demo --> DV
 ```
 
 ---
 
 ## Interface Specifications
 
-### Demo Interface (Internal Contract)
+### Wizard Step Interface
 
-All demo modules implement this interface:
+All wizard step data must conform to this structure:
 
 ```typescript
-interface Demo {
-  // Lifecycle
-  start(): void;
-  stop(): void;
-  reset(): void;
-
-  // Per-frame update
-  update(deltaTime: number): void;
-
-  // Input handling
-  onInput(state: InputState): void;
-
-  // Parameter management
-  getParameterSchema(): ParameterSchema[];
-  setParameter(key: string, value: any): void;
-
-  // Scene integration
-  getSceneObjects(): Object3D[];
+interface WizardStep {
+  id: string;                    // Unique identifier (e.g., 'particle-emission')
+  title: string;                 // Display title
+  tier: ComplexityTier;          // micro | medium | advanced
+  demoType: DemoType;            // Which demo to display
+  description: string;           // Markdown-supported explanation
+  learningObjectives: string[];  // What user will learn
+  codeSnippets: CodeSnippetRef[];
+  annotations: Annotation[];
+  parameters?: ParameterBinding[];
+  order: number;                 // Position in recommended path
+  prerequisites?: string[];      // Optional step dependencies
 }
 ```
 
-### Public Events
+### Code Snippet Reference
+
+```typescript
+interface CodeSnippetRef {
+  id: string;
+  sourceFile: string;           // Relative path from src/
+  startLine: number;
+  endLine: number;
+  title?: string;               // Optional snippet title
+  focusLines?: number[];        // Lines to emphasize
+}
+```
+
+### Events
 
 | Event | Publisher | Subscriber(s) | Payload |
 |-------|-----------|---------------|---------|
-| demoChange | DemoSelector | DemoController | `{ demoId: DemoType }` |
-| parameterChange | ControlPanel | DemoController | `{ key: string, value: any }` |
-| resetRequested | ControlPanel | DemoController | `void` |
-| inputUpdate | InputManager | DemoController | `InputState` |
+| stepChange | WizardController | LearningPanel, DemoAdapter, Navigator | `{ step: WizardStep }` |
+| parameterChange | ControlPanel | WizardController, ParameterCodeLinker | `{ key: string, value: any }` |
+| parameterFocus | ControlPanel | ParameterCodeLinker | `{ key: string }` |
+| demoLoaded | DemoAdapter | WizardController | `{ demoType: DemoType }` |
 
 ---
 
 ## Architecture Decision Records
 
-### ADR-001: Use Three.js for 3D Rendering
+### ADR-001: Layered Architecture with Adapter Pattern
 
 | Attribute | Value |
 |-----------|-------|
 | **Status** | Accepted |
-| **Date** | 2025-12-25 |
+| **Date** | 2025-12-27 |
 | **Deciders** | Architect |
 
-**Context**: The application requires browser-based 3D rendering with particle systems, object animation, and physics visualization. The developer learning the codebase has no prior 3D graphics experience.
+**Context**: The PRD v2.0 requires adding educational features (wizard, code display, annotations) to an existing working demo application. The demos must continue to work unchanged while new UI is added.
 
-**Decision**: Use Three.js as the primary 3D rendering library.
+**Decision**: Use a layered architecture where the Wizard Layer sits above the Demo Layer, with a Demo Adapter providing a clean integration boundary.
 
 **Consequences**:
-- Positive: Abstracts WebGL complexity, making code more accessible to beginners
-- Positive: Extensive documentation and community resources for learning
-- Positive: Built-in support for particles (Points), meshes, and instanced rendering
-- Positive: Patterns transfer well to production 3D applications
-- Trade-off: Additional bundle size (~150KB minified)
-- Trade-off: Abstractions may hide some low-level concepts
+- Positive: Existing demo code remains untouched (low risk)
+- Positive: Clear separation of concerns (educational vs. rendering)
+- Positive: Demo Adapter can be extended for future demo types
+- Positive: Wizard can be developed/tested independently
+- Trade-off: Slight indirection when controlling demos
+- Trade-off: Must maintain two conceptual layers
 
 **Alternatives Considered**:
 | Alternative | Rejected Because |
 |-------------|------------------|
-| Raw WebGL | Too complex for learning; steep curve conflicts with NFR-003 (usability) |
-| Babylon.js | Larger, more game-focused; Three.js has broader educational resources |
-| PixiJS | 2D-focused; doesn't satisfy 3D object animation requirements |
-| p5.js | Limited 3D capabilities; less transferable to production work |
+| Modify demos directly | High risk; demos already working; violates separation of concerns |
+| Single monolithic app | Harder to maintain; mixes educational and rendering logic |
+| Iframe separation | Overkill; adds complexity for same-origin content |
 
 ---
 
-### ADR-002: Vanilla TypeScript Without Framework
+### ADR-002: Bundled Source Code for Snippet Extraction
 
 | Attribute | Value |
 |-----------|-------|
 | **Status** | Accepted |
-| **Date** | 2025-12-25 |
+| **Date** | 2025-12-27 |
 | **Deciders** | Architect |
 
-**Context**: The application needs a UI for demo selection and parameter adjustment. The codebase must be beginner-friendly and the patterns should be extractable for future use.
+**Context**: FR-002 requires displaying actual source code from the running demos. Options are: (1) fetch at runtime, (2) bundle with app, (3) hard-code snippets.
 
-**Decision**: Use vanilla TypeScript with minimal DOM manipulation rather than a UI framework like React or Vue.
+**Decision**: Bundle the source files as static assets at build time, extractable by the CodeSnippetEngine at runtime.
 
 **Consequences**:
-- Positive: No framework-specific concepts to learn (JSX, virtual DOM, reactivity)
-- Positive: Direct DOM manipulation is more transferable to any future context
-- Positive: Smaller bundle size, faster load times
-- Positive: Easier to understand data flow without framework abstractions
-- Trade-off: More boilerplate for UI updates
-- Trade-off: Manual state management required
+- Positive: Code is always consistent with running demo (from same build)
+- Positive: No network requests needed (NFR-005 portability)
+- Positive: Snippets can be extracted dynamically with line numbers
+- Trade-off: Increases bundle size (source is already included as compiled JS)
+- Trade-off: Build step must include raw source alongside compiled output
 
 **Alternatives Considered**:
 | Alternative | Rejected Because |
 |-------------|------------------|
-| React | Adds complexity (hooks, components, JSX); learning React isn't the goal |
-| Vue | Similar concerns; introduces reactivity concepts beyond scope |
-| Svelte | Smaller but still adds compilation step and new paradigm |
+| Fetch from server | Violates NFR-005 (no server dependencies) |
+| Hard-coded snippets | Snippets would drift from actual code; maintenance burden |
+| Source maps | Complex to parse; not designed for display |
+
+**Implementation Note**: Use Vite's raw import (`?raw`) to bundle source files as strings.
 
 ---
 
-### ADR-003: Object Pooling for Particles
+### ADR-003: Static Syntax Highlighting with Shiki
 
 | Attribute | Value |
 |-----------|-------|
 | **Status** | Accepted |
-| **Date** | 2025-12-25 |
+| **Date** | 2025-12-27 |
 | **Deciders** | Architect |
 
-**Context**: Particle systems and fluid simulations create/destroy many objects per frame. JavaScript garbage collection can cause frame drops, violating NFR-001 (30+ FPS).
+**Context**: Code snippets must be syntax-highlighted and readable (FR-002). Options include runtime highlighting (PrismJS) or build-time (Shiki).
 
-**Decision**: Implement object pooling for all high-frequency allocations (particles, fluid elements).
+**Decision**: Use Shiki for syntax highlighting, with tokens generated at runtime from bundled source.
 
 **Consequences**:
-- Positive: Eliminates GC pauses during animation
-- Positive: Consistent frame rates under load
-- Positive: Teaches an important optimization pattern for game/graphics development
-- Trade-off: Slightly more complex code with acquire/release patterns
-- Trade-off: Must carefully reset object state on release
+- Positive: High-quality VSCode-style highlighting
+- Positive: TypeScript support built-in
+- Positive: Line highlighting and annotations integrate naturally
+- Trade-off: Larger dependency (~200KB for language grammars)
+- Trade-off: Initial load parses grammars
 
 **Alternatives Considered**:
 | Alternative | Rejected Because |
 |-------------|------------------|
-| No pooling | GC pauses would cause visible stuttering |
-| Web Workers | Adds complexity; doesn't solve allocation issue in main thread |
+| PrismJS | Less accurate TypeScript highlighting; annotation integration harder |
+| highlight.js | Similar concerns; less active development |
+| Plain monospace | Fails FR-002 (code must be readable and highlighted) |
 
 ---
 
-### ADR-004: Simplified Physics Model for Learning
+### ADR-004: CSS Grid Layout for Split View
 
 | Attribute | Value |
 |-----------|-------|
 | **Status** | Accepted |
-| **Date** | 2025-12-25 |
+| **Date** | 2025-12-27 |
 | **Deciders** | Architect |
 
-**Context**: FR-003 requires fluid physics demonstration. Full SPH (Smoothed Particle Hydrodynamics) is complex and computationally expensive.
+**Context**: FR-007 and NFR-006 require a split-view layout showing demo and learning content simultaneously, minimum 1024px width.
 
-**Decision**: Implement a simplified "SPH-like" particle-based fluid that looks fluid-like but prioritizes understandability over physical accuracy.
+**Decision**: Use CSS Grid for the main layout with flexible column sizing.
 
 **Consequences**:
-- Positive: Achievable performance in browser (NFR-001)
-- Positive: Code is understandable by a beginner (NFR-003, FR-005)
-- Positive: Demonstrates core concepts: density, pressure, viscosity
-- Trade-off: Not physically accurate; labeled as educational simplification
-- Trade-off: May need more sophisticated approach for car physics product
+- Positive: Clean, declarative layout without JavaScript
+- Positive: Responsive to container size
+- Positive: Supported in all target browsers (NFR-002)
+- Trade-off: Less control than JS-based resizers
+- Note: No draggable splitter needed (simplicity over configurability)
 
 **Alternatives Considered**:
 | Alternative | Rejected Because |
 |-------------|------------------|
-| Full SPH simulation | Too complex; would dominate learning time |
-| Physics engine (cannon.js, ammo.js) | Hides concepts; goal is to understand, not use black box |
-| 2D fluid simulation | Doesn't match 3D focus of other demos |
+| Flexbox only | Grid provides better 2D layout control |
+| JS-based layout | Over-engineering for fixed layout |
+| Absolute positioning | Brittle; harder to maintain |
 
 ---
 
-### ADR-005: Static File Deployment Model
+### ADR-005: Concept Registry as Static TypeScript Data
 
 | Attribute | Value |
 |-----------|-------|
 | **Status** | Accepted |
-| **Date** | 2025-12-25 |
+| **Date** | 2025-12-27 |
 | **Deciders** | Architect |
 
-**Context**: FR-006 and NFR-005 require standalone operation with no server dependencies.
+**Context**: Wizard steps, annotations, and concept metadata must be stored and accessed. Options: database, JSON files, TypeScript objects.
 
-**Decision**: Build the application as static files (HTML, CSS, JS bundle) that can run from file:// protocol or any static file server.
+**Decision**: Store concept data as typed TypeScript objects, imported directly into the application.
 
 **Consequences**:
-- Positive: Works offline after initial load
-- Positive: Can be opened directly from filesystem during development
-- Positive: Simple deployment (copy files anywhere)
-- Positive: No CORS issues for local development
-- Trade-off: ES modules require local server in some browsers
-- Trade-off: Must bundle all assets inline or handle loading carefully
+- Positive: Full type safety for step definitions
+- Positive: IDE support (autocomplete, error checking)
+- Positive: No parsing or validation at runtime
+- Positive: Content and code reviewed together
+- Trade-off: Must recompile to update content
+- Trade-off: Non-developers cannot easily edit content
 
 **Alternatives Considered**:
 | Alternative | Rejected Because |
 |-------------|------------------|
-| Server-side rendering | Violates standalone requirement |
-| Electron app | Overkill; adds complexity not aligned with learning goals |
+| JSON files | Lose type safety; require runtime parsing |
+| Database | Violates NFR-005 (no server dependencies) |
+| CMS | Overkill for single-developer project |
 
 ---
 
@@ -851,18 +722,19 @@ interface Demo {
 
 | Layer | Technology | Version | Purpose | License |
 |-------|------------|---------|---------|---------|
-| Language | TypeScript | 5.x | Type safety, IDE support, documentation | Apache 2.0 |
-| Build Tool | Vite | 5.x | Fast development, ES module bundling | MIT |
-| 3D Rendering | Three.js | 0.160+ | WebGL abstraction, 3D primitives | MIT |
-| UI Controls | lil-gui | 0.19+ | Parameter adjustment panels (lightweight dat.gui fork) | MIT |
-| Testing | Vitest | 1.x | Unit testing (optional, for future) | MIT |
+| Language | TypeScript | 5.x | Type safety, maintainability | Apache 2.0 |
+| Build Tool | Vite | 5.x | Bundling, raw imports for source | MIT |
+| 3D Rendering | Three.js | 0.160+ | Existing demo infrastructure | MIT |
+| Syntax Highlighting | Shiki | 1.x | Code display with TypeScript support | MIT |
+| UI Controls | lil-gui | 0.19+ | Parameter adjustment (existing) | MIT |
+| Styling | CSS (vanilla) | - | Layout and theming | - |
 
-### Technology Rationale
+### New Dependencies for Wizard Layer
 
-- **TypeScript**: Provides type safety and self-documentation (FR-005), excellent IDE support for learning
-- **Vite**: Modern, fast bundler with excellent TypeScript/ES module support; simple configuration
-- **Three.js**: See ADR-001
-- **lil-gui**: Minimal footprint (~7KB), familiar interface, easy parameter binding for FR-008
+| Dependency | Purpose | Size Impact |
+|------------|---------|-------------|
+| Shiki | Syntax highlighting | ~200KB (grammars) |
+| (optional) marked | Markdown parsing for annotations | ~25KB |
 
 ---
 
@@ -872,57 +744,60 @@ interface Demo {
 
 | Requirement | Approach | Verification |
 |-------------|----------|--------------|
-| 30+ FPS sustained | Object pooling for particles; BufferGeometry for batch rendering; InstancedMesh for fluids | FPS monitor overlay; Chrome DevTools profiling |
-| Efficient rendering | Single render pass; frustum culling (Three.js built-in) | Performance tests with max particle counts |
-| No frame drops | Fixed timestep with interpolation; avoid allocations in update loop | Visual inspection; FPS variance monitoring |
+| Demo maintains 30+ FPS | Wizard UI updates don't block render loop | FPS monitor during navigation |
+| Smooth transitions | CSS transitions for step changes | Visual inspection |
+| Lazy snippet rendering | Only render visible code snippets | Profile memory usage |
 
 ### Compatibility (NFR-002: Modern Browsers)
 
 | Requirement | Approach | Verification |
 |-------------|----------|--------------|
-| Chrome, Firefox, Safari, Edge | Use WebGL 1.0 baseline features; avoid experimental APIs | Manual testing in each browser |
-| WebGL detection | Graceful fallback message if WebGL unavailable | Test with WebGL disabled |
-| ES modules | Vite bundles for broad compatibility | Test in Safari 14+, Edge 79+ |
+| Chrome, Firefox, Safari, Edge | CSS Grid (98%+ support); ES2020 | Manual testing |
+| No experimental APIs | Standard DOM APIs only | Caniuse verification |
 
-### Usability (NFR-003: Beginner-Friendly)
-
-| Requirement | Approach | Verification |
-|-------------|----------|--------------|
-| No prior 3D knowledge required | Clear labels; visual demo selector; tooltips on controls | User testing with non-3D developer |
-| Intuitive navigation | Single-click demo switching; visible current state | UI review |
-| Immediate feedback | Visual response to input within same frame | Input latency testing |
-
-### Maintainability (NFR-004: Learning Reference)
+### Usability (NFR-003: Intuitive Navigation)
 
 | Requirement | Approach | Verification |
 |-------------|----------|--------------|
-| Self-documenting code | TypeScript interfaces; JSDoc comments on public APIs | Code review; documentation generation |
-| Clear patterns | Consistent naming; single responsibility per module | Architecture review |
-| Extractable code | Minimal cross-dependencies; well-defined interfaces | Test extraction of ParticleSystem |
+| First-time navigation < 30s | Clear step indicators, visible controls | User testing |
+| Current position visible | Progress bar/step counter always shown | UI review |
+| Next step obvious | Prominent "Next" button | Visual hierarchy |
 
-### Portability (NFR-005: No Server Dependencies)
-
-| Requirement | Approach | Verification |
-|-------------|----------|--------------|
-| Zero runtime server calls | All assets bundled; no fetch() for data | Network tab inspection; offline test |
-| Works from file:// | Avoid absolute paths; inline critical assets | Open from filesystem |
-
-### Responsiveness (NFR-006: <100ms Input Response)
+### Maintainability (NFR-004)
 
 | Requirement | Approach | Verification |
 |-------------|----------|--------------|
-| <100ms input response | Input processed synchronously in current frame | Performance profiling |
-| No input queue | Direct event handling, not batched | Input latency measurement |
+| Content updates simple | TypeScript concept definitions | Developer review |
+| Clear module boundaries | One responsibility per component | Architecture review |
+| Type safety | Full TypeScript coverage | Compile-time checks |
+
+### Accessibility (NFR-005)
+
+| Requirement | Approach | Verification |
+|-------------|----------|--------------|
+| 16px minimum font | CSS base font size | Style audit |
+| Sufficient contrast | WCAG AA compliant colors | Contrast checker |
+| Semantic HTML | Proper heading hierarchy | HTML validator |
+
+### Responsiveness (NFR-006: Desktop)
+
+| Requirement | Approach | Verification |
+|-------------|----------|--------------|
+| 1024px minimum | CSS min-width, graceful stacking below | Resize testing |
+| Split view balance | 50/50 default, adjustable via CSS | Visual inspection |
 
 ---
 
 ## Integration Points
 
-This is a standalone application with no external system integrations.
+The wizard layer integrates with the existing demo layer through well-defined interfaces:
 
-| System | Direction | Protocol | Auth | Data Format | Error Handling |
-|--------|-----------|----------|------|-------------|----------------|
-| None | N/A | N/A | N/A | N/A | N/A |
+| Integration | Direction | Interface | Notes |
+|-------------|-----------|-----------|-------|
+| Demo Lifecycle | Wizard → Demo | Demo.start(), stop(), reset() | Via DemoAdapter |
+| Parameter Control | Wizard → Demo | Demo.setParameter(key, value) | Forwards from ControlPanel |
+| Scene Objects | Demo → Wizard | Demo.getSceneObjects() | For rendering |
+| Input Events | Wizard → Demo | Demo.onInput(state) | Via InputManager |
 
 ---
 
@@ -930,67 +805,52 @@ This is a standalone application with no external system integrations.
 
 | ID | Risk | Probability | Impact | Score | Mitigation |
 |----|------|-------------|--------|-------|------------|
-| TR-001 | Performance issues with high particle counts | Medium | High | 6 | Object pooling; cap maximum counts; performance budget per demo |
-| TR-002 | Browser compatibility issues with WebGL | Low | High | 3 | Feature detection; graceful degradation message; test on all target browsers |
-| TR-003 | Fluid simulation too complex to understand | Medium | Medium | 4 | Simplified model (ADR-004); extensive comments; separate learning from production |
-| TR-004 | TypeScript compilation adds friction | Low | Low | 1 | Vite handles transparently; good IDE integration |
-| TR-005 | Three.js version updates break compatibility | Low | Medium | 2 | Pin version; document upgrade path |
-| TR-006 | Learning patterns don't transfer to car product | Low | High | 3 | Periodic architecture review; design for extensibility |
+| TR-001 | Source code bundling increases bundle size significantly | Medium | Low | 2 | Only bundle demo source files (~50KB); lazy load if needed |
+| TR-002 | Shiki initialization delays first code display | Low | Medium | 2 | Show loading state; consider pre-warming |
+| TR-003 | Annotation content maintenance becomes burdensome | Medium | Medium | 4 | Start with minimal annotations; add iteratively |
+| TR-004 | Split-view layout feels cramped on 1024px screens | Medium | Low | 2 | Optimize layout; allow panel collapse |
+| TR-005 | Step ordering doesn't match natural learning progression | Medium | High | 6 | Iterate on ordering with self-testing; mark as assumption to validate |
 
 ---
 
 ## Coding Standards
 
-### File Structure
+### File Structure (Wizard Layer)
+
 ```
 src/
-  main.ts              # Entry point
-  app/
-    AppController.ts   # Application lifecycle
-    DemoController.ts  # Demo management
-  demos/
-    Demo.ts            # Base interface
-    ParticleDemo.ts    # Particle system
-    ObjectDemo.ts      # Object animation
-    FluidDemo.ts       # Fluid physics
-    CombinedDemo.ts    # Integration demo
-  core/
-    AnimationLoop.ts   # RAF wrapper
-    DemoRenderer.ts    # Three.js setup
-    SceneManager.ts    # Scene handling
-    InputManager.ts    # Input handling
-  ui/
-    DemoSelector.ts    # Navigation
-    ControlPanel.ts    # Parameter UI
-    FPSDisplay.ts      # Performance overlay
-  utils/
-    ObjectPool.ts      # Object pooling
-    VectorUtils.ts     # Math helpers
-    ColorUtils.ts      # Color helpers
-  types/
-    index.ts           # Shared type definitions
+├── wizard/
+│   ├── WizardController.ts     # State and navigation management
+│   ├── ConceptRegistry.ts      # Step definitions and concept data
+│   ├── CodeSnippetEngine.ts    # Source extraction and highlighting
+│   ├── ParameterCodeLinker.ts  # Parameter-to-code mapping
+│   └── DemoAdapter.ts          # Integration with demo layer
+├── wizard-ui/
+│   ├── WizardLayout.ts         # Split-view container
+│   ├── WizardNavigator.ts      # Navigation controls
+│   ├── LearningPanel.ts        # Content display
+│   └── DemoViewport.ts         # Demo canvas container
+├── wizard-data/
+│   ├── steps/
+│   │   ├── particle-steps.ts   # Particle demo concepts
+│   │   ├── object-steps.ts     # Object demo concepts
+│   │   └── fluid-steps.ts      # Fluid demo concepts
+│   └── index.ts                # Aggregated step registry
+└── ... (existing demo structure unchanged)
 ```
 
 ### Naming Conventions
-- Files: PascalCase for classes (e.g., `ParticleDemo.ts`), camelCase for utilities
-- Classes: PascalCase (e.g., `ParticleDemo`, `InputManager`)
-- Functions: camelCase (e.g., `createParticle`, `handleMouseMove`)
-- Variables: camelCase (e.g., `particleCount`, `isRunning`)
-- Constants: UPPER_SNAKE_CASE (e.g., `MAX_PARTICLES`, `DEFAULT_LIFETIME`)
-- Interfaces: PascalCase with descriptive names (e.g., `ParticleParams`, `InputState`)
+
+- Wizard components: PascalCase prefixed with context (e.g., `WizardController`, `LearningPanel`)
+- Step IDs: kebab-case (e.g., `particle-emission-basics`)
+- Event names: camelCase with subject prefix (e.g., `stepChange`, `parameterFocus`)
 
 ### Patterns to Follow
-- **Factory Pattern**: For creating demo instances and pooled objects
-- **Observer Pattern**: For input events and parameter changes
-- **Strategy Pattern**: For animation types in ObjectDemo
-- **Module Pattern**: Each file exports a single primary class/interface
-- **Composition over Inheritance**: Demos share utilities, don't inherit
 
-### Documentation Standards
-- Every public function has JSDoc with description, params, returns
-- Complex algorithms have inline comments explaining the "why"
-- Each demo module has a header comment explaining the concept it teaches
-- Type definitions serve as documentation; keep them readable
+- **Observer Pattern**: Events for component communication
+- **Adapter Pattern**: DemoAdapter wraps existing demos
+- **Registry Pattern**: ConceptRegistry centralizes step data
+- **Composition**: UI components composed, not inherited
 
 ---
 
@@ -998,29 +858,27 @@ src/
 
 | Term | Definition |
 |------|------------|
-| Particle System | Collection of small elements (particles) that together create effects like smoke, fire, or sparks |
-| SPH | Smoothed Particle Hydrodynamics - a method for simulating fluids using particles |
-| BufferGeometry | Three.js class for efficiently storing vertex data in typed arrays |
-| InstancedMesh | Three.js class for rendering many copies of the same geometry efficiently |
-| Delta Time | Time elapsed since the last frame; used for frame-rate independent animation |
-| Object Pool | Pre-allocated collection of reusable objects to avoid garbage collection |
-| RAF | requestAnimationFrame - browser API for efficient animation timing |
-| Emit | To generate new particles in a particle system |
-| Lifecycle | The stages a particle goes through: creation, animation, destruction |
+| Wizard | Step-by-step guided learning experience |
+| Step | Single screen/state in the wizard, teaching one concept |
+| Concept | A learning unit (e.g., "particle emission rate") |
+| Tier | Complexity level: micro, medium, or advanced |
+| Annotation | Explanatory text linked to specific code lines |
+| Snippet | Extracted portion of source code for display |
+| Learning Panel | UI area showing explanations and code |
+| Demo Viewport | UI area showing the 3D rendering |
 
 ---
 
 ## Open Questions
 
-- [ ] Q1: What specific particle effects should be demonstrated?
-  - Impact: Affects ParticleDemo feature scope
-  - Owner: Developer
-  - Note: Suggest starting with simple fountain, then add trails and attractors
+- [x] Q1: How many micro-concepts exist in current demos?
+  - Answer: To be enumerated during story creation; architecture supports any number
+  - Note: PRD Q4 defers this to architecture phase; recommend starting with 5-7 per demo
 
-- [ ] Q2: Should fluid simulation be 2D (simpler) or 3D (more challenging)?
-  - Impact: Affects FluidDemo complexity and performance
+- [ ] Q2: Should annotations support interactive elements (e.g., "try this")?
+  - Impact: May require richer annotation schema
   - Owner: Developer
-  - Note: Recommend 2.5D (3D rendering of 2D simulation) as compromise
+  - Recommendation: Start with static text; add interactivity in future iteration
 
 ---
 
@@ -1028,7 +886,7 @@ src/
 
 | Role | Name | Date | Status |
 |------|------|------|--------|
-| Architect | Winston | 2025-12-25 | Complete |
+| Architect | Winston | 2025-12-27 | Complete |
 | Tech Lead | | | Pending |
 | Primary Stakeholder | | | Pending |
 
