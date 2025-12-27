@@ -1,7 +1,7 @@
 ---
 id: story-014
 title: "Code Snippet Engine with Syntax Highlighting"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-27

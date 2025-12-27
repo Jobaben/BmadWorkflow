@@ -1,7 +1,7 @@
 ---
 id: story-013
 title: "Wizard Core Types & Concept Registry"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-27
