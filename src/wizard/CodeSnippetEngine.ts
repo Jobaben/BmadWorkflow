@@ -10,7 +10,7 @@
  */
 
 import type { CodeSnippetRef, Annotation } from './types';
-import { extractLines, snippetToString, isLineFocused } from './SnippetExtractor';
+import { extractLines, snippetToString } from './SnippetExtractor';
 import {
   highlightCode,
   initializeHighlighter,

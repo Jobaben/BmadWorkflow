@@ -7,3 +7,15 @@
 
 export { CodeDisplay, injectCodeDisplayStyles, getCodeDisplayStyles } from './CodeDisplay';
 export type { CodeDisplayOptions } from './CodeDisplay';
+
+export {
+  WizardLayout,
+  injectWizardLayoutStyles,
+  getWizardLayoutStyles,
+} from './WizardLayout';
+
+export {
+  DemoViewport,
+  injectDemoViewportStyles,
+  getDemoViewportStyles,
+} from './DemoViewport';
