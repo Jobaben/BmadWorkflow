@@ -16,7 +16,7 @@ import {
   showWebGLFallback,
 } from './core';
 import { FPSDisplay, DemoSelector, ControlPanel } from './ui';
-import { ParticleDemo, ObjectDemo, FluidDemo } from './demos';
+import { ParticleDemo, ObjectDemo, FluidDemo, CombinedDemo } from './demos';
 
 // Import types and enums
 import { DemoType } from './types';
@@ -144,8 +144,7 @@ function init(): void {
   demos.set(DemoType.Particles, new ParticleDemo());
   demos.set(DemoType.Objects, new ObjectDemo());
   demos.set(DemoType.Fluid, new FluidDemo());
-  // Combined demo would require a CombinedDemo class - using Particles as placeholder
-  demos.set(DemoType.Combined, new ParticleDemo());
+  demos.set(DemoType.Combined, new CombinedDemo());
 
   // Initialize control panel
   const controlPanelContainer = document.getElementById('control-panel-container');
