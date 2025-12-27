@@ -1,12 +1,12 @@
 ---
 id: story-010
 title: "Control Panel"
-status: Ready
+status: Done
 priority: P2
 estimate: M
 created: 2025-12-25
-updated: 2025-12-25
-assignee:
+updated: 2025-12-26
+assignee: Claude Opus 4.5
 pr_link:
 epic: Integration & Polish
 depends_on: [story-005, story-007, story-008, story-009]
@@ -28,27 +28,27 @@ prd_requirement: FR-008
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Control panel shows parameters for active demo
+- [x] **AC1**: Control panel shows parameters for active demo
   - Given: A demo is selected
   - When: I view the control panel
   - Then: I see adjustable controls for that demo's parameters
 
-- [ ] **AC2**: Parameter changes take effect immediately
+- [x] **AC2**: Parameter changes take effect immediately
   - Given: A demo is running
   - When: I adjust a parameter value
   - Then: The demo behavior changes immediately
 
-- [ ] **AC3**: Different control types for different parameters
+- [x] **AC3**: Different control types for different parameters
   - Given: Various parameter types exist
   - When: I view controls
   - Then: Numbers have sliders, booleans have checkboxes, enums have dropdowns
 
-- [ ] **AC4**: Default values are visible
+- [x] **AC4**: Default values are visible
   - Given: Parameters have defaults
   - When: I view controls
   - Then: I can see or restore original values
 
-- [ ] **AC5**: Control panel updates when switching demos
+- [x] **AC5**: Control panel updates when switching demos
   - Given: Demo A is active with its controls
   - When: I switch to Demo B
   - Then: Controls update to show Demo B's parameters
@@ -61,49 +61,49 @@ prd_requirement: FR-008
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create ControlPanel class (AC: 1)
-  - [ ] Subtask 1.1: Create `src/ui/ControlPanel.ts`
-  - [ ] Subtask 1.2: Accept container element in constructor
-  - [ ] Subtask 1.3: Initialize lil-gui instance
+- [x] **Task 1**: Create ControlPanel class (AC: 1)
+  - [x] Subtask 1.1: Create `src/ui/ControlPanel.ts`
+  - [x] Subtask 1.2: Accept container element in constructor
+  - [x] Subtask 1.3: Initialize lil-gui instance
 
-- [ ] **Task 2**: Implement parameter schema rendering (AC: 1, 3)
-  - [ ] Subtask 2.1: Accept ParameterSchema array
-  - [ ] Subtask 2.2: Create slider for number types
-  - [ ] Subtask 2.3: Create checkbox for boolean types
-  - [ ] Subtask 2.4: Create dropdown for select types
-  - [ ] Subtask 2.5: Set min/max/step for sliders
+- [x] **Task 2**: Implement parameter schema rendering (AC: 1, 3)
+  - [x] Subtask 2.1: Accept ParameterSchema array
+  - [x] Subtask 2.2: Create slider for number types
+  - [x] Subtask 2.3: Create checkbox for boolean types
+  - [x] Subtask 2.4: Create dropdown for select types
+  - [x] Subtask 2.5: Set min/max/step for sliders
 
-- [ ] **Task 3**: Implement value change callbacks (AC: 2)
-  - [ ] Subtask 3.1: Emit events on value change
-  - [ ] Subtask 3.2: Ensure changes are synchronous
-  - [ ] Subtask 3.3: Debounce rapid slider movements
+- [x] **Task 3**: Implement value change callbacks (AC: 2)
+  - [x] Subtask 3.1: Emit events on value change
+  - [x] Subtask 3.2: Ensure changes are synchronous
+  - [x] Subtask 3.3: Debounce rapid slider movements
 
-- [ ] **Task 4**: Implement default value display (AC: 4)
-  - [ ] Subtask 4.1: Store default values from schema
-  - [ ] Subtask 4.2: Add "Reset to defaults" button
-  - [ ] Subtask 4.3: Emit reset event
+- [x] **Task 4**: Implement default value display (AC: 4)
+  - [x] Subtask 4.1: Store default values from schema
+  - [x] Subtask 4.2: Add "Reset to defaults" button
+  - [x] Subtask 4.3: Emit reset event
 
-- [ ] **Task 5**: Implement demo switching (AC: 5)
-  - [ ] Subtask 5.1: Create setParameters() method
-  - [ ] Subtask 5.2: Clear existing controls
-  - [ ] Subtask 5.3: Rebuild controls for new schema
+- [x] **Task 5**: Implement demo switching (AC: 5)
+  - [x] Subtask 5.1: Create setParameters() method
+  - [x] Subtask 5.2: Clear existing controls
+  - [x] Subtask 5.3: Rebuild controls for new schema
 
-- [ ] **Task 6**: Integrate with DemoController
-  - [ ] Subtask 6.1: Wire control panel to demo parameter updates
-  - [ ] Subtask 6.2: Update controls when demo switches
-  - [ ] Subtask 6.3: Test with Particle, Object, and Fluid demos
+- [x] **Task 6**: Integrate with DemoController
+  - [x] Subtask 6.1: Wire control panel to demo parameter updates
+  - [x] Subtask 6.2: Update controls when demo switches
+  - [x] Subtask 6.3: Test with Particle, Object, and Fluid demos
 
-- [ ] **Task 7**: Style the control panel
-  - [ ] Subtask 7.1: Position panel (top-right corner)
-  - [ ] Subtask 7.2: Ensure readable on dark background
-  - [ ] Subtask 7.3: Collapse/expand capability (lil-gui built-in)
+- [x] **Task 7**: Style the control panel
+  - [x] Subtask 7.1: Position panel (top-right corner)
+  - [x] Subtask 7.2: Ensure readable on dark background
+  - [x] Subtask 7.3: Collapse/expand capability (lil-gui built-in)
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify controls match parameter schema
-- [ ] **Test Task 2**: Verify changes affect demo immediately
-- [ ] **Test Task 3**: Verify controls update on demo switch
-- [ ] **Test Task 4**: Verify reset restores defaults
+- [x] **Test Task 1**: Verify controls match parameter schema
+- [x] **Test Task 2**: Verify changes affect demo immediately
+- [x] **Test Task 3**: Verify controls update on demo switch
+- [x] **Test Task 4**: Verify reset restores defaults
 
 ---
 
@@ -152,14 +152,14 @@ class ControlPanel {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -195,16 +195,19 @@ class ControlPanel {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5
+- **Session Date**: 2025-12-26
+- **Tasks Completed**: All 7 implementation tasks + 4 testing tasks
+- **Implementation Notes**: Created ControlPanel component using lil-gui library. Integrated with demo switching and parameter change callbacks. Added 26 unit tests covering all acceptance criteria.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used lil-gui's built-in features for control rendering: The library handles sliders, checkboxes, and dropdowns automatically based on parameter types
+- Implemented debouncing for number controls: Prevents excessive updates during rapid slider movements (16ms debounce delay)
+- Reset functionality emits both reset callback and individual parameter change callbacks: Ensures demos can respond to resets appropriately
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- lil-gui requires window.matchMedia: Added mock in test file to handle jsdom environment
+- Demo switching required clearing and recreating GUI: Implemented by destroying and recreating the GUI instance on setParameters()
 
 ---
 
@@ -213,10 +216,14 @@ class ControlPanel {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/ui/ControlPanel.ts` - ControlPanel component with lil-gui integration
+- `tests/ui/ControlPanel.test.ts` - 26 unit tests for ControlPanel
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/ui/index.ts` - Added ControlPanel export
+- `src/main.ts` - Integrated ControlPanel with demos and demo switching
+- `src/style.css` - Added CSS for control panel positioning and lil-gui styling
+- `index.html` - Added control-panel-container element
 
 ---
 
@@ -225,6 +232,10 @@ class ControlPanel {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-25 | - | Ready | Scrum | Created |
+| 2025-12-26 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-26 | In Progress | In Review | Dev | Implementation complete |
+| 2025-12-26 | In Review | QA Pass | QA | All acceptance criteria verified |
+| 2025-12-27 | QA Pass | Done | User | Story complete |
 
 ---
 

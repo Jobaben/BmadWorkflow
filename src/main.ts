@@ -6,8 +6,6 @@
  */
 
 import './style.css';
-import * as THREE from 'three';
-import GUI from 'lil-gui';
 import {
   DemoRenderer,
   SceneManager,
@@ -17,17 +15,18 @@ import {
   isWebGLAvailable,
   showWebGLFallback,
 } from './core';
-import { FPSDisplay, DemoSelector } from './ui';
+import { FPSDisplay, DemoSelector, ControlPanel } from './ui';
+import { ParticleDemo, ObjectDemo, FluidDemo } from './demos';
 
 // Import types and enums
 import { DemoType } from './types';
-import type { Demo, ParameterSchema, DemoInfo } from './types';
+import type { Demo, DemoInfo } from './types';
 
 /** Reference to the demo renderer for cleanup */
 let demoRenderer: DemoRenderer | null = null;
 
-/** Reference to the GUI for cleanup */
-let gui: GUI | null = null;
+/** Reference to the control panel for cleanup */
+let controlPanel: ControlPanel | null = null;
 
 /** Reference to the animation loop for cleanup */
 let animationLoop: AnimationLoop | null = null;
@@ -40,6 +39,56 @@ let inputManager: InputManager | null = null;
 
 /** Reference to the demo selector for cleanup */
 let demoSelector: DemoSelector | null = null;
+
+/** Reference to the scene manager */
+let sceneManager: SceneManager | null = null;
+
+/** Map of available demos */
+const demos: Map<DemoType, Demo> = new Map();
+
+/** Currently active demo */
+let activeDemo: Demo | null = null;
+
+/**
+ * Switches to a new demo.
+ * Stops the current demo, cleans up, and starts the new one.
+ *
+ * @param demoType - The type of demo to switch to
+ */
+function switchDemo(demoType: DemoType): void {
+  if (!sceneManager) return;
+
+  // Stop and remove current demo
+  if (activeDemo) {
+    activeDemo.stop();
+    const objects = activeDemo.getSceneObjects();
+    objects.forEach((obj) => sceneManager!.removeObject(obj));
+  }
+
+  // Get the new demo
+  const newDemo = demos.get(demoType);
+  if (!newDemo) {
+    console.warn(`Demo not found: ${demoType}`);
+    return;
+  }
+
+  // Set as active demo
+  activeDemo = newDemo;
+
+  // Add demo objects to scene
+  const objects = activeDemo.getSceneObjects();
+  objects.forEach((obj) => sceneManager!.addObject(obj));
+
+  // Start the demo
+  activeDemo.start();
+
+  // Update control panel with new demo's parameters
+  if (controlPanel) {
+    controlPanel.setParameters(activeDemo.getParameterSchema());
+  }
+
+  console.log(`Switched to demo: ${demoType}`);
+}
 
 /**
  * Initialize the application when the DOM is ready.
@@ -75,36 +124,13 @@ function init(): void {
   }
 
   // Initialize the scene manager
-  const sceneManager = new SceneManager();
+  sceneManager = new SceneManager();
 
   // Connect camera to renderer for resize updates
   demoRenderer.setCamera(sceneManager.getCamera());
 
-  // Add a simple cube to verify rendering is working
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x4a90d9,
-    roughness: 0.5,
-    metalness: 0.5,
-  });
-  const cube = new THREE.Mesh(geometry, material);
-  sceneManager.addObject(cube);
-
   // Initialize the input manager
   inputManager = new InputManager(canvas, sceneManager.getCamera());
-
-  // Add a helper cube that follows the mouse world position
-  const helperGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-  const helperMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff6b6b,
-    roughness: 0.3,
-    metalness: 0.7,
-    transparent: true,
-    opacity: 0.8,
-  });
-  const helperCube = new THREE.Mesh(helperGeometry, helperMaterial);
-  helperCube.position.z = 0; // On the z=0 plane
-  sceneManager.addObject(helperCube);
 
   // Create FPS monitor and display
   const fpsMonitor = new FPSMonitor();
@@ -114,24 +140,32 @@ function init(): void {
   // Create the animation loop
   animationLoop = new AnimationLoop();
 
-  // Create a simple GUI to control the cube
-  gui = new GUI();
-  const params = {
-    rotationSpeed: 0.01,
-    color: '#4a90d9',
-    showFPS: true,
-  };
-  gui.add(params, 'rotationSpeed', 0, 0.1).name('Rotation Speed');
-  gui.addColor(params, 'color').name('Color').onChange((value: string) => {
-    material.color.set(value);
-  });
-  gui.add(params, 'showFPS').name('Show FPS').onChange((value: boolean) => {
-    if (value) {
-      fpsDisplay?.show();
-    } else {
-      fpsDisplay?.hide();
-    }
-  });
+  // Initialize demos
+  demos.set(DemoType.Particles, new ParticleDemo());
+  demos.set(DemoType.Objects, new ObjectDemo());
+  demos.set(DemoType.Fluid, new FluidDemo());
+  // Combined demo would require a CombinedDemo class - using Particles as placeholder
+  demos.set(DemoType.Combined, new ParticleDemo());
+
+  // Initialize control panel
+  const controlPanelContainer = document.getElementById('control-panel-container');
+  if (controlPanelContainer) {
+    controlPanel = new ControlPanel(controlPanelContainer);
+
+    // Handle parameter changes
+    controlPanel.onParameterChange((key: string, value: unknown) => {
+      if (activeDemo) {
+        activeDemo.setParameter(key, value);
+      }
+    });
+
+    // Handle reset
+    controlPanel.onReset(() => {
+      if (activeDemo) {
+        activeDemo.reset();
+      }
+    });
+  }
 
   // Initialize demo selector
   const demoSelectorContainer = document.getElementById('demo-selector-container');
@@ -139,26 +173,23 @@ function init(): void {
     demoSelector = new DemoSelector(demoSelectorContainer);
 
     // Configure available demos
-    const demos: DemoInfo[] = [
+    const demoInfos: DemoInfo[] = [
       { id: DemoType.Particles, label: 'Particles', description: 'Particle system demonstration' },
       { id: DemoType.Objects, label: 'Objects', description: '3D object animation' },
       { id: DemoType.Fluid, label: 'Fluid', description: 'Fluid physics simulation' },
       { id: DemoType.Combined, label: 'Combined', description: 'All demos together' },
     ];
-    demoSelector.setDemos(demos);
-
-    // Set initial selection
-    demoSelector.setSelected(DemoType.Particles);
+    demoSelector.setDemos(demoInfos);
 
     // Handle demo selection changes
     demoSelector.onSelect((id: DemoType) => {
-      console.log('Demo selected:', id);
-      // TODO: Integrate with DemoController when available
+      switchDemo(id);
     });
-  }
 
-  // Track previous key state for logging changes
-  let previousKeysCount = 0;
+    // Set initial selection and switch to it
+    demoSelector.setSelected(DemoType.Particles);
+    switchDemo(DemoType.Particles);
+  }
 
   // Register the frame callback
   animationLoop.onFrame((deltaTime: number) => {
@@ -166,37 +197,19 @@ function init(): void {
     fpsMonitor.frame(deltaTime);
     fpsDisplay?.update();
 
-    // Get input state and update helper cube
-    if (inputManager) {
+    // Get input state and pass to active demo
+    if (inputManager && activeDemo) {
       const inputState = inputManager.getInputState();
-
-      // Update helper cube position to follow mouse world position
-      helperCube.position.x = inputState.mouseWorldPosition.x;
-      helperCube.position.y = inputState.mouseWorldPosition.y;
-
-      // Change color based on mouse button state
-      if (inputState.isMouseDown) {
-        helperMaterial.color.setHex(0x4ecdc4);
-      } else {
-        helperMaterial.color.setHex(0xff6b6b);
-      }
-
-      // Log keyboard state changes (only when keys change)
-      if (inputState.keysPressed.size !== previousKeysCount) {
-        if (inputState.keysPressed.size > 0) {
-          console.log('Keys pressed:', Array.from(inputState.keysPressed).join(', '));
-        }
-        previousKeysCount = inputState.keysPressed.size;
-      }
+      activeDemo.onInput(inputState);
     }
 
-    // Rotate the cube (frame-rate independent)
-    const rotationAmount = params.rotationSpeed * deltaTime * 60;
-    cube.rotation.x += rotationAmount;
-    cube.rotation.y += rotationAmount;
+    // Update active demo
+    if (activeDemo) {
+      activeDemo.update(deltaTime);
+    }
 
     // Render the scene
-    if (demoRenderer) {
+    if (demoRenderer && sceneManager) {
       demoRenderer.render(sceneManager.getScene());
     }
   });
@@ -206,12 +219,9 @@ function init(): void {
 
   // Log success message
   console.log('3D Animation Learning Foundation initialized successfully');
-  console.log('Three.js version:', THREE.REVISION);
-  console.log('Using DemoRenderer, SceneManager, AnimationLoop, and InputManager');
   console.log('Animation loop running:', animationLoop.isRunning());
-  console.log('Move mouse over canvas - red cube follows mouse position');
-  console.log('Click mouse - cube turns teal');
-  console.log('Press keys - watch console for key events');
+  console.log('Use the demo selector to switch between demos');
+  console.log('Adjust parameters in the control panel');
 }
 
 /**
@@ -222,6 +232,16 @@ function cleanup(): void {
     animationLoop.stop();
     animationLoop = null;
   }
+
+  // Dispose all demos
+  demos.forEach((demo) => {
+    if ('dispose' in demo && typeof demo.dispose === 'function') {
+      (demo as { dispose: () => void }).dispose();
+    }
+  });
+  demos.clear();
+  activeDemo = null;
+
   if (inputManager) {
     inputManager.dispose();
     inputManager = null;
@@ -234,14 +254,16 @@ function cleanup(): void {
     demoSelector.dispose();
     demoSelector = null;
   }
+  if (controlPanel) {
+    controlPanel.dispose();
+    controlPanel = null;
+  }
   if (demoRenderer) {
     demoRenderer.dispose();
     demoRenderer = null;
   }
-  if (gui) {
-    gui.destroy();
-    gui = null;
-  }
+
+  sceneManager = null;
 }
 
 // Initialize when DOM is ready
@@ -251,4 +273,4 @@ document.addEventListener('DOMContentLoaded', init);
 window.addEventListener('beforeunload', cleanup);
 
 // Export types to verify they're accessible
-export type { DemoType, Demo, ParameterSchema };
+export type { DemoType, Demo };
