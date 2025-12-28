@@ -42,3 +42,12 @@ export type { HighlightedCode } from './CodeSnippetEngine';
 
 // Source Registry
 export { sourceRegistry, getSourceFile, hasSourceFile, getAvailableSourceFiles } from './sourceRegistry';
+
+// Demo Adapter
+export { DemoAdapter } from './DemoAdapter';
+export type {
+  DemoFactory,
+  DemoAdapterEvent,
+  DemoAdapterEventListener,
+  DemoAdapterEventData,
+} from './DemoAdapter';

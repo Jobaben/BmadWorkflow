@@ -1,11 +1,11 @@
 ---
 id: story-018
 title: "Demo Adapter for Wizard Integration"
-status: Ready
+status: QA Pass
 priority: P0
 estimate: S
 created: 2025-12-27
-updated: 2025-12-27
+updated: 2025-12-28
 assignee:
 pr_link:
 epic: Wizard Core
@@ -28,27 +28,27 @@ prd_requirement: FR-007
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Adapter can load any demo type
+- [x] **AC1**: Adapter can load any demo type
   - Given: A wizard step specifies a demo type
   - When: loadDemoForStep is called
   - Then: The correct demo is loaded and ready
 
-- [ ] **AC2**: Adapter forwards parameter changes
+- [x] **AC2**: Adapter forwards parameter changes
   - Given: A demo is loaded
   - When: setParameter is called
   - Then: The underlying demo receives the parameter change
 
-- [ ] **AC3**: Adapter can reset the demo
+- [x] **AC3**: Adapter can reset the demo
   - Given: A demo is running with modifications
   - When: resetDemo is called
   - Then: The demo returns to initial state
 
-- [ ] **AC4**: Adapter provides scene objects
+- [x] **AC4**: Adapter provides scene objects
   - Given: A demo is loaded
   - When: getSceneObjects is called
   - Then: The demo's Three.js objects are returned for rendering
 
-- [ ] **AC5**: Adapter manages demo lifecycle
+- [x] **AC5**: Adapter manages demo lifecycle
   - Given: Switching between demos
   - When: A new demo is loaded
   - Then: The previous demo is properly stopped and cleaned up
@@ -61,45 +61,45 @@ prd_requirement: FR-007
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create DemoAdapter class (AC: 1, 5)
-  - [ ] Subtask 1.1: Create `src/wizard/DemoAdapter.ts`
-  - [ ] Subtask 1.2: Accept demo factories/constructors
-  - [ ] Subtask 1.3: Track currently active demo
-  - [ ] Subtask 1.4: Implement loadDemoForStep(step: WizardStep)
+- [x] **Task 1**: Create DemoAdapter class (AC: 1, 5)
+  - [x] Subtask 1.1: Create `src/wizard/DemoAdapter.ts`
+  - [x] Subtask 1.2: Accept demo factories/constructors
+  - [x] Subtask 1.3: Track currently active demo
+  - [x] Subtask 1.4: Implement loadDemoForStep(step: WizardStep)
 
-- [ ] **Task 2**: Implement demo switching (AC: 1, 5)
-  - [ ] Subtask 2.1: Stop current demo before switching
-  - [ ] Subtask 2.2: Clear current demo's scene objects
-  - [ ] Subtask 2.3: Create new demo instance
-  - [ ] Subtask 2.4: Start new demo
-  - [ ] Subtask 2.5: Emit demoLoaded event
+- [x] **Task 2**: Implement demo switching (AC: 1, 5)
+  - [x] Subtask 2.1: Stop current demo before switching
+  - [x] Subtask 2.2: Clear current demo's scene objects
+  - [x] Subtask 2.3: Create new demo instance
+  - [x] Subtask 2.4: Start new demo
+  - [x] Subtask 2.5: Emit demoLoaded event
 
-- [ ] **Task 3**: Implement parameter forwarding (AC: 2)
-  - [ ] Subtask 3.1: Implement setParameter(key: string, value: any)
-  - [ ] Subtask 3.2: Forward to active demo's setParameter
-  - [ ] Subtask 3.3: Handle parameter not found gracefully
+- [x] **Task 3**: Implement parameter forwarding (AC: 2)
+  - [x] Subtask 3.1: Implement setParameter(key: string, value: any)
+  - [x] Subtask 3.2: Forward to active demo's setParameter
+  - [x] Subtask 3.3: Handle parameter not found gracefully
 
-- [ ] **Task 4**: Implement reset functionality (AC: 3)
-  - [ ] Subtask 4.1: Implement resetDemo()
-  - [ ] Subtask 4.2: Call active demo's reset method
-  - [ ] Subtask 4.3: Reset parameters to defaults
+- [x] **Task 4**: Implement reset functionality (AC: 3)
+  - [x] Subtask 4.1: Implement resetDemo()
+  - [x] Subtask 4.2: Call active demo's reset method
+  - [x] Subtask 4.3: Reset parameters to defaults
 
-- [ ] **Task 5**: Implement scene object access (AC: 4)
-  - [ ] Subtask 5.1: Implement getSceneObjects(): Object3D[]
-  - [ ] Subtask 5.2: Return active demo's scene objects
-  - [ ] Subtask 5.3: Handle no demo loaded case
+- [x] **Task 5**: Implement scene object access (AC: 4)
+  - [x] Subtask 5.1: Implement getSceneObjects(): Object3D[]
+  - [x] Subtask 5.2: Return active demo's scene objects
+  - [x] Subtask 5.3: Handle no demo loaded case
 
-- [ ] **Task 6**: Implement input forwarding
-  - [ ] Subtask 6.1: Implement onInput(state: InputState)
-  - [ ] Subtask 6.2: Forward to active demo's onInput
-  - [ ] Subtask 6.3: Implement update(deltaTime: number)
+- [x] **Task 6**: Implement input forwarding
+  - [x] Subtask 6.1: Implement onInput(state: InputState)
+  - [x] Subtask 6.2: Forward to active demo's onInput
+  - [x] Subtask 6.3: Implement update(deltaTime: number)
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify demo loading works for all demo types
-- [ ] **Test Task 2**: Verify parameter changes reach demo
-- [ ] **Test Task 3**: Verify demo reset works
-- [ ] **Test Task 4**: Verify clean switching between demos
+- [x] **Test Task 1**: Verify demo loading works for all demo types
+- [x] **Test Task 2**: Verify parameter changes reach demo
+- [x] **Test Task 3**: Verify demo reset works
+- [x] **Test Task 4**: Verify clean switching between demos
 
 ---
 
@@ -138,14 +138,14 @@ class DemoAdapter {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -182,16 +182,19 @@ class DemoAdapter {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 6 implementation tasks and 4 testing tasks
+- **Implementation Notes**: Implemented DemoAdapter using the Adapter pattern to wrap existing demos. Uses factory functions for demo creation, enabling lazy instantiation. Added event system for demo lifecycle notifications. Handles edge cases like rapid switching, disposed state, and missing demos gracefully.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used Map<DemoType, DemoFactory> for demo registration to enable lazy instantiation
+- Added event system (demoLoaded, demoUnloaded, error) for lifecycle notifications
+- When same demo type is loaded again, reset instead of recreate for efficiency
+- Added helper methods (hasDemo, supportsDemoType, getSupportedDemoTypes) for better API
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- None significant - clean implementation following existing patterns
 
 ---
 
@@ -200,10 +203,11 @@ class DemoAdapter {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/wizard/DemoAdapter.ts` - DemoAdapter class with full demo lifecycle management
+- `tests/wizard/DemoAdapter.test.ts` - Unit tests (34 tests covering all acceptance criteria)
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/wizard/index.ts` - Added DemoAdapter exports
 
 ---
 
@@ -212,6 +216,9 @@ class DemoAdapter {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-27 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-28 | In Progress | In Review | Dev | Implementation complete, 34 tests passing |
+| 2025-12-28 | In Review | QA Pass | QA | All acceptance criteria verified |
 
 ---
 
