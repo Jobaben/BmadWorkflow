@@ -7,18 +7,16 @@
  * @see FR-001, FR-002, FR-003, FR-006
  */
 
+import { ComplexityTier } from '../wizard/types';
 import {
   ConceptRegistry,
   WizardStep,
 } from '../wizard';
 
 // Import step definitions from demo-specific files
-import {
-  particleSteps,
-  getMicroParticleSteps,
-  getMediumParticleSteps,
-  getAdvancedParticleSteps,
-} from './steps/particle-steps';
+import { particleSteps } from './steps/particle-steps';
+import { objectSteps } from './steps/object-steps';
+import { fluidSteps } from './steps/fluid-steps';
 
 // Re-export individual step collections for direct access
 export {
@@ -28,7 +26,21 @@ export {
   getAdvancedParticleSteps,
 } from './steps/particle-steps';
 
-// Re-export individual steps for testing/specific use
+export {
+  objectSteps,
+  getMicroObjectSteps,
+  getMediumObjectSteps,
+  getAdvancedObjectSteps,
+} from './steps/object-steps';
+
+export {
+  fluidSteps,
+  getMicroFluidSteps,
+  getMediumFluidSteps,
+  getAdvancedFluidSteps,
+} from './steps/fluid-steps';
+
+// Re-export individual particle steps for testing/specific use
 export {
   particleWhatIs,
   particleLifecycle,
@@ -45,15 +57,44 @@ export {
   particleComplete,
 } from './steps/particle-steps';
 
+// Re-export individual object steps for testing/specific use
+export {
+  objectTransformBasics,
+  objectMesh,
+  objectDeltaTime,
+  objectRotation,
+  objectOrbit,
+  objectBounce,
+  objectWave,
+  objectScale,
+  objectMultiType,
+  objectInputDriven,
+  objectGroups,
+} from './steps/object-steps';
+
+// Re-export individual fluid steps for testing/specific use
+export {
+  fluidWhatIsSPH,
+  fluidParticles,
+  fluidGravity,
+  fluidInstancedMesh,
+  fluidBoundaries,
+  fluidDensity,
+  fluidPressure,
+  fluidViscosity,
+  fluidSpatialHash,
+  fluidInteraction,
+  fluidPerformance,
+} from './steps/fluid-steps';
+
 /**
  * All wizard steps combined from all demos.
- * Currently includes particle steps only.
- * Object and fluid steps will be added in future stories.
+ * Includes particle, object, and fluid steps.
  */
 export const allSteps: WizardStep[] = [
   ...particleSteps,
-  // Future: ...objectSteps,
-  // Future: ...fluidSteps,
+  ...objectSteps,
+  ...fluidSteps,
 ];
 
 /**
@@ -70,13 +111,24 @@ export function getTotalStepCount(): number {
 }
 
 /**
- * Get step counts by tier.
+ * Get step counts by tier across all demos.
  */
 export function getStepCountsByTier(): { micro: number; medium: number; advanced: number } {
   return {
-    micro: getMicroParticleSteps().length,
-    medium: getMediumParticleSteps().length,
-    advanced: getAdvancedParticleSteps().length,
+    micro: allSteps.filter(s => s.tier === ComplexityTier.Micro).length,
+    medium: allSteps.filter(s => s.tier === ComplexityTier.Medium).length,
+    advanced: allSteps.filter(s => s.tier === ComplexityTier.Advanced).length,
+  };
+}
+
+/**
+ * Get step counts by demo type.
+ */
+export function getStepCountsByDemo(): { particle: number; object: number; fluid: number } {
+  return {
+    particle: particleSteps.length,
+    object: objectSteps.length,
+    fluid: fluidSteps.length,
   };
 }
 

@@ -279,9 +279,11 @@ describe('Particle Steps', () => {
 
 describe('Wizard Data Index', () => {
   describe('allSteps', () => {
-    it('should contain all particle steps', () => {
-      expect(allSteps).toHaveLength(13);
-      expect(allSteps).toEqual(particleSteps);
+    it('should contain all steps from all demos', () => {
+      // 13 particle + 11 object + 11 fluid = 35 total
+      expect(allSteps).toHaveLength(35);
+      // First 13 should be particle steps
+      expect(allSteps.slice(0, 13)).toEqual(particleSteps);
     });
   });
 
@@ -292,9 +294,10 @@ describe('Wizard Data Index', () => {
       expect(typeof wizardRegistry.getAllSteps).toBe('function');
     });
 
-    it('should contain all particle steps', () => {
+    it('should contain all steps from all demos', () => {
       const registeredSteps = wizardRegistry.getAllSteps();
-      expect(registeredSteps).toHaveLength(13);
+      // 13 particle + 11 object + 11 fluid = 35 total
+      expect(registeredSteps).toHaveLength(35);
     });
 
     it('should be able to retrieve steps by ID', () => {
@@ -304,27 +307,34 @@ describe('Wizard Data Index', () => {
     });
 
     it('should be able to get steps by tier', () => {
+      // Micro: 5 particle + 4 object + 4 fluid = 13
       const microSteps = wizardRegistry.getStepsByTier(ComplexityTier.Micro);
-      expect(microSteps).toHaveLength(5);
+      expect(microSteps).toHaveLength(13);
 
+      // Medium: 5 particle + 4 object + 4 fluid = 13
       const mediumSteps = wizardRegistry.getStepsByTier(ComplexityTier.Medium);
-      expect(mediumSteps).toHaveLength(5);
+      expect(mediumSteps).toHaveLength(13);
 
+      // Advanced: 3 particle + 3 object + 3 fluid = 9
       const advancedSteps = wizardRegistry.getStepsByTier(ComplexityTier.Advanced);
-      expect(advancedSteps).toHaveLength(3);
+      expect(advancedSteps).toHaveLength(9);
     });
   });
 
   describe('helper functions', () => {
-    it('getTotalStepCount should return 13', () => {
-      expect(getTotalStepCount()).toBe(13);
+    it('getTotalStepCount should return 35', () => {
+      // 13 particle + 11 object + 11 fluid = 35 total
+      expect(getTotalStepCount()).toBe(35);
     });
 
     it('getStepCountsByTier should return correct counts', () => {
       const counts = getStepCountsByTier();
-      expect(counts.micro).toBe(5);
-      expect(counts.medium).toBe(5);
-      expect(counts.advanced).toBe(3);
+      // Micro: 5 particle + 4 object + 4 fluid = 13
+      expect(counts.micro).toBe(13);
+      // Medium: 5 particle + 4 object + 4 fluid = 13
+      expect(counts.medium).toBe(13);
+      // Advanced: 3 particle + 3 object + 3 fluid = 9
+      expect(counts.advanced).toBe(9);
     });
   });
 
