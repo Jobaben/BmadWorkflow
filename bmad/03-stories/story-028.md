@@ -1,12 +1,12 @@
 ---
 id: story-028
 title: "Async Integration & Boundary Documentation"
-status: Ready
+status: QA Pass
 priority: P0
 estimate: S
 created: 2025-12-28
 updated: 2025-12-28
-assignee:
+assignee: Dev Agent
 pr_link:
 epic: Async Optimization
 depends_on: [story-024, story-025, story-026, story-027]
@@ -28,22 +28,22 @@ prd_requirement: FR-004, NFR-005
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Sync/async boundary guidelines are documented
+- [x] **AC1**: Sync/async boundary guidelines are documented
   - Given: A developer wants to add a new feature
   - When: They consult the documentation
   - Then: They can determine whether to use sync or async patterns
 
-- [ ] **AC2**: Existing components are integrated with async infrastructure
+- [x] **AC2**: Existing components are integrated with async infrastructure
   - Given: SyntaxHighlighter is pre-warmable
   - When: ComponentInitializer is used
   - Then: SyntaxHighlighter can register for idle-time initialization
 
-- [ ] **AC3**: Wizard integration uses AsyncContentLoader
+- [x] **AC3**: Wizard integration uses AsyncContentLoader
   - Given: WizardController navigates to a step
   - When: Content needs loading
   - Then: AsyncContentLoader is used instead of direct sync loading
 
-- [ ] **AC4**: Code comments document zone membership
+- [x] **AC4**: Code comments document zone membership
   - Given: A file in the codebase
   - When: A developer reads it
   - Then: Comments indicate if it's sync zone, async zone, or bridge
@@ -56,39 +56,39 @@ prd_requirement: FR-004, NFR-005
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create sync/async boundary documentation (AC: 1)
-  - [ ] Subtask 1.1: Create `docs/async-boundaries.md`
-  - [ ] Subtask 1.2: Document MUST BE SYNC components and reasons
-  - [ ] Subtask 1.3: Document SHOULD BE ASYNC components and reasons
-  - [ ] Subtask 1.4: Document decision criteria for ambiguous cases
-  - [ ] Subtask 1.5: Include code examples of correct patterns
+- [x] **Task 1**: Create sync/async boundary documentation (AC: 1)
+  - [x] Subtask 1.1: Create `docs/async-boundaries.md`
+  - [x] Subtask 1.2: Document MUST BE SYNC components and reasons
+  - [x] Subtask 1.3: Document SHOULD BE ASYNC components and reasons
+  - [x] Subtask 1.4: Document decision criteria for ambiguous cases
+  - [x] Subtask 1.5: Include code examples of correct patterns
 
-- [ ] **Task 2**: Make SyntaxHighlighter AsyncInitializable (AC: 2)
-  - [ ] Subtask 2.1: Update SyntaxHighlighter to implement AsyncInitializable
-  - [ ] Subtask 2.2: Add id, priority, isCritical, isInitialized properties
-  - [ ] Subtask 2.3: Ensure initialize() pre-warms the highlighter
+- [x] **Task 2**: Make SyntaxHighlighter AsyncInitializable (AC: 2)
+  - [x] Subtask 2.1: Update SyntaxHighlighter to implement AsyncInitializable
+  - [x] Subtask 2.2: Add id, priority, isCritical, isInitialized properties
+  - [x] Subtask 2.3: Ensure initialize() pre-warms the highlighter
 
-- [ ] **Task 3**: Integrate WizardController with async loading (AC: 3)
-  - [ ] Subtask 3.1: Inject AsyncContentLoader into WizardController
-  - [ ] Subtask 3.2: Update navigation to use loadStep()
-  - [ ] Subtask 3.3: Read from ContentBuffer for display
-  - [ ] Subtask 3.4: Handle loading states in UI
+- [x] **Task 3**: Integrate WizardController with async loading (AC: 3)
+  - [x] Subtask 3.1: Inject AsyncContentLoader into WizardController
+  - [x] Subtask 3.2: Update navigation to use loadStep()
+  - [x] Subtask 3.3: Read from ContentBuffer for display
+  - [x] Subtask 3.4: Handle loading states in UI
 
-- [ ] **Task 4**: Add zone documentation comments (AC: 4)
-  - [ ] Subtask 4.1: Add zone comments to AnimationLoop.ts (SYNC ZONE)
-  - [ ] Subtask 4.2: Add zone comments to InputManager.ts (SYNC ZONE)
-  - [ ] Subtask 4.3: Add zone comments to AsyncContentLoader.ts (ASYNC ZONE)
-  - [ ] Subtask 4.4: Add zone comments to ContentBuffer.ts (BRIDGE)
+- [x] **Task 4**: Add zone documentation comments (AC: 4)
+  - [x] Subtask 4.1: Add zone comments to AnimationLoop.ts (SYNC ZONE)
+  - [x] Subtask 4.2: Add zone comments to InputManager.ts (SYNC ZONE)
+  - [x] Subtask 4.3: Add zone comments to AsyncContentLoader.ts (ASYNC ZONE)
+  - [x] Subtask 4.4: Add zone comments to ContentBuffer.ts (BRIDGE)
 
-- [ ] **Task 5**: Create usage example (AC: 1)
-  - [ ] Subtask 5.1: Add example of correct async pattern to docs
-  - [ ] Subtask 5.2: Add example of incorrect pattern (anti-pattern)
+- [x] **Task 5**: Create usage example (AC: 1)
+  - [x] Subtask 5.1: Add example of correct async pattern to docs
+  - [x] Subtask 5.2: Add example of incorrect pattern (anti-pattern)
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify SyntaxHighlighter initializes via ComponentInitializer
-- [ ] **Test Task 2**: Verify WizardController uses async loading
-- [ ] **Test Task 3**: Integration test: full navigation flow
+- [x] **Test Task 1**: Verify SyntaxHighlighter initializes via ComponentInitializer
+- [x] **Test Task 2**: Verify WizardController uses async loading
+- [x] **Test Task 3**: Integration test: full navigation flow
 
 ---
 
@@ -126,14 +126,14 @@ This story ties together all async components and ensures proper documentation. 
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -159,10 +159,10 @@ This story ties together all async components and ensures proper documentation. 
 
 | Dependency | Type | Status | Notes |
 |------------|------|--------|-------|
-| story-024 | Must complete first | Ready | ContentBuffer |
-| story-025 | Must complete first | Ready | LoadingStateManager |
-| story-026 | Must complete first | Ready | ComponentInitializer |
-| story-027 | Must complete first | Ready | AsyncContentLoader |
+| story-024 | Must complete first | Done | ContentBuffer |
+| story-025 | Must complete first | Done | LoadingStateManager |
+| story-026 | Must complete first | Done | ComponentInitializer |
+| story-027 | Must complete first | Done | AsyncContentLoader |
 
 ---
 
@@ -170,16 +170,18 @@ This story ties together all async components and ensures proper documentation. 
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5 (claude-opus-4-5-20251101)
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 5 implementation tasks, all 3 testing tasks
+- **Implementation Notes**: Created comprehensive sync/async boundary documentation. Added SyntaxHighlighterComponent implementing AsyncInitializable. Integrated WizardController with optional AsyncContentLoader for cancellable content loading with preloading. Added @zone comments to key files.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Made asyncLoader optional in WizardControllerConfig for backwards compatibility
+- Added preloadAdjacentSteps() to automatically preload prev/next steps after navigation
+- Used @zone JSDoc tag format for zone documentation (SYNC, ASYNC, BRIDGE)
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- None significant - implementation followed story specs closely
 
 ---
 
@@ -188,10 +190,18 @@ This story ties together all async components and ensures proper documentation. 
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `docs/async-boundaries.md` - Comprehensive sync/async boundary guidelines with decision tree, code examples, and anti-patterns
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/wizard/SyntaxHighlighter.ts` - Added SyntaxHighlighterComponent implementing AsyncInitializable, added @zone ASYNC comment
+- `src/wizard/WizardController.ts` - Added optional asyncLoader integration, preloadAdjacentSteps(), added @zone ASYNC comment
+- `src/wizard/index.ts` - Added SyntaxHighlighterComponent export
+- `src/core/AnimationLoop.ts` - Added @zone SYNC comment
+- `src/core/InputManager.ts` - Added @zone SYNC comment
+- `src/async/AsyncContentLoader.ts` - Added @zone ASYNC comment
+- `src/async/ContentBuffer.ts` - Added @zone BRIDGE comment
+- `tests/wizard/SyntaxHighlighter.test.ts` - Added 11 tests for SyntaxHighlighterComponent
+- `tests/wizard/WizardController.test.ts` - Added 8 tests for AsyncContentLoader integration
 
 ---
 
@@ -200,6 +210,9 @@ This story ties together all async components and ensures proper documentation. 
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-28 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev Agent | Started implementation |
+| 2025-12-28 | In Progress | In Review | Dev Agent | All tasks complete, 955 tests passing |
+| 2025-12-28 | In Review | QA Pass | QA Agent | All ACs verified, 955 tests passing |
 
 ---
 

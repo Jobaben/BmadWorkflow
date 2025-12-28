@@ -19,6 +19,8 @@ import type { CodeSnippetEngine, HighlightedCode } from '../../src/wizard/CodeSn
 import type { DemoAdapter } from '../../src/wizard/DemoAdapter';
 import type { WizardNavigator } from '../../src/wizard-ui/WizardNavigator';
 import type { LearningPanel } from '../../src/wizard-ui/LearningPanel';
+import type { AsyncContentLoader } from '../../src/async/AsyncContentLoader';
+import type { StepContent } from '../../src/async/types';
 import { DemoType } from '../../src/types';
 
 // Helper to create mock WizardStep
@@ -554,6 +556,169 @@ describe('WizardController', () => {
         controller.dispose();
         controller.dispose();
       }).not.toThrow();
+    });
+  });
+});
+
+/**
+ * story-028 AC3: Wizard integration uses AsyncContentLoader
+ *
+ * Tests that WizardController properly integrates with AsyncContentLoader
+ * when provided.
+ */
+describe('WizardController with AsyncContentLoader (story-028 AC3)', () => {
+  let controller: WizardController;
+  let config: ReturnType<typeof createMockConfig>;
+  let testSteps: WizardStep[];
+  let mockAsyncLoader: {
+    loadStep: ReturnType<typeof vi.fn>;
+    preloadSteps: ReturnType<typeof vi.fn>;
+  };
+
+  function createMockAsyncLoader() {
+    const mockContent: StepContent = {
+      stepId: 'step-1',
+      snippets: [
+        {
+          html: '<code>async loaded</code>',
+          plainText: 'async loaded',
+          lineCount: 5,
+          annotations: [],
+        },
+      ],
+      annotations: [],
+      loadedAt: Date.now(),
+    };
+
+    return {
+      loadStep: vi.fn((stepId: string) => {
+        return Promise.resolve({
+          ...mockContent,
+          stepId,
+        });
+      }),
+      preloadSteps: vi.fn(),
+      cancelPending: vi.fn(),
+      hasContent: vi.fn().mockReturnValue(false),
+      getContent: vi.fn().mockReturnValue(undefined),
+      isLoading: vi.fn().mockReturnValue(false),
+      onLoadStart: vi.fn(),
+      offLoadStart: vi.fn(),
+      onLoadComplete: vi.fn(),
+      offLoadComplete: vi.fn(),
+      onLoadError: vi.fn(),
+      offLoadError: vi.fn(),
+      dispose: vi.fn(),
+    };
+  }
+
+  beforeEach(() => {
+    testSteps = [
+      createMockStep('step-1', 1),
+      createMockStep('step-2', 2),
+      createMockStep('step-3', 3),
+    ];
+    config = createMockConfig(testSteps);
+    mockAsyncLoader = createMockAsyncLoader();
+    controller = new WizardController({
+      ...config,
+      asyncLoader: mockAsyncLoader as unknown as AsyncContentLoader,
+    });
+  });
+
+  afterEach(() => {
+    controller.dispose();
+  });
+
+  describe('loadStep integration', () => {
+    it('should use AsyncContentLoader.loadStep when available', async () => {
+      await controller.start();
+
+      expect(mockAsyncLoader.loadStep).toHaveBeenCalledWith('step-1');
+      // Should NOT use direct engine calls
+      expect(config.mockEngine.getSnippet).not.toHaveBeenCalled();
+    });
+
+    it('should use AsyncContentLoader for navigation', async () => {
+      await controller.start();
+      mockAsyncLoader.loadStep.mockClear();
+
+      await controller.goToStep('step-2');
+
+      expect(mockAsyncLoader.loadStep).toHaveBeenCalledWith('step-2');
+    });
+
+    it('should pass loaded content to panel', async () => {
+      await controller.start();
+
+      expect(config.mockPanel.renderStep).toHaveBeenCalled();
+      const callArgs = config.mockPanel.renderStep.mock.calls[0];
+      expect(callArgs[0].id).toBe('step-1');
+      // Second argument is the highlighted code array
+      expect(callArgs[1]).toBeDefined();
+    });
+  });
+
+  describe('preloadSteps integration', () => {
+    it('should preload adjacent steps after navigation', async () => {
+      await controller.start();
+
+      // Should preload step-2 (next)
+      expect(mockAsyncLoader.preloadSteps).toHaveBeenCalled();
+      const preloadedSteps = mockAsyncLoader.preloadSteps.mock.calls[0][0];
+      expect(preloadedSteps).toContain('step-2');
+    });
+
+    it('should preload both prev and next steps', async () => {
+      await controller.start();
+      mockAsyncLoader.preloadSteps.mockClear();
+
+      await controller.goToStep('step-2');
+
+      const preloadedSteps = mockAsyncLoader.preloadSteps.mock.calls[0][0];
+      expect(preloadedSteps).toContain('step-1'); // previous
+      expect(preloadedSteps).toContain('step-3'); // next
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle AbortError gracefully', async () => {
+      const abortError = new DOMException('Aborted', 'AbortError');
+      mockAsyncLoader.loadStep.mockRejectedValueOnce(abortError);
+
+      await controller.start();
+
+      // Should not throw
+      expect(config.mockPanel.renderStep).toHaveBeenCalled();
+      // Should receive empty snippets array due to abort
+      const callArgs = config.mockPanel.renderStep.mock.calls[0];
+      expect(callArgs[1]).toEqual([]);
+    });
+
+    it('should handle load errors and log them', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const loadError = new Error('Load failed');
+      mockAsyncLoader.loadStep.mockRejectedValueOnce(loadError);
+
+      await controller.start();
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Error loading step'),
+        expect.anything()
+      );
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('fallback behavior', () => {
+    it('should use direct engine calls when asyncLoader is not provided', async () => {
+      // Create controller without asyncLoader
+      const controllerWithoutAsync = new WizardController(config);
+
+      await controllerWithoutAsync.start();
+
+      expect(config.mockEngine.getSnippet).toHaveBeenCalled();
+      controllerWithoutAsync.dispose();
     });
   });
 });

@@ -7,8 +7,16 @@
  * Implements the Mediator pattern to decouple wizard components.
  * Navigation methods are async due to code snippet loading.
  *
+ * @zone ASYNC
+ * @reason Navigation triggers async content loading via AsyncContentLoader
+ *
+ * This controller coordinates between async loading (AsyncContentLoader) and
+ * sync display (LearningPanel, WizardNavigator). Content is loaded async and
+ * stored in ContentBuffer for sync access during render.
+ *
  * @see FR-001 (Wizard Navigation)
  * @see FR-004 (Flexible Navigation)
+ * @see story-028 AC3: Wizard integration uses AsyncContentLoader
  */
 
 import type { WizardStep } from './types';
@@ -17,6 +25,8 @@ import type { CodeSnippetEngine, HighlightedCode } from './CodeSnippetEngine';
 import type { DemoAdapter } from './DemoAdapter';
 import type { WizardNavigator } from '../wizard-ui/WizardNavigator';
 import type { LearningPanel } from '../wizard-ui/LearningPanel';
+import type { AsyncContentLoader } from '../async/AsyncContentLoader';
+import type { StepContent } from '../async/types';
 
 /**
  * Event emitted when the wizard step changes.
@@ -47,6 +57,14 @@ export interface WizardControllerConfig {
   panel: LearningPanel;
   /** Engine for retrieving code snippets */
   engine: CodeSnippetEngine;
+  /**
+   * Optional async content loader for optimized content loading.
+   * When provided, content is loaded via AsyncContentLoader with
+   * cancellation support and ContentBuffer caching.
+   *
+   * @see story-028 AC3: Wizard integration uses AsyncContentLoader
+   */
+  asyncLoader?: AsyncContentLoader;
 }
 
 /**
@@ -92,6 +110,14 @@ export class WizardController {
   /** Code snippet engine */
   private readonly engine: CodeSnippetEngine;
 
+  /**
+   * Optional async content loader for optimized loading.
+   * When provided, uses AsyncContentLoader instead of direct engine calls.
+   *
+   * @see story-028 AC3: Wizard integration uses AsyncContentLoader
+   */
+  private readonly asyncLoader?: AsyncContentLoader;
+
   /** Current step ID */
   private currentStepId: string | null = null;
 
@@ -127,6 +153,7 @@ export class WizardController {
     this.navigator = config.navigator;
     this.panel = config.panel;
     this.engine = config.engine;
+    this.asyncLoader = config.asyncLoader;
 
     // Create bound handler for navigator
     this.boundNavigateHandler = (stepId: string) => {
@@ -225,6 +252,9 @@ export class WizardController {
 
       // Emit step change event
       this.emitStepChange(previousStep, targetStep);
+
+      // Preload adjacent steps if using async loader (story-028 AC3)
+      this.preloadAdjacentSteps(stepId);
     } finally {
       this.isNavigating = false;
     }
@@ -422,8 +452,27 @@ export class WizardController {
 
   /**
    * Load code snippets for a step.
+   * Uses AsyncContentLoader if available, otherwise falls back to direct engine calls.
+   *
+   * @see story-028 AC3: Wizard integration uses AsyncContentLoader
    */
   private async loadCodeSnippets(step: WizardStep): Promise<HighlightedCode[]> {
+    // Use AsyncContentLoader if available (story-028 AC3)
+    if (this.asyncLoader) {
+      try {
+        const content: StepContent = await this.asyncLoader.loadStep(step.id);
+        return content.snippets;
+      } catch (error) {
+        // Handle abort gracefully
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return [];
+        }
+        console.error(`WizardController: Error loading step ${step.id}:`, error);
+        return [];
+      }
+    }
+
+    // Fallback to direct engine calls (backwards compatibility)
     const snippets: HighlightedCode[] = [];
 
     for (const ref of step.codeSnippets) {
@@ -437,6 +486,34 @@ export class WizardController {
     }
 
     return snippets;
+  }
+
+  /**
+   * Preload adjacent steps for smoother navigation.
+   * Uses AsyncContentLoader's preloadSteps() to load during idle time.
+   *
+   * @see story-028 AC3: Wizard integration uses AsyncContentLoader
+   */
+  private preloadAdjacentSteps(currentStepId: string): void {
+    if (!this.asyncLoader) {
+      return;
+    }
+
+    const adjacentStepIds: string[] = [];
+
+    const nextStep = this.registry.getNextStep(currentStepId);
+    if (nextStep) {
+      adjacentStepIds.push(nextStep.id);
+    }
+
+    const prevStep = this.registry.getPreviousStep(currentStepId);
+    if (prevStep) {
+      adjacentStepIds.push(prevStep.id);
+    }
+
+    if (adjacentStepIds.length > 0) {
+      this.asyncLoader.preloadSteps(adjacentStepIds);
+    }
   }
 
   /**

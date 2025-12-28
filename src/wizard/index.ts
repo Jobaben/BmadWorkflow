@@ -33,6 +33,7 @@ export {
   initializeHighlighter,
   disposeHighlighter,
   isHighlighterReady,
+  SyntaxHighlighterComponent,
 } from './SyntaxHighlighter';
 export type { HighlightOptions, HighlightResult } from './SyntaxHighlighter';
 

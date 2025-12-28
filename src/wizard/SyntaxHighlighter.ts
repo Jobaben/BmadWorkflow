@@ -4,12 +4,20 @@
  * Provides VSCode-quality syntax highlighting using Shiki.
  * Supports TypeScript and JavaScript with customizable themes.
  *
+ * @zone ASYNC
+ * @reason Shiki highlighter initialization is async and expensive
+ *
+ * This module can be pre-warmed during idle time via ComponentInitializer.
+ * The highlightCode() function is async but results can be cached in ContentBuffer.
+ *
  * @see ADR-003 (Static Syntax Highlighting with Shiki)
  * @see FR-002 (Code Snippet Display)
  * @see AC2 (Code is syntax highlighted)
+ * @see story-028 (Async Integration)
  */
 
 import { createHighlighter, type Highlighter, type BundledTheme } from 'shiki';
+import type { AsyncInitializable } from '../async/types';
 
 /**
  * Options for syntax highlighting.
@@ -190,4 +198,52 @@ export function disposeHighlighter(): void {
  */
 export function isHighlighterReady(): boolean {
   return highlighterInstance !== null;
+}
+
+/**
+ * SyntaxHighlighterComponent implements AsyncInitializable for idle-time pre-warming.
+ * Register this with ComponentInitializer to initialize the Shiki highlighter
+ * during idle time before it's needed.
+ *
+ * @example
+ * ```typescript
+ * const highlighter = new SyntaxHighlighterComponent();
+ * componentInitializer.register(highlighter);
+ * componentInitializer.initializeAll();
+ * ```
+ *
+ * @see story-028 AC2: SyntaxHighlighter can register for idle-time initialization
+ */
+export class SyntaxHighlighterComponent implements AsyncInitializable {
+  /** Unique identifier for this component */
+  readonly id = 'syntax-highlighter';
+
+  /**
+   * Priority for initialization order.
+   * Lower numbers initialize first. Set to 1 (high priority) because
+   * syntax highlighting is needed early in the wizard experience.
+   */
+  readonly priority = 1;
+
+  /**
+   * Whether this component is critical.
+   * Set to true because syntax highlighting is essential for the learning experience.
+   */
+  readonly isCritical = true;
+
+  /**
+   * Whether the highlighter has been initialized.
+   * Uses the module-level isHighlighterReady() function.
+   */
+  get isInitialized(): boolean {
+    return isHighlighterReady();
+  }
+
+  /**
+   * Initialize the Shiki highlighter.
+   * This can be called during idle time to pre-warm the highlighter.
+   */
+  async initialize(): Promise<void> {
+    await initializeHighlighter();
+  }
 }

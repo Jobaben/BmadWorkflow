@@ -4,6 +4,15 @@
  * Manages the render/update cycle using requestAnimationFrame.
  * Provides consistent delta time calculation with frame capping
  * to prevent physics issues when returning from inactive tabs.
+ *
+ * @zone SYNC
+ * @reason Animation frame callback - 16ms budget per frame
+ *
+ * This file contains synchronous-only code. DO NOT use async/await.
+ * All callbacks registered via onFrame() must complete within the frame budget.
+ * If data is not ready, show a placeholder instead of blocking.
+ *
+ * @see docs/async-boundaries.md for sync/async boundary guidelines
  */
 
 /** Maximum delta time (seconds) to prevent physics explosion after tab switch */
