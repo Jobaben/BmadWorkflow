@@ -1,12 +1,12 @@
 ---
 id: story-025
 title: "LoadingStateManager - Threshold Loading Indicators"
-status: Ready
+status: QA Pass
 priority: P0
 estimate: S
 created: 2025-12-28
 updated: 2025-12-28
-assignee:
+assignee: Dev Agent
 pr_link:
 epic: Async Optimization
 depends_on: []
@@ -28,27 +28,27 @@ prd_requirement: FR-002, NFR-004
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Loading indicators delayed by 100ms threshold
+- [x] **AC1**: Loading indicators delayed by 100ms threshold
   - Given: An async operation starts
   - When: The operation takes >100ms
   - Then: Loading indicator is shown after 100ms
 
-- [ ] **AC2**: Fast operations show no indicator
+- [x] **AC2**: Fast operations show no indicator
   - Given: An async operation starts
   - When: The operation completes within 100ms
   - Then: No loading indicator is ever shown
 
-- [ ] **AC3**: Indicators clear immediately on completion
+- [x] **AC3**: Indicators clear immediately on completion
   - Given: Loading indicator is visible
   - When: The operation completes
   - Then: Indicator is hidden immediately (no delay)
 
-- [ ] **AC4**: Multiple concurrent loading states supported
+- [x] **AC4**: Multiple concurrent loading states supported
   - Given: Multiple async operations in progress
   - When: Each has unique ID
   - Then: Each is tracked independently
 
-- [ ] **AC5**: Navigation clears pending indicators
+- [x] **AC5**: Navigation clears pending indicators
   - Given: Loading is in progress
   - When: User navigates away
   - Then: Pending indicators are cleared
@@ -61,32 +61,32 @@ prd_requirement: FR-002, NFR-004
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create LoadingState type (AC: 4)
-  - [ ] Subtask 1.1: Add LoadingState to `src/async/types.ts`
-  - [ ] Subtask 1.2: Define id, startTime, timeoutId, isVisible fields
+- [x] **Task 1**: Create LoadingState type (AC: 4)
+  - [x] Subtask 1.1: Add LoadingState to `src/async/types.ts`
+  - [x] Subtask 1.2: Define id, startTime, timeoutId, isVisible fields
 
-- [ ] **Task 2**: Create LoadingStateManager class (AC: 1, 2, 3, 4)
-  - [ ] Subtask 2.1: Create `src/async/LoadingStateManager.ts`
-  - [ ] Subtask 2.2: Implement startLoading(id) with 100ms setTimeout
-  - [ ] Subtask 2.3: Implement stopLoading(id) with immediate clear
-  - [ ] Subtask 2.4: Implement isLoading(id) query method
-  - [ ] Subtask 2.5: Add onShowIndicator callback support
-  - [ ] Subtask 2.6: Add onHideIndicator callback support
+- [x] **Task 2**: Create LoadingStateManager class (AC: 1, 2, 3, 4)
+  - [x] Subtask 2.1: Create `src/async/LoadingStateManager.ts`
+  - [x] Subtask 2.2: Implement startLoading(id) with 100ms setTimeout
+  - [x] Subtask 2.3: Implement stopLoading(id) with immediate clear
+  - [x] Subtask 2.4: Implement isLoading(id) query method
+  - [x] Subtask 2.5: Add onShowIndicator callback support
+  - [x] Subtask 2.6: Add onHideIndicator callback support
 
-- [ ] **Task 3**: Implement cleanup (AC: 5)
-  - [ ] Subtask 3.1: Implement clearAll() method
-  - [ ] Subtask 3.2: Clear pending timeouts on stopLoading
-  - [ ] Subtask 3.3: Add dispose() for cleanup
+- [x] **Task 3**: Implement cleanup (AC: 5)
+  - [x] Subtask 3.1: Implement clearAll() method
+  - [x] Subtask 3.2: Clear pending timeouts on stopLoading
+  - [x] Subtask 3.3: Add dispose() for cleanup
 
-- [ ] **Task 4**: Export from async module (AC: 1)
-  - [ ] Subtask 4.1: Add export to `src/async/index.ts`
+- [x] **Task 4**: Export from async module (AC: 1)
+  - [x] Subtask 4.1: Add export to `src/async/index.ts`
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Test 100ms threshold behavior
-- [ ] **Test Task 2**: Test fast operation (no indicator flash)
-- [ ] **Test Task 3**: Test immediate clear on completion
-- [ ] **Test Task 4**: Test concurrent loading states
+- [x] **Test Task 1**: Test 100ms threshold behavior
+- [x] **Test Task 2**: Test fast operation (no indicator flash)
+- [x] **Test Task 3**: Test immediate clear on completion
+- [x] **Test Task 4**: Test concurrent loading states
 
 ---
 
@@ -135,14 +135,14 @@ class LoadingStateManager {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -176,16 +176,19 @@ class LoadingStateManager {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5 (claude-opus-4-5-20251101)
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 4 implementation tasks, all 4 testing tasks
+- **Implementation Notes**: Created LoadingStateManager following existing ContentBuffer patterns. Used Map for O(1) state lookup, Set for callback storage to ensure uniqueness.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used `ReturnType<typeof setTimeout>` for timeoutId type for cross-platform compatibility
+- Added `isIndicatorVisible(id)` helper method beyond API contract for convenience
+- Added `activeCount` getter for debugging/monitoring purposes
+- Used default threshold of 100ms with constructor parameter for customization
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- None - straightforward implementation following existing patterns
 
 ---
 
@@ -194,10 +197,12 @@ class LoadingStateManager {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/async/LoadingStateManager.ts` - LoadingStateManager class implementation with threshold-based loading indicators
+- `tests/async/LoadingStateManager.test.ts` - Comprehensive test suite with 39 tests covering all acceptance criteria and edge cases
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/async/types.ts` - Added LoadingState interface
+- `src/async/index.ts` - Added exports for LoadingStateManager and LoadingState type
 
 ---
 
@@ -206,6 +211,9 @@ class LoadingStateManager {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-28 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev Agent | Started implementation |
+| 2025-12-28 | In Progress | In Review | Dev Agent | All tasks complete, 39 tests passing, ready for QA |
+| 2025-12-28 | In Review | QA Pass | QA Agent | All ACs verified, code quality approved, ready for ship |
 
 ---
 
