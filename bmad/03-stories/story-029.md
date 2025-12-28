@@ -1,7 +1,7 @@
 ---
 id: story-029
 title: "Wizard UI Integration & Mode Toggle"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-28
@@ -294,6 +294,7 @@ Per PRD: **No changes to wizard/* or async/* internals**. This story only wires 
 | 2025-12-28 | Ready | In Progress | Dev Agent | Started implementation |
 | 2025-12-28 | In Progress | In Review | Dev Agent | All tasks complete, 977 tests passing |
 | 2025-12-28 | In Review | QA Pass | QA Agent | All ACs verified, 977 tests passing |
+| 2025-12-28 | QA Pass | Done | Ship | Merged PR #39 to main |
 
 ---
 
