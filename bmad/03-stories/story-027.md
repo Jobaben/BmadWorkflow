@@ -1,12 +1,12 @@
 ---
 id: story-027
 title: "AsyncContentLoader - Wizard Content Pipeline"
-status: Ready
+status: QA Pass
 priority: P0
 estimate: M
 created: 2025-12-28
 updated: 2025-12-28
-assignee:
+assignee: Dev Agent
 pr_link:
 epic: Async Optimization
 depends_on: [story-024, story-025]
@@ -28,32 +28,32 @@ prd_requirement: FR-001, NFR-002
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Content loads asynchronously without blocking animation
+- [x] **AC1**: Content loads asynchronously without blocking animation
   - Given: Animation is running at 60fps
   - When: User navigates to a new wizard step
   - Then: Animation continues smoothly during content load
 
-- [ ] **AC2**: Pending loads are cancellable
+- [x] **AC2**: Pending loads are cancellable
   - Given: Content load is in progress
   - When: User navigates to a different step
   - Then: Previous load is cancelled (AbortController)
 
-- [ ] **AC3**: Race conditions are prevented
+- [x] **AC3**: Race conditions are prevented
   - Given: User rapidly clicks through steps
   - When: Multiple loads are triggered
   - Then: Only the latest navigation result is used
 
-- [ ] **AC4**: Loaded content is stored in ContentBuffer
+- [x] **AC4**: Loaded content is stored in ContentBuffer
   - Given: Content finishes loading
   - When: The promise resolves
   - Then: Content is written to ContentBuffer for sync access
 
-- [ ] **AC5**: Loading state is coordinated with LoadingStateManager
+- [x] **AC5**: Loading state is coordinated with LoadingStateManager
   - Given: Content load starts/completes
   - When: The operation progresses
   - Then: LoadingStateManager is notified
 
-- [ ] **AC6**: Content preloading is supported
+- [x] **AC6**: Content preloading is supported
   - Given: User is on step N
   - When: Idle time is available
   - Then: Steps N+1, N-1 can be preloaded
@@ -66,46 +66,46 @@ prd_requirement: FR-001, NFR-002
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create StepContent type (AC: 4)
-  - [ ] Subtask 1.1: Add StepContent to `src/async/types.ts`
-  - [ ] Subtask 1.2: Include snippets, annotations, metadata
+- [x] **Task 1**: Create StepContent type (AC: 4)
+  - [x] Subtask 1.1: Add StepContent to `src/async/types.ts`
+  - [x] Subtask 1.2: Include snippets, annotations, metadata
 
-- [ ] **Task 2**: Create AsyncContentLoader class (AC: 1, 4)
-  - [ ] Subtask 2.1: Create `src/async/AsyncContentLoader.ts`
-  - [ ] Subtask 2.2: Accept ContentBuffer, LoadingStateManager, CodeSnippetEngine in constructor
-  - [ ] Subtask 2.3: Implement loadStep(stepId): Promise<StepContent>
-  - [ ] Subtask 2.4: Write to ContentBuffer on completion
+- [x] **Task 2**: Create AsyncContentLoader class (AC: 1, 4)
+  - [x] Subtask 2.1: Create `src/async/AsyncContentLoader.ts`
+  - [x] Subtask 2.2: Accept ContentBuffer, LoadingStateManager, CodeSnippetEngine in constructor
+  - [x] Subtask 2.3: Implement loadStep(stepId): Promise<StepContent>
+  - [x] Subtask 2.4: Write to ContentBuffer on completion
 
-- [ ] **Task 3**: Implement cancellation (AC: 2, 3)
-  - [ ] Subtask 3.1: Add AbortController per load operation
-  - [ ] Subtask 3.2: Implement cancelPending() method
-  - [ ] Subtask 3.3: Cancel previous load when new one starts
-  - [ ] Subtask 3.4: Handle AbortError gracefully
+- [x] **Task 3**: Implement cancellation (AC: 2, 3)
+  - [x] Subtask 3.1: Add AbortController per load operation
+  - [x] Subtask 3.2: Implement cancelPending() method
+  - [x] Subtask 3.3: Cancel previous load when new one starts
+  - [x] Subtask 3.4: Handle AbortError gracefully
 
-- [ ] **Task 4**: Integrate LoadingStateManager (AC: 5)
-  - [ ] Subtask 4.1: Call startLoading() when load begins
-  - [ ] Subtask 4.2: Call stopLoading() when load ends
-  - [ ] Subtask 4.3: Handle both success and error cases
+- [x] **Task 4**: Integrate LoadingStateManager (AC: 5)
+  - [x] Subtask 4.1: Call startLoading() when load begins
+  - [x] Subtask 4.2: Call stopLoading() when load ends
+  - [x] Subtask 4.3: Handle both success and error cases
 
-- [ ] **Task 5**: Implement preloading (AC: 6)
-  - [ ] Subtask 5.1: Add preloadSteps(stepIds: string[]) method
-  - [ ] Subtask 5.2: Use requestIdleCallback for preloading
-  - [ ] Subtask 5.3: Skip already-loaded steps
+- [x] **Task 5**: Implement preloading (AC: 6)
+  - [x] Subtask 5.1: Add preloadSteps(stepIds: string[]) method
+  - [x] Subtask 5.2: Use requestIdleCallback for preloading
+  - [x] Subtask 5.3: Skip already-loaded steps
 
-- [ ] **Task 6**: Add event callbacks (AC: 1)
-  - [ ] Subtask 6.1: Add onLoadStart callback
-  - [ ] Subtask 6.2: Add onLoadComplete callback
-  - [ ] Subtask 6.3: Add onLoadError callback
+- [x] **Task 6**: Add event callbacks (AC: 1)
+  - [x] Subtask 6.1: Add onLoadStart callback
+  - [x] Subtask 6.2: Add onLoadComplete callback
+  - [x] Subtask 6.3: Add onLoadError callback
 
-- [ ] **Task 7**: Export from async module
-  - [ ] Subtask 7.1: Add export to `src/async/index.ts`
+- [x] **Task 7**: Export from async module
+  - [x] Subtask 7.1: Add export to `src/async/index.ts`
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Test basic load/store flow
-- [ ] **Test Task 2**: Test cancellation prevents race conditions
-- [ ] **Test Task 3**: Test LoadingStateManager integration
-- [ ] **Test Task 4**: Test preloading during idle time
+- [x] **Test Task 1**: Test basic load/store flow
+- [x] **Test Task 2**: Test cancellation prevents race conditions
+- [x] **Test Task 3**: Test LoadingStateManager integration
+- [x] **Test Task 4**: Test preloading during idle time
 
 ---
 
@@ -171,14 +171,14 @@ loadStep(stepId)
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -215,16 +215,18 @@ loadStep(stepId)
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5 (claude-opus-4-5-20251101)
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 7 implementation tasks, all 4 testing tasks
+- **Implementation Notes**: Created AsyncContentLoader that coordinates between CodeSnippetEngine, LoadingStateManager, and ContentBuffer. Uses AbortController for cancellation and requestIdleCallback for preloading.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used StepProvider interface to decouple from ConceptRegistry for easier testing
+- Preloading runs in idle time without loading indicators to avoid visual noise
+- All load operations automatically cancel previous pending loads to prevent race conditions
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- Promise rejection warnings in tests due to async nature of AbortController - Fixed by attaching .catch() handlers immediately after promise creation
 
 ---
 
@@ -233,10 +235,12 @@ loadStep(stepId)
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/async/AsyncContentLoader.ts` - AsyncContentLoader class with load/cancel/preload functionality
+- `tests/async/AsyncContentLoader.test.ts` - Comprehensive test suite with 32 tests covering all ACs
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/async/types.ts` - Added StepContent interface
+- `src/async/index.ts` - Added exports for AsyncContentLoader, StepProvider, and StepContent
 
 ---
 
@@ -245,6 +249,8 @@ loadStep(stepId)
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-28 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev Agent | Started implementation |
+| 2025-12-28 | In Progress | In Review | Dev Agent | All tasks complete, 32 tests passing, ready for QA |
 
 ---
 

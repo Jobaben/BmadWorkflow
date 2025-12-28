@@ -84,3 +84,23 @@ export interface AsyncInitializable {
  * @see story-026 (ComponentInitializer - Idle-Time Pre-warming)
  */
 export type InitStatus = 'pending' | 'initializing' | 'initialized' | 'failed';
+
+/**
+ * Content for a wizard step, loaded asynchronously.
+ * Contains highlighted code snippets and annotations ready for display.
+ *
+ * @see story-027 (AsyncContentLoader - Wizard Content Pipeline)
+ */
+export interface StepContent {
+  /** The wizard step ID this content belongs to */
+  stepId: string;
+
+  /** Syntax-highlighted code snippets ready for display */
+  snippets: HighlightedCode[];
+
+  /** Annotations to display with the code */
+  annotations: Annotation[];
+
+  /** Timestamp when this content was loaded (ms since epoch) */
+  loadedAt: number;
+}
