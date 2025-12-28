@@ -1,7 +1,7 @@
 ---
 id: story-028
 title: "Async Integration & Boundary Documentation"
-status: QA Pass
+status: Done
 priority: P0
 estimate: S
 created: 2025-12-28
