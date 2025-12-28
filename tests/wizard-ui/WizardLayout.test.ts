@@ -17,19 +17,23 @@ import {
 
 describe('WizardLayout', () => {
   let container: HTMLElement;
-  let layout: WizardLayout;
+  let layout: WizardLayout | undefined;
 
   beforeEach(() => {
     container = document.createElement('div');
     container.id = 'test-container';
     document.body.appendChild(container);
+    layout = undefined; // Reset layout for each test
   });
 
   afterEach(() => {
     if (layout) {
       layout.dispose();
+      layout = undefined;
     }
-    document.body.removeChild(container);
+    if (container.parentNode) {
+      document.body.removeChild(container);
+    }
   });
 
   describe('constructor', () => {
@@ -266,11 +270,12 @@ describe('WizardLayout', () => {
 
   describe('dispose()', () => {
     it('should remove layout from container', () => {
-      layout = new WizardLayout(container);
+      const testLayout = new WizardLayout(container);
 
-      layout.dispose();
+      testLayout.dispose();
 
       expect(container.querySelector('.wizard-layout')).toBeNull();
+      // Note: Not assigning to layout since we already disposed it
     });
   });
 

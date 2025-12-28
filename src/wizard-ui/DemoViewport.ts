@@ -69,15 +69,16 @@ export function getDemoViewportStyles(): string {
 }
 
 /**
- * Check if styles have been injected.
- */
-let demoViewportStylesInjected = false;
-
-/**
  * Inject demo viewport styles into the document head.
+ * Uses DOM check to determine if already injected, making it test-friendly.
  */
 export function injectDemoViewportStyles(): void {
-  if (demoViewportStylesInjected || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  // Check DOM for existing style element (test-friendly approach)
+  if (document.getElementById('demo-viewport-styles')) {
     return;
   }
 
@@ -85,7 +86,6 @@ export function injectDemoViewportStyles(): void {
   styleElement.id = 'demo-viewport-styles';
   styleElement.textContent = getDemoViewportStyles();
   document.head.appendChild(styleElement);
-  demoViewportStylesInjected = true;
 }
 
 /**
