@@ -292,15 +292,16 @@ export function getLearningPanelStyles(): string {
 }
 
 /**
- * Check if styles have been injected.
- */
-let stylesInjected = false;
-
-/**
  * Inject learning panel styles into the document head.
+ * Uses DOM check to determine if already injected, making it test-friendly.
  */
 export function injectLearningPanelStyles(): void {
-  if (stylesInjected || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  // Check DOM for existing style element (test-friendly approach)
+  if (document.getElementById('learning-panel-styles')) {
     return;
   }
 
@@ -308,7 +309,6 @@ export function injectLearningPanelStyles(): void {
   styleElement.id = 'learning-panel-styles';
   styleElement.textContent = getLearningPanelStyles();
   document.head.appendChild(styleElement);
-  stylesInjected = true;
 }
 
 /**

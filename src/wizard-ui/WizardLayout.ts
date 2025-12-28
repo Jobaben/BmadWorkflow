@@ -167,15 +167,16 @@ export function getWizardLayoutStyles(): string {
 }
 
 /**
- * Check if styles have been injected.
- */
-let wizardLayoutStylesInjected = false;
-
-/**
  * Inject wizard layout styles into the document head.
+ * Uses DOM check to determine if already injected, making it test-friendly.
  */
 export function injectWizardLayoutStyles(): void {
-  if (wizardLayoutStylesInjected || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  // Check DOM for existing style element (test-friendly approach)
+  if (document.getElementById('wizard-layout-styles')) {
     return;
   }
 
@@ -183,7 +184,6 @@ export function injectWizardLayoutStyles(): void {
   styleElement.id = 'wizard-layout-styles';
   styleElement.textContent = getWizardLayoutStyles();
   document.head.appendChild(styleElement);
-  wizardLayoutStylesInjected = true;
 }
 
 /**

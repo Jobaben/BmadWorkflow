@@ -14,19 +14,23 @@ import {
 
 describe('DemoViewport', () => {
   let container: HTMLElement;
-  let viewport: DemoViewport;
+  let viewport: DemoViewport | undefined;
 
   beforeEach(() => {
     container = document.createElement('div');
     container.id = 'test-container';
     document.body.appendChild(container);
+    viewport = undefined; // Reset viewport for each test
   });
 
   afterEach(() => {
     if (viewport) {
       viewport.dispose();
+      viewport = undefined;
     }
-    document.body.removeChild(container);
+    if (container.parentNode) {
+      document.body.removeChild(container);
+    }
   });
 
   describe('constructor', () => {

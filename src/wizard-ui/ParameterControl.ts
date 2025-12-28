@@ -272,15 +272,16 @@ export function getParameterControlStyles(): string {
 }
 
 /**
- * Check if styles have been injected.
- */
-let stylesInjected = false;
-
-/**
  * Inject parameter control styles into the document head.
+ * Uses DOM check to determine if already injected, making it test-friendly.
  */
 export function injectParameterControlStyles(): void {
-  if (stylesInjected || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  // Check DOM for existing style element (test-friendly approach)
+  if (document.getElementById('parameter-control-styles')) {
     return;
   }
 
@@ -288,7 +289,6 @@ export function injectParameterControlStyles(): void {
   styleElement.id = 'parameter-control-styles';
   styleElement.textContent = getParameterControlStyles();
   document.head.appendChild(styleElement);
-  stylesInjected = true;
 }
 
 /**

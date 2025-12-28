@@ -1,7 +1,7 @@
 ---
 id: story-022
 title: "Wizard Content (Object & Fluid Concepts)"
-status: QA Pass
+status: Done
 priority: P2
 estimate: L
 created: 2025-12-27
@@ -238,6 +238,7 @@ Follow the same pattern as particle concepts. Object concepts teach transformati
 | 2025-12-28 | Ready | In Progress | Dev | Started implementation |
 | 2025-12-28 | In Progress | In Review | Dev | Implementation complete, 87 tests passing |
 | 2025-12-28 | In Review | QA Pass | QA | All ACs verified, code quality approved |
+| 2025-12-28 | QA Pass | Done | Ship | Merged PR #32 to main |
 
 ---
 

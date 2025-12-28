@@ -245,15 +245,16 @@ export function getWizardNavigatorStyles(): string {
 }
 
 /**
- * Check if styles have been injected.
- */
-let navigatorStylesInjected = false;
-
-/**
  * Inject wizard navigator styles into the document head.
+ * Uses DOM check to determine if already injected, making it test-friendly.
  */
 export function injectWizardNavigatorStyles(): void {
-  if (navigatorStylesInjected || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  // Check DOM for existing style element (test-friendly approach)
+  if (document.getElementById('wizard-navigator-styles')) {
     return;
   }
 
@@ -261,7 +262,6 @@ export function injectWizardNavigatorStyles(): void {
   styleElement.id = 'wizard-navigator-styles';
   styleElement.textContent = getWizardNavigatorStyles();
   document.head.appendChild(styleElement);
-  navigatorStylesInjected = true;
 }
 
 /**

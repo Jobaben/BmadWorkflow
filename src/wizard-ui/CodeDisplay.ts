@@ -167,15 +167,16 @@ export function getCodeDisplayStyles(): string {
 }
 
 /**
- * Check if styles have been injected.
- */
-let stylesInjected = false;
-
-/**
  * Inject code display styles into the document head.
+ * Uses DOM check to determine if already injected, making it test-friendly.
  */
 export function injectCodeDisplayStyles(): void {
-  if (stylesInjected || typeof document === 'undefined') {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  // Check DOM for existing style element (test-friendly approach)
+  if (document.getElementById('code-display-styles')) {
     return;
   }
 
@@ -183,7 +184,6 @@ export function injectCodeDisplayStyles(): void {
   styleElement.id = 'code-display-styles';
   styleElement.textContent = getCodeDisplayStyles();
   document.head.appendChild(styleElement);
-  stylesInjected = true;
 }
 
 /**
