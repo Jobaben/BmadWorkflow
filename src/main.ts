@@ -3,6 +3,12 @@
  *
  * This is the main entry point for the application.
  * It uses DemoRenderer, SceneManager, AnimationLoop, and FPS monitoring.
+ *
+ * Supports two modes:
+ * - Playground: Original demo experience with demo buttons and sliders
+ * - Wizard: Guided learning experience with code snippets and explanations
+ *
+ * @see story-029: Wizard UI Integration & Mode Toggle
  */
 
 import './style.css';
@@ -14,9 +20,32 @@ import {
   InputManager,
   isWebGLAvailable,
   showWebGLFallback,
+  AppModeManager,
 } from './core';
+import type { AppMode } from './core';
 import { FPSDisplay, DemoSelector, ControlPanel } from './ui';
 import { ParticleDemo, ObjectDemo, FluidDemo, CombinedDemo } from './demos';
+
+// Wizard imports
+import {
+  WizardLayout,
+  WizardNavigator,
+  LearningPanel,
+} from './wizard-ui';
+import {
+  CodeSnippetEngine,
+  DemoAdapter,
+  WizardController,
+  SyntaxHighlighterComponent,
+} from './wizard';
+import type { DemoFactory } from './wizard';
+import { wizardRegistry } from './wizard-data';
+import {
+  ContentBuffer,
+  LoadingStateManager,
+  AsyncContentLoader,
+  ComponentInitializer,
+} from './async';
 
 // Import types and enums
 import { DemoType } from './types';
@@ -43,6 +72,9 @@ let demoSelector: DemoSelector | null = null;
 /** Reference to the scene manager */
 let sceneManager: SceneManager | null = null;
 
+/** Reference to the mode manager */
+let modeManager: AppModeManager | null = null;
+
 /** Bound keyboard handler for cleanup */
 let boundKeyHandler: ((e: KeyboardEvent) => void) | null = null;
 
@@ -51,6 +83,22 @@ const demos: Map<DemoType, Demo> = new Map();
 
 /** Currently active demo */
 let activeDemo: Demo | null = null;
+
+// Wizard-related references (lazily initialized)
+let wizardInitialized = false;
+let wizardLayout: WizardLayout | null = null;
+let wizardNavigator: WizardNavigator | null = null;
+let learningPanel: LearningPanel | null = null;
+let wizardController: WizardController | null = null;
+let wizardDemoAdapter: DemoAdapter | null = null;
+let codeSnippetEngine: CodeSnippetEngine | null = null;
+let asyncContentLoader: AsyncContentLoader | null = null;
+let contentBuffer: ContentBuffer | null = null;
+let loadingStateManager: LoadingStateManager | null = null;
+let componentInitializer: ComponentInitializer | null = null;
+
+/** Mode toggle button reference */
+let modeToggleButton: HTMLButtonElement | null = null;
 
 /**
  * Resets the current demo to its initial state.
@@ -71,6 +119,7 @@ function resetCurrentDemo(): void {
  * Handles global keyboard events for application-wide shortcuts.
  * - R key: Reset current demo
  * - F key: Toggle FPS display
+ * - W key: Toggle between playground and wizard modes
  * @param event - The keyboard event
  */
 function handleKeyDown(event: KeyboardEvent): void {
@@ -89,6 +138,12 @@ function handleKeyDown(event: KeyboardEvent): void {
       // F key toggles FPS display
       if (fpsDisplay) {
         fpsDisplay.toggle();
+      }
+      break;
+    case 'w':
+      // W key toggles mode
+      if (modeManager) {
+        modeManager.toggleMode();
       }
       break;
   }
@@ -131,6 +186,170 @@ function switchDemo(demoType: DemoType): void {
   if (controlPanel) {
     controlPanel.setParameters(activeDemo.getParameterSchema());
   }
+}
+
+/**
+ * Creates the mode toggle button.
+ */
+function createModeToggleButton(): HTMLButtonElement {
+  const button = document.createElement('button');
+  button.className = 'mode-toggle';
+  button.type = 'button';
+  updateModeToggleLabel(button, 'playground');
+
+  button.addEventListener('click', () => {
+    if (modeManager) {
+      modeManager.toggleMode();
+    }
+  });
+
+  return button;
+}
+
+/**
+ * Updates the mode toggle button label based on current mode.
+ */
+function updateModeToggleLabel(button: HTMLButtonElement, mode: AppMode): void {
+  if (mode === 'playground') {
+    button.innerHTML = '<span class="mode-toggle__icon">&#128218;</span> Wizard Mode';
+  } else {
+    button.innerHTML = '<span class="mode-toggle__icon">&#127918;</span> Playground Mode';
+  }
+}
+
+/**
+ * Initialize wizard components lazily on first wizard mode activation.
+ */
+async function initializeWizardIfNeeded(): Promise<void> {
+  if (wizardInitialized) {
+    return;
+  }
+
+  console.log('Initializing wizard components...');
+
+  const wizardAppContainer = document.getElementById('wizard-app');
+  if (!wizardAppContainer) {
+    console.error('Wizard app container not found');
+    return;
+  }
+
+  try {
+    // Create wizard layout
+    wizardLayout = new WizardLayout(wizardAppContainer);
+
+    // Create navigator in the header area
+    const navigatorContainer = document.createElement('div');
+    wizardLayout.getHeaderContainer().appendChild(navigatorContainer);
+    wizardNavigator = new WizardNavigator(navigatorContainer);
+
+    // Create learning panel
+    learningPanel = new LearningPanel(wizardLayout.getPanelContainer());
+
+    // Create code snippet engine
+    codeSnippetEngine = new CodeSnippetEngine();
+
+    // Create demo adapter with factories
+    const demoFactories = new Map<DemoType, DemoFactory>([
+      [DemoType.Particles, () => new ParticleDemo()],
+      [DemoType.Objects, () => new ObjectDemo()],
+      [DemoType.Fluid, () => new FluidDemo()],
+      [DemoType.Combined, () => new CombinedDemo()],
+    ]);
+    wizardDemoAdapter = new DemoAdapter(demoFactories);
+
+    // Create async infrastructure
+    contentBuffer = new ContentBuffer();
+    loadingStateManager = new LoadingStateManager();
+    asyncContentLoader = new AsyncContentLoader(
+      contentBuffer,
+      loadingStateManager,
+      codeSnippetEngine,
+      wizardRegistry
+    );
+
+    // Create wizard controller with async loader
+    wizardController = new WizardController({
+      registry: wizardRegistry,
+      adapter: wizardDemoAdapter,
+      navigator: wizardNavigator,
+      panel: learningPanel,
+      engine: codeSnippetEngine,
+      asyncLoader: asyncContentLoader,
+    });
+
+    // Wire layout navigation to controller
+    wizardLayout.onPrevious(() => {
+      wizardController?.previousStep().catch(console.error);
+    });
+    wizardLayout.onNext(() => {
+      wizardController?.nextStep().catch(console.error);
+    });
+
+    // Update layout navigation state on step change
+    wizardController.onStepChange((event) => {
+      const allSteps = wizardRegistry.getAllSteps();
+      const currentIndex = allSteps.findIndex(s => s.id === event.currentStep.id);
+      wizardLayout?.setStepInfo(
+        currentIndex + 1,
+        allSteps.length,
+        event.currentStep.title
+      );
+      wizardLayout?.setNavigationState(
+        wizardController?.hasPreviousStep() ?? false,
+        wizardController?.hasNextStep() ?? false
+      );
+    });
+
+    // Start the wizard controller
+    await wizardController.start();
+
+    wizardInitialized = true;
+    console.log('Wizard components initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize wizard:', error);
+  }
+}
+
+/**
+ * Handle mode change events.
+ */
+function handleModeChange(mode: AppMode, _previousMode: AppMode): void {
+  console.log(`Mode changed to: ${mode}`);
+
+  // Update body class for CSS-based visibility
+  if (mode === 'wizard') {
+    document.body.classList.remove('playground-mode-active');
+    document.body.classList.add('wizard-mode-active');
+
+    // Initialize wizard if needed
+    initializeWizardIfNeeded().catch(console.error);
+  } else {
+    document.body.classList.remove('wizard-mode-active');
+    document.body.classList.add('playground-mode-active');
+  }
+
+  // Update toggle button label
+  if (modeToggleButton) {
+    updateModeToggleLabel(modeToggleButton, mode);
+  }
+}
+
+/**
+ * Set up component pre-warming during idle time.
+ */
+function setupComponentPrewarming(): void {
+  componentInitializer = new ComponentInitializer();
+
+  // Register SyntaxHighlighterComponent for pre-warming
+  const syntaxHighlighterComponent = new SyntaxHighlighterComponent();
+  componentInitializer.register(syntaxHighlighterComponent);
+
+  // Start idle-time initialization
+  componentInitializer.initializeAll().then(() => {
+    console.log('Component pre-warming complete');
+  }).catch(error => {
+    console.warn('Component pre-warming failed:', error);
+  });
 }
 
 /**
@@ -233,6 +452,23 @@ function init(): void {
     switchDemo(DemoType.Particles);
   }
 
+  // Initialize mode manager
+  modeManager = new AppModeManager('playground');
+  modeManager.onModeChange(handleModeChange);
+
+  // Set initial mode class on body
+  document.body.classList.add('playground-mode-active');
+
+  // Create mode toggle button
+  const toggleContainer = document.getElementById('mode-toggle-container');
+  if (toggleContainer) {
+    modeToggleButton = createModeToggleButton();
+    toggleContainer.appendChild(modeToggleButton);
+  }
+
+  // Set up component pre-warming during idle time
+  setupComponentPrewarming();
+
   // Register the frame callback
   animationLoop.onFrame((deltaTime: number) => {
     // Update FPS monitor
@@ -266,7 +502,7 @@ function init(): void {
   // Log success message
   console.log('3D Animation Learning Foundation initialized successfully');
   console.log('Animation loop running:', animationLoop.isRunning());
-  console.log('Keyboard shortcuts: R = Reset, F = Toggle FPS');
+  console.log('Keyboard shortcuts: R = Reset, F = Toggle FPS, W = Toggle Wizard');
 }
 
 /**
@@ -293,6 +529,7 @@ function cleanup(): void {
   demos.clear();
   activeDemo = null;
 
+  // Dispose playground components
   if (inputManager) {
     inputManager.dispose();
     inputManager = null;
@@ -314,7 +551,50 @@ function cleanup(): void {
     demoRenderer = null;
   }
 
+  // Dispose mode manager
+  if (modeManager) {
+    modeManager.dispose();
+    modeManager = null;
+  }
+
+  // Dispose wizard components
+  if (wizardController) {
+    wizardController.dispose();
+    wizardController = null;
+  }
+  if (wizardDemoAdapter) {
+    wizardDemoAdapter.dispose();
+    wizardDemoAdapter = null;
+  }
+  if (asyncContentLoader) {
+    asyncContentLoader.dispose();
+    asyncContentLoader = null;
+  }
+  if (componentInitializer) {
+    componentInitializer.dispose();
+    componentInitializer = null;
+  }
+  if (codeSnippetEngine) {
+    codeSnippetEngine.dispose();
+    codeSnippetEngine = null;
+  }
+  if (wizardLayout) {
+    wizardLayout.dispose();
+    wizardLayout = null;
+  }
+  if (learningPanel) {
+    learningPanel.dispose();
+    learningPanel = null;
+  }
+  if (wizardNavigator) {
+    wizardNavigator.dispose();
+    wizardNavigator = null;
+  }
+
   sceneManager = null;
+  contentBuffer = null;
+  loadingStateManager = null;
+  wizardInitialized = false;
 }
 
 // Initialize when DOM is ready

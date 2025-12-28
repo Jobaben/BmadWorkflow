@@ -191,3 +191,38 @@ body {
 .mode-toggle:focus:not(:focus-visible) {
   outline: none;
 }
+
+.mode-toggle__icon {
+  margin-right: 6px;
+}
+
+/* Mode-based visibility */
+.app-mode-playground {
+  /* Default visible */
+}
+
+.app-mode-wizard {
+  /* Default hidden via inline style, shown when active */
+}
+
+/* When in wizard mode, hide playground UI elements */
+body.wizard-mode-active #ui-shell {
+  display: none;
+}
+
+body.wizard-mode-active #app {
+  display: none;
+}
+
+body.wizard-mode-active #wizard-app {
+  display: block !important;
+}
+
+/* When in playground mode, hide wizard UI */
+body.playground-mode-active #wizard-app {
+  display: none !important;
+}
+
+body.playground-mode-active #app {
+  display: block;
+}
