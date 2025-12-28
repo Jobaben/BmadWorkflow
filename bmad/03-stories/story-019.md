@@ -1,7 +1,7 @@
 ---
 id: story-019
 title: "Wizard Controller (State Machine)"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-27

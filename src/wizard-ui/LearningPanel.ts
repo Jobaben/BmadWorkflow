@@ -16,10 +16,12 @@
  * @see NFR-005 (Accessibility - readable typography)
  */
 
-import type { WizardStep, Annotation } from '../wizard/types';
+import type { WizardStep, Annotation, ParameterBinding } from '../wizard/types';
 import { ComplexityTier } from '../wizard/types';
 import type { HighlightedCode } from '../wizard/CodeSnippetEngine';
 import { CodeDisplay, injectCodeDisplayStyles } from './CodeDisplay';
+import { ParameterControl, injectParameterControlStyles } from './ParameterControl';
+import type { ParameterControlConfig, ParameterControlCallbacks } from './ParameterControl';
 
 /**
  * Generate the CSS styles for the learning panel component.
@@ -270,6 +272,22 @@ export function getLearningPanelStyles(): string {
       color: #8b949e;
       font-size: 16px;
     }
+
+    /* Line number highlight animation */
+    .code-display-line-number.highlight-animate {
+      animation: line-highlight-pulse 1s ease-in-out;
+    }
+
+    @keyframes line-highlight-pulse {
+      0%, 100% {
+        background-color: rgba(255, 255, 0, 0.1);
+        color: #c9d1d9;
+      }
+      50% {
+        background-color: rgba(255, 215, 0, 0.3);
+        color: #ffffff;
+      }
+    }
   `;
 }
 
@@ -346,13 +364,28 @@ function parseDescription(text: string): string {
  * panel.renderStep(wizardStep, highlightedCodeArray);
  * ```
  */
+/**
+ * Callbacks for parameter control events from the panel.
+ */
+export interface LearningPanelParameterCallbacks {
+  onFocus?: (key: string) => void;
+  onBlur?: (key: string) => void;
+  onChange?: (key: string, value: unknown) => void;
+  onHover?: (key: string) => void;
+  onLeave?: (key: string) => void;
+}
+
 export class LearningPanel {
   private container: HTMLElement;
   private panelElement: HTMLElement | null = null;
   private contentElement: HTMLElement | null = null;
   private parameterContainer: HTMLElement | null = null;
   private codeDisplays: CodeDisplay[] = [];
+  private parameterControls: ParameterControl[] = [];
   private collapsedAnnotations: Set<string> = new Set();
+  private parameterCallbacks: LearningPanelParameterCallbacks = {};
+  private currentBindings: ParameterBinding[] = [];
+  private highlightedLines: Map<string, number[]> = new Map();
 
   /**
    * Create a new LearningPanel.
@@ -365,9 +398,19 @@ export class LearningPanel {
     // Inject styles on first use
     injectLearningPanelStyles();
     injectCodeDisplayStyles();
+    injectParameterControlStyles();
 
     // Create initial structure
     this.createStructure();
+  }
+
+  /**
+   * Set callbacks for parameter control events.
+   *
+   * @param callbacks - Event callbacks
+   */
+  setParameterCallbacks(callbacks: LearningPanelParameterCallbacks): void {
+    this.parameterCallbacks = callbacks;
   }
 
   /**
@@ -397,6 +440,9 @@ export class LearningPanel {
 
     // Clear existing content and code displays
     this.clear();
+
+    // Store bindings for later reference
+    this.currentBindings = step.parameters ?? [];
 
     // Create header
     const header = this.createHeader(step);
@@ -430,8 +476,8 @@ export class LearningPanel {
       this.contentElement.appendChild(annotationsSection);
     }
 
-    // Parameter controls section (placeholder for story-020)
-    const parameterSection = this.createParameterSection();
+    // Parameter controls section
+    const parameterSection = this.createParameterSection(step.parameters);
     this.contentElement.appendChild(parameterSection);
 
     this.panelElement.appendChild(this.contentElement);
@@ -663,9 +709,11 @@ export class LearningPanel {
   }
 
   /**
-   * Create the parameter controls section (placeholder).
+   * Create the parameter controls section.
+   *
+   * @param bindings - Optional parameter bindings for the step
    */
-  private createParameterSection(): HTMLElement {
+  private createParameterSection(bindings?: ParameterBinding[]): HTMLElement {
     const section = document.createElement('div');
     section.className = 'learning-panel-section';
 
@@ -677,13 +725,111 @@ export class LearningPanel {
     this.parameterContainer = document.createElement('div');
     this.parameterContainer.className = 'learning-panel-parameter-section';
 
-    const placeholder = document.createElement('div');
-    placeholder.className = 'learning-panel-parameter-placeholder';
-    placeholder.textContent = 'Parameter controls will appear here';
-    this.parameterContainer.appendChild(placeholder);
+    if (!bindings || bindings.length === 0) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'learning-panel-parameter-placeholder';
+      placeholder.textContent = 'No adjustable parameters for this step';
+      this.parameterContainer.appendChild(placeholder);
+    } else {
+      // Create controls for each binding
+      for (const binding of bindings) {
+        this.createParameterControl(binding);
+      }
+    }
 
     section.appendChild(this.parameterContainer);
     return section;
+  }
+
+  /**
+   * Create a parameter control for a binding.
+   *
+   * @param binding - The parameter binding
+   */
+  private createParameterControl(binding: ParameterBinding): void {
+    if (!this.parameterContainer) return;
+
+    // Determine control type and initial value based on parameter key
+    // Default to slider for numeric parameters
+    const config: ParameterControlConfig = {
+      binding,
+      type: 'slider',
+      value: 50, // Default value - will be overridden by demo's actual value
+      min: 0,
+      max: 100,
+      step: 1,
+    };
+
+    // Create callbacks that forward to parameterCallbacks
+    const callbacks: ParameterControlCallbacks = {
+      onFocus: (key) => {
+        this.parameterCallbacks.onFocus?.(key);
+        this.highlightCodeForBinding(binding);
+      },
+      onBlur: (key) => {
+        this.parameterCallbacks.onBlur?.(key);
+      },
+      onChange: (key, value) => {
+        this.parameterCallbacks.onChange?.(key, value);
+        this.highlightCodeForBinding(binding, true);
+      },
+      onHover: (key) => {
+        this.parameterCallbacks.onHover?.(key);
+        this.highlightCodeForBinding(binding);
+      },
+      onLeave: (key) => {
+        this.parameterCallbacks.onLeave?.(key);
+      },
+    };
+
+    const control = new ParameterControl(this.parameterContainer, config, callbacks);
+    this.parameterControls.push(control);
+  }
+
+  /**
+   * Highlight code lines for a parameter binding.
+   *
+   * @param binding - The parameter binding with code location
+   * @param animate - Whether to animate the highlight
+   */
+  private highlightCodeForBinding(binding: ParameterBinding, animate: boolean = false): void {
+    // Find and highlight lines in code displays
+    const { startLine, endLine } = binding.codeLocation;
+    const linesToHighlight: number[] = [];
+    for (let i = startLine; i <= endLine; i++) {
+      linesToHighlight.push(i);
+    }
+
+    // Add highlight styling to line numbers
+    this.applyLineHighlights(linesToHighlight, animate);
+  }
+
+  /**
+   * Apply highlight styling to specific line numbers.
+   *
+   * @param lines - Line numbers to highlight
+   * @param animate - Whether to animate the highlight
+   */
+  private applyLineHighlights(lines: number[], animate: boolean): void {
+    // Find all line number elements in code displays
+    const lineElements = this.contentElement?.querySelectorAll('.code-display-line-number');
+    if (!lineElements) return;
+
+    // Remove previous highlights
+    lineElements.forEach((el) => {
+      el.classList.remove('focused', 'highlight-animate');
+    });
+
+    // Add new highlights
+    lineElements.forEach((el) => {
+      const lineNum = parseInt(el.textContent || '0', 10);
+      if (lines.includes(lineNum)) {
+        el.classList.add('focused');
+        if (animate) {
+          el.classList.add('highlight-animate');
+        }
+      }
+    });
   }
 
   /**
@@ -693,8 +839,17 @@ export class LearningPanel {
    * @param key - The parameter key to highlight
    */
   highlightParameter(key: string): void {
-    // This will be implemented when integrating with ParameterCodeLinker (story-020)
-    console.log(`Highlighting parameter: ${key}`);
+    // Find the binding for this parameter
+    const binding = this.currentBindings.find((b) => b.parameterKey === key);
+    if (binding) {
+      this.highlightCodeForBinding(binding, true);
+    }
+
+    // Also highlight the parameter control
+    const control = this.parameterControls.find((c) => c.getParameterKey() === key);
+    if (control) {
+      control.highlight();
+    }
   }
 
   /**
@@ -714,6 +869,14 @@ export class LearningPanel {
       display.clear();
     }
     this.codeDisplays = [];
+
+    // Dispose parameter controls
+    for (const control of this.parameterControls) {
+      control.dispose();
+    }
+    this.parameterControls = [];
+    this.currentBindings = [];
+    this.highlightedLines.clear();
 
     // Clear panel content
     if (this.panelElement) {

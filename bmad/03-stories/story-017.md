@@ -1,7 +1,7 @@
 ---
 id: story-017
 title: "Learning Panel Component"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-27
