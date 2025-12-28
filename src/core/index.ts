@@ -9,3 +9,5 @@ export { SceneManager } from './SceneManager';
 export { AnimationLoop, type FrameCallback } from './AnimationLoop';
 export { FPSMonitor } from './FPSMonitor';
 export { InputManager } from './InputManager';
+export { AppModeManager } from './AppModeManager';
+export type { AppMode, ModeChangeCallback } from './AppModeManager';

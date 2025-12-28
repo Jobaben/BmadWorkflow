@@ -7,8 +7,11 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
+    <!-- Mode Toggle: Switches between playground and wizard modes -->
+    <div id="mode-toggle-container"></div>
+
     <!-- Playground Mode: Original full-viewport demo experience -->
-    <div id="app">
+    <div id="app" class="app-mode-playground">
       <canvas id="canvas"></canvas>
       <!-- UI Shell: Container for overlay controls -->
       <div id="ui-shell">
@@ -18,8 +21,10 @@
         <div id="control-panel-container"></div>
       </div>
     </div>
+
     <!-- Wizard Mode: Split-view learning experience -->
-    <div id="wizard-app" style="display: none;"></div>
+    <div id="wizard-app" class="app-mode-wizard" style="display: none;"></div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
