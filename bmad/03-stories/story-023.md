@@ -1,7 +1,7 @@
 ---
 id: story-023
 title: "Wizard Integration & Polish"
-status: QA Pass
+status: Done
 priority: P2
 estimate: M
 created: 2025-12-27
