@@ -53,3 +53,34 @@ export interface LoadingState {
   /** Whether the loading indicator is currently visible */
   isVisible: boolean;
 }
+
+/**
+ * Interface for components that can be initialized asynchronously.
+ * Components implementing this interface can register with ComponentInitializer
+ * for idle-time pre-warming.
+ *
+ * @see story-026 (ComponentInitializer - Idle-Time Pre-warming)
+ */
+export interface AsyncInitializable {
+  /** Unique identifier for this component */
+  readonly id: string;
+
+  /** Priority for initialization order (lower = earlier) */
+  readonly priority: number;
+
+  /** Whether this component is critical (affects initialization strategy) */
+  readonly isCritical: boolean;
+
+  /** Async initialization method */
+  initialize(): Promise<void>;
+
+  /** Whether the component has been initialized */
+  readonly isInitialized: boolean;
+}
+
+/**
+ * Status of a component's initialization.
+ *
+ * @see story-026 (ComponentInitializer - Idle-Time Pre-warming)
+ */
+export type InitStatus = 'pending' | 'initializing' | 'initialized' | 'failed';
