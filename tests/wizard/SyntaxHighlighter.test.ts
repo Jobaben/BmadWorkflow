@@ -5,13 +5,15 @@
  * - AC2: Code is syntax highlighted
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import {
   highlightCode,
   initializeHighlighter,
   disposeHighlighter,
   isHighlighterReady,
+  SyntaxHighlighterComponent,
 } from '../../src/wizard/SyntaxHighlighter';
+import type { AsyncInitializable } from '../../src/async/types';
 
 describe('SyntaxHighlighter', () => {
   beforeAll(async () => {
@@ -170,6 +172,107 @@ describe('SyntaxHighlighter', () => {
       const result = await highlightCode(code, { language: 'typescript' });
 
       expect(result.html).toContain('async');
+    });
+  });
+});
+
+/**
+ * SyntaxHighlighterComponent Tests (story-028 AC2)
+ *
+ * Tests that SyntaxHighlighterComponent implements AsyncInitializable
+ * and can be used with ComponentInitializer.
+ */
+describe('SyntaxHighlighterComponent', () => {
+  let component: SyntaxHighlighterComponent;
+
+  beforeEach(() => {
+    // Dispose any existing highlighter
+    disposeHighlighter();
+    component = new SyntaxHighlighterComponent();
+  });
+
+  afterEach(() => {
+    disposeHighlighter();
+  });
+
+  describe('AsyncInitializable interface', () => {
+    it('should have correct id', () => {
+      expect(component.id).toBe('syntax-highlighter');
+    });
+
+    it('should have priority 1 (high priority)', () => {
+      expect(component.priority).toBe(1);
+    });
+
+    it('should be marked as critical', () => {
+      expect(component.isCritical).toBe(true);
+    });
+
+    it('should implement AsyncInitializable interface', () => {
+      // Type check - if this compiles, the interface is implemented correctly
+      const asyncInit: AsyncInitializable = component;
+      expect(asyncInit.id).toBeDefined();
+      expect(asyncInit.priority).toBeDefined();
+      expect(asyncInit.isCritical).toBeDefined();
+      expect(typeof asyncInit.initialize).toBe('function');
+      expect(typeof asyncInit.isInitialized).toBe('boolean');
+    });
+  });
+
+  describe('isInitialized', () => {
+    it('should be false before initialization', () => {
+      expect(component.isInitialized).toBe(false);
+    });
+
+    it('should be true after initialization', async () => {
+      await component.initialize();
+      expect(component.isInitialized).toBe(true);
+    });
+
+    it('should reflect module-level highlighter state', async () => {
+      expect(isHighlighterReady()).toBe(false);
+      await component.initialize();
+      expect(isHighlighterReady()).toBe(true);
+    });
+  });
+
+  describe('initialize()', () => {
+    it('should initialize the Shiki highlighter', async () => {
+      expect(isHighlighterReady()).toBe(false);
+      await component.initialize();
+      expect(isHighlighterReady()).toBe(true);
+    });
+
+    it('should be idempotent (can call multiple times)', async () => {
+      await component.initialize();
+      await component.initialize();
+      expect(isHighlighterReady()).toBe(true);
+    });
+
+    it('should allow highlighting after initialization', async () => {
+      await component.initialize();
+      const result = await highlightCode('const x = 1;');
+      expect(result.html).toContain('const');
+    });
+  });
+
+  describe('integration with ComponentInitializer pattern', () => {
+    it('should work with typical ComponentInitializer usage', async () => {
+      // Simulate how ComponentInitializer would use it
+      const components: AsyncInitializable[] = [component];
+
+      // Sort by priority (ComponentInitializer does this)
+      components.sort((a, b) => a.priority - b.priority);
+
+      // Initialize each
+      for (const comp of components) {
+        if (!comp.isInitialized) {
+          await comp.initialize();
+        }
+      }
+
+      expect(component.isInitialized).toBe(true);
+      expect(isHighlighterReady()).toBe(true);
     });
   });
 });

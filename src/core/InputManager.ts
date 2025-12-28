@@ -10,6 +10,14 @@
  * - Mouse button state tracking
  * - Keyboard key tracking with Set
  * - Synchronous state access for render loop integration
+ *
+ * @zone SYNC
+ * @reason Event handlers must be synchronous; state accessed from render loop
+ *
+ * This file contains synchronous-only code. DO NOT use async/await.
+ * getInputState() is called every frame and must return immediately.
+ *
+ * @see docs/async-boundaries.md for sync/async boundary guidelines
  */
 
 import { Vector2, Vector3, Camera, Raycaster, Plane } from 'three';

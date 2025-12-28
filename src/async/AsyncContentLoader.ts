@@ -8,8 +8,16 @@
  * Key principle: Content loads asynchronously without blocking the render loop.
  * Uses AbortController for cancellation to prevent race conditions.
  *
+ * @zone ASYNC
+ * @reason Content loading runs outside render loop with cancellation support
+ *
+ * This file contains async code that runs outside the animation frame.
+ * Results are written to ContentBuffer for sync access during render.
+ * Uses AbortController for cancellation when user navigates during load.
+ *
  * @see story-027 (AsyncContentLoader - Wizard Content Pipeline)
  * @see ADR-004: AbortController for cancellation pattern
+ * @see docs/async-boundaries.md for sync/async boundary guidelines
  */
 
 import type { StepContent } from './types';

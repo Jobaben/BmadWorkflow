@@ -8,8 +8,18 @@
  * Key design principle: All reads are synchronous (no async/await).
  * The async zone writes to it; the sync zone reads from it.
  *
+ * @zone BRIDGE
+ * @reason Sync reads (O(1)), async writes - connects SYNC and ASYNC zones
+ *
+ * This is the sole bridge between async loading and sync rendering.
+ * - ASYNC zone calls set() after loading content
+ * - SYNC zone calls get()/has() during render loop
+ *
+ * All read methods are O(1) Map operations with no async behavior.
+ *
  * @see story-024 (ContentBuffer - Async/Sync Bridge)
  * @see Architecture - Pure data structure, Map-based storage
+ * @see docs/async-boundaries.md for sync/async boundary guidelines
  */
 
 import type { PreparedContent } from './types';
