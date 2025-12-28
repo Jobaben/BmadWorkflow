@@ -1,12 +1,12 @@
 ---
 id: story-020
 title: "Parameter Code Linker"
-status: Ready
+status: Done
 priority: P1
 estimate: M
 created: 2025-12-27
-updated: 2025-12-27
-assignee:
+updated: 2025-12-28
+assignee: Dev
 pr_link:
 epic: Wizard Core
 depends_on: [story-013, story-014, story-019]
@@ -28,27 +28,27 @@ prd_requirement: FR-005
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Parameter controls show code variable names
+- [x] **AC1**: Parameter controls show code variable names
   - Given: I am viewing a step with adjustable parameters
   - When: I look at a parameter control
   - Then: I can see which code variable it affects (FR-005)
 
-- [ ] **AC2**: Adjusting a parameter highlights related code
+- [x] **AC2**: Adjusting a parameter highlights related code
   - Given: I am viewing code and parameter controls
   - When: I adjust a parameter
   - Then: The related code line is highlighted (FR-005)
 
-- [ ] **AC3**: Hovering parameter shows code location
+- [x] **AC3**: Hovering parameter shows code location
   - Given: I am viewing parameter controls
   - When: I hover over a parameter
   - Then: The code section is emphasized
 
-- [ ] **AC4**: Visual effect changes in real-time
+- [x] **AC4**: Visual effect changes in real-time
   - Given: I am adjusting a parameter
   - When: I move the slider
   - Then: The 3D demo updates immediately (FR-005)
 
-- [ ] **AC5**: Parameter explanation is visible
+- [x] **AC5**: Parameter explanation is visible
   - Given: I am viewing a parameter control
   - When: I look at the control
   - Then: I see a brief explanation of what it does
@@ -61,50 +61,50 @@ prd_requirement: FR-005
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create ParameterCodeLinker class (AC: 1, 2, 3)
-  - [ ] Subtask 1.1: Create `src/wizard/ParameterCodeLinker.ts`
-  - [ ] Subtask 1.2: Accept LearningPanel reference
-  - [ ] Subtask 1.3: Accept DemoAdapter reference
-  - [ ] Subtask 1.4: Store ParameterBinding mappings
+- [x] **Task 1**: Create ParameterCodeLinker class (AC: 1, 2, 3)
+  - [x] Subtask 1.1: Create `src/wizard/ParameterCodeLinker.ts`
+  - [x] Subtask 1.2: Accept LearningPanel reference
+  - [x] Subtask 1.3: Accept DemoAdapter reference
+  - [x] Subtask 1.4: Store ParameterBinding mappings
 
-- [ ] **Task 2**: Create enhanced parameter controls (AC: 1, 5)
-  - [ ] Subtask 2.1: Create `src/wizard-ui/ParameterControl.ts`
-  - [ ] Subtask 2.2: Display parameter label and variable name
-  - [ ] Subtask 2.3: Display parameter explanation
-  - [ ] Subtask 2.4: Create slider/checkbox/dropdown based on type
+- [x] **Task 2**: Create enhanced parameter controls (AC: 1, 5)
+  - [x] Subtask 2.1: Create `src/wizard-ui/ParameterControl.ts`
+  - [x] Subtask 2.2: Display parameter label and variable name
+  - [x] Subtask 2.3: Display parameter explanation
+  - [x] Subtask 2.4: Create slider/checkbox/dropdown based on type
 
-- [ ] **Task 3**: Implement code highlighting on focus (AC: 2, 3)
-  - [ ] Subtask 3.1: Add focus/hover listeners to controls
-  - [ ] Subtask 3.2: On focus, call highlightCodeForParameter(key)
-  - [ ] Subtask 3.3: Communicate with LearningPanel to highlight lines
-  - [ ] Subtask 3.4: Add visual transition for highlight
+- [x] **Task 3**: Implement code highlighting on focus (AC: 2, 3)
+  - [x] Subtask 3.1: Add focus/hover listeners to controls
+  - [x] Subtask 3.2: On focus, call highlightCodeForParameter(key)
+  - [x] Subtask 3.3: Communicate with LearningPanel to highlight lines
+  - [x] Subtask 3.4: Add visual transition for highlight
 
-- [ ] **Task 4**: Implement code highlighting on change (AC: 2)
-  - [ ] Subtask 4.1: Add change listener to controls
-  - [ ] Subtask 4.2: Animate code highlight on value change
-  - [ ] Subtask 4.3: Clear highlight after brief delay
+- [x] **Task 4**: Implement code highlighting on change (AC: 2)
+  - [x] Subtask 4.1: Add change listener to controls
+  - [x] Subtask 4.2: Animate code highlight on value change
+  - [x] Subtask 4.3: Clear highlight after brief delay
 
-- [ ] **Task 5**: Wire parameter changes to demo (AC: 4)
-  - [ ] Subtask 5.1: On parameter change, call DemoAdapter.setParameter
-  - [ ] Subtask 5.2: Ensure changes are immediate
-  - [ ] Subtask 5.3: Handle edge values gracefully
+- [x] **Task 5**: Wire parameter changes to demo (AC: 4)
+  - [x] Subtask 5.1: On parameter change, call DemoAdapter.setParameter
+  - [x] Subtask 5.2: Ensure changes are immediate
+  - [x] Subtask 5.3: Handle edge values gracefully
 
-- [ ] **Task 6**: Integrate with LearningPanel (AC: 2, 3)
-  - [ ] Subtask 6.1: Render controls in panel's parameter section
-  - [ ] Subtask 6.2: Update controls when step changes
-  - [ ] Subtask 6.3: Clear controls when step has no parameters
+- [x] **Task 6**: Integrate with LearningPanel (AC: 2, 3)
+  - [x] Subtask 6.1: Render controls in panel's parameter section
+  - [x] Subtask 6.2: Update controls when step changes
+  - [x] Subtask 6.3: Clear controls when step has no parameters
 
-- [ ] **Task 7**: Style parameter controls
-  - [ ] Subtask 7.1: Style controls to match learning panel
-  - [ ] Subtask 7.2: Add code variable name styling
-  - [ ] Subtask 7.3: Style highlight animation
+- [x] **Task 7**: Style parameter controls
+  - [x] Subtask 7.1: Style controls to match learning panel
+  - [x] Subtask 7.2: Add code variable name styling
+  - [x] Subtask 7.3: Style highlight animation
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify code highlights on parameter focus
-- [ ] **Test Task 2**: Verify code highlights on parameter change
-- [ ] **Test Task 3**: Verify demo updates when parameter changes
-- [ ] **Test Task 4**: Verify explanations are visible
+- [x] **Test Task 1**: Verify code highlights on parameter focus
+- [x] **Test Task 2**: Verify code highlights on parameter change
+- [x] **Test Task 3**: Verify demo updates when parameter changes
+- [x] **Test Task 4**: Verify explanations are visible
 
 ---
 
@@ -148,14 +148,14 @@ class ParameterCodeLinker {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -190,16 +190,19 @@ class ParameterCodeLinker {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 7 implementation tasks, all 4 testing tasks
+- **Implementation Notes**: Implemented ParameterCodeLinker to bridge parameter UI controls with code display and demo updates. Created ParameterControl UI component with slider, checkbox, select, and color picker support. Integrated with LearningPanel for code line highlighting with CSS animations.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used observer pattern for parameter events to allow external components to react to focus/blur/change
+- Implemented 4 control types (slider, checkbox, select, color) with consistent styling
+- Added CSS animations for parameter-code highlight connection feedback
+- Used Map for efficient binding lookups by parameter key
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- JSDOM doesn't properly fire range input value setters: Fixed by testing internal state (getValue) instead of DOM element properties
 
 ---
 
@@ -208,10 +211,16 @@ class ParameterCodeLinker {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/wizard/ParameterCodeLinker.ts` - Core linker bridging parameter controls with code display
+- `src/wizard-ui/ParameterControl.ts` - Interactive UI controls with variable name display
+- `tests/wizard/ParameterCodeLinker.test.ts` - Unit tests (23 tests)
+- `tests/wizard-ui/ParameterControl.test.ts` - Unit tests (29 tests)
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/wizard-ui/LearningPanel.ts` - Added parameter control integration and code line highlighting
+- `src/wizard/index.ts` - Added ParameterCodeLinker exports
+- `src/wizard-ui/index.ts` - Added ParameterControl exports
+- `tests/wizard-ui/LearningPanel.test.ts` - Updated placeholder text test for new message
 
 ---
 
@@ -220,6 +229,9 @@ class ParameterCodeLinker {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-27 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-28 | In Progress | In Review | Dev | Implementation complete |
+| 2025-12-28 | In Review | QA Pass | QA | All acceptance criteria verified |
 
 ---
 

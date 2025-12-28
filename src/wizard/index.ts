@@ -59,3 +59,11 @@ export type {
   StepChangeCallback,
   WizardControllerConfig,
 } from './WizardController';
+
+// Parameter Code Linker
+export { ParameterCodeLinker } from './ParameterCodeLinker';
+export type {
+  ParameterLinkerEvent,
+  ParameterEventData,
+  ParameterEventCallback,
+} from './ParameterCodeLinker';

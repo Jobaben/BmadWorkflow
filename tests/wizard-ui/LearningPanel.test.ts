@@ -392,7 +392,7 @@ describe('LearningPanel', () => {
       expect(paramSection).toBeTruthy();
     });
 
-    it('should show placeholder text', () => {
+    it('should show placeholder text when no parameters', () => {
       panel = new LearningPanel(container);
       const step = createMockStep();
       const code = [createMockHighlightedCode()];
@@ -400,7 +400,7 @@ describe('LearningPanel', () => {
       panel.renderStep(step, code);
 
       const placeholder = container.querySelector('.learning-panel-parameter-placeholder');
-      expect(placeholder?.textContent).toContain('Parameter controls');
+      expect(placeholder?.textContent).toContain('No adjustable parameters');
     });
 
     it('should provide parameter container via getter', () => {

@@ -31,3 +31,14 @@ export {
   injectLearningPanelStyles,
   getLearningPanelStyles,
 } from './LearningPanel';
+
+export {
+  ParameterControl,
+  injectParameterControlStyles,
+  getParameterControlStyles,
+} from './ParameterControl';
+export type {
+  ParameterControlType,
+  ParameterControlConfig,
+  ParameterControlCallbacks,
+} from './ParameterControl';
