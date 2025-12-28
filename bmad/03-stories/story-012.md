@@ -1,7 +1,7 @@
 ---
 id: story-012
 title: "Reset Capability & Final Polish"
-status: QA Pass
+status: Done
 priority: P3
 estimate: S
 created: 2025-12-25

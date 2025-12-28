@@ -19,3 +19,9 @@ export {
   injectDemoViewportStyles,
   getDemoViewportStyles,
 } from './DemoViewport';
+
+export {
+  WizardNavigator,
+  injectWizardNavigatorStyles,
+  getWizardNavigatorStyles,
+} from './WizardNavigator';

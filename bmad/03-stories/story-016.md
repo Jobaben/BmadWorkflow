@@ -1,7 +1,7 @@
 ---
 id: story-016
 title: "Wizard Navigator Component"
-status: Ready
+status: Done
 priority: P0
 estimate: S
 created: 2025-12-27
@@ -61,49 +61,49 @@ prd_requirement: FR-001, FR-004, FR-006
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Create WizardNavigator class (AC: 1, 2, 3)
-  - [ ] Subtask 1.1: Create `src/wizard-ui/WizardNavigator.ts`
-  - [ ] Subtask 1.2: Accept container element in constructor
-  - [ ] Subtask 1.3: Create Previous button
-  - [ ] Subtask 1.4: Create Next button
-  - [ ] Subtask 1.5: Create step indicator display
+- [x] **Task 1**: Create WizardNavigator class (AC: 1, 2, 3)
+  - [x] Subtask 1.1: Create `src/wizard-ui/WizardNavigator.ts`
+  - [x] Subtask 1.2: Accept container element in constructor
+  - [x] Subtask 1.3: Create Previous button
+  - [x] Subtask 1.4: Create Next button
+  - [x] Subtask 1.5: Create step indicator display
 
-- [ ] **Task 2**: Implement navigation controls (AC: 1)
-  - [ ] Subtask 2.1: Add click handler for Previous button
-  - [ ] Subtask 2.2: Add click handler for Next button
-  - [ ] Subtask 2.3: Disable Previous on first step
-  - [ ] Subtask 2.4: Disable Next on last step
-  - [ ] Subtask 2.5: Emit navigation events via callback
+- [x] **Task 2**: Implement navigation controls (AC: 1)
+  - [x] Subtask 2.1: Add click handler for Previous button
+  - [x] Subtask 2.2: Add click handler for Next button
+  - [x] Subtask 2.3: Disable Previous on first step
+  - [x] Subtask 2.4: Disable Next on last step
+  - [x] Subtask 2.5: Emit navigation events via callback
 
-- [ ] **Task 3**: Implement step indicator (AC: 2, 3)
-  - [ ] Subtask 3.1: Display "Step X of Y"
-  - [ ] Subtask 3.2: Display current step title
-  - [ ] Subtask 3.3: Update on step change
+- [x] **Task 3**: Implement step indicator (AC: 2, 3)
+  - [x] Subtask 3.1: Display "Step X of Y"
+  - [x] Subtask 3.2: Display current step title
+  - [x] Subtask 3.3: Update on step change
 
-- [ ] **Task 4**: Create concept list/dropdown (AC: 4, 5)
-  - [ ] Subtask 4.1: Create expandable concept list
-  - [ ] Subtask 4.2: Display all available steps
-  - [ ] Subtask 4.3: Show complexity tier badge for each step
-  - [ ] Subtask 4.4: Highlight current step in list
-  - [ ] Subtask 4.5: Add click handler for direct navigation
+- [x] **Task 4**: Create concept list/dropdown (AC: 4, 5)
+  - [x] Subtask 4.1: Create expandable concept list
+  - [x] Subtask 4.2: Display all available steps
+  - [x] Subtask 4.3: Show complexity tier badge for each step
+  - [x] Subtask 4.4: Highlight current step in list
+  - [x] Subtask 4.5: Add click handler for direct navigation
 
-- [ ] **Task 5**: Create tier filter (AC: 5)
-  - [ ] Subtask 5.1: Create tier tab/radio buttons (Micro, Medium, Advanced)
-  - [ ] Subtask 5.2: Filter concept list by tier when clicked
-  - [ ] Subtask 5.3: Show count of steps per tier
+- [x] **Task 5**: Create tier filter (AC: 5)
+  - [x] Subtask 5.1: Create tier tab/radio buttons (Micro, Medium, Advanced)
+  - [x] Subtask 5.2: Filter concept list by tier when clicked
+  - [x] Subtask 5.3: Show count of steps per tier
 
-- [ ] **Task 6**: Style the navigator (AC: 1, 2, 4)
-  - [ ] Subtask 6.1: Style navigation buttons prominently
-  - [ ] Subtask 6.2: Style step indicator for readability
-  - [ ] Subtask 6.3: Style concept list dropdown
-  - [ ] Subtask 6.4: Style tier badges with distinct colors
+- [x] **Task 6**: Style the navigator (AC: 1, 2, 4)
+  - [x] Subtask 6.1: Style navigation buttons prominently
+  - [x] Subtask 6.2: Style step indicator for readability
+  - [x] Subtask 6.3: Style concept list dropdown
+  - [x] Subtask 6.4: Style tier badges with distinct colors
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify prev/next navigation works
-- [ ] **Test Task 2**: Verify step indicator updates correctly
-- [ ] **Test Task 3**: Verify direct navigation from concept list
-- [ ] **Test Task 4**: Verify tier filtering works
+- [x] **Test Task 1**: Verify prev/next navigation works
+- [x] **Test Task 2**: Verify step indicator updates correctly
+- [x] **Test Task 3**: Verify direct navigation from concept list
+- [x] **Test Task 4**: Verify tier filtering works
 
 ---
 
@@ -138,14 +138,14 @@ class WizardNavigator {
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -180,16 +180,18 @@ class WizardNavigator {
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 6 implementation tasks and 4 testing tasks
+- **Implementation Notes**: Created WizardNavigator component with full navigation support. Includes prev/next buttons, step indicator, expandable concept list with tier filtering. Component follows existing wizard-ui patterns with inline CSS injection.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- [Decision 1: Tier tabs with counts]: Added step counts per tier in tabs for better UX when filtering
+- [Decision 2: Auto-close concept list]: Concept list automatically closes after selecting a step for cleaner navigation
+- [Decision 3: Unified callback pattern]: Used onNavigate/offNavigate pattern matching other components
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- None
 
 ---
 
@@ -198,10 +200,11 @@ class WizardNavigator {
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/wizard-ui/WizardNavigator.ts` - Navigator component with prev/next, step indicator, concept list, tier filtering
+- `tests/wizard-ui/WizardNavigator.test.ts` - 30+ unit tests covering all acceptance criteria
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/wizard-ui/index.ts` - Added WizardNavigator export
 
 ---
 
@@ -210,6 +213,10 @@ class WizardNavigator {
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-27 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev | Implementation started |
+| 2025-12-28 | In Progress | In Review | Dev | Implementation complete |
+| 2025-12-28 | In Review | QA Pass | QA | All AC verified, ready for merge |
+| 2025-12-28 | QA Pass | Done | User | Merged |
 
 ---
 
