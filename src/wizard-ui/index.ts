@@ -25,3 +25,9 @@ export {
   injectWizardNavigatorStyles,
   getWizardNavigatorStyles,
 } from './WizardNavigator';
+
+export {
+  LearningPanel,
+  injectLearningPanelStyles,
+  getLearningPanelStyles,
+} from './LearningPanel';
