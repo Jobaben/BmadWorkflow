@@ -1,13 +1,13 @@
 ---
 id: story-025
 title: "LoadingStateManager - Threshold Loading Indicators"
-status: QA Pass
+status: Done
 priority: P0
 estimate: S
 created: 2025-12-28
 updated: 2025-12-28
 assignee: Dev Agent
-pr_link:
+pr_link: https://github.com/Jobaben/BmadWorkflow/pull/35
 epic: Async Optimization
 depends_on: []
 blocks: [story-027]
@@ -214,6 +214,7 @@ class LoadingStateManager {
 | 2025-12-28 | Ready | In Progress | Dev Agent | Started implementation |
 | 2025-12-28 | In Progress | In Review | Dev Agent | All tasks complete, 39 tests passing, ready for QA |
 | 2025-12-28 | In Review | QA Pass | QA Agent | All ACs verified, code quality approved, ready for ship |
+| 2025-12-28 | QA Pass | Done | Ship | Merged PR #35 to main |
 
 ---
 
