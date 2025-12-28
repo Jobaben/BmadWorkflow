@@ -1,7 +1,7 @@
 ---
 id: story-024
 title: "ContentBuffer - Async/Sync Bridge"
-status: QA Pass
+status: Done
 priority: P0
 estimate: S
 created: 2025-12-28
@@ -201,6 +201,7 @@ class ContentBuffer {
 | 2025-12-28 | Ready | In Progress | Dev | Started implementation |
 | 2025-12-28 | In Progress | In Review | Dev | Implementation complete, 31 tests passing |
 | 2025-12-28 | In Review | QA Pass | QA | All acceptance criteria verified, 31 tests pass |
+| 2025-12-28 | QA Pass | Done | Ship | Shipped to main branch |
 
 ---
 
