@@ -1,7 +1,7 @@
 ---
 id: story-021
 title: "Initial Wizard Content (Particle Concepts)"
-status: QA Pass
+status: Done
 priority: P1
 estimate: L
 created: 2025-12-27
@@ -233,6 +233,7 @@ Per Architecture recommendations, start with 5-7 concepts per demo. Organize fro
 | 2025-12-28 | Ready | In Progress | Dev | Started implementation |
 | 2025-12-28 | In Progress | In Review | Dev | Implementation complete, 39 tests passing |
 | 2025-12-28 | In Review | QA Pass | QA | All ACs verified, code quality approved |
+| 2025-12-28 | QA Pass | Done | Ship | Merged PR #31 to main |
 
 ---
 
