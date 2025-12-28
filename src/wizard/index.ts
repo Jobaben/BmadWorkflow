@@ -51,3 +51,11 @@ export type {
   DemoAdapterEventListener,
   DemoAdapterEventData,
 } from './DemoAdapter';
+
+// Wizard Controller
+export { WizardController } from './WizardController';
+export type {
+  StepChangeEvent,
+  StepChangeCallback,
+  WizardControllerConfig,
+} from './WizardController';
