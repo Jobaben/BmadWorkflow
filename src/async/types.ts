@@ -33,3 +33,23 @@ export interface PreparedContent {
   /** Optional expiration timestamp (ms since epoch), null for no expiration */
   expiresAt: number | null;
 }
+
+/**
+ * Loading state for an individual async operation.
+ * Tracks the operation's loading indicator visibility.
+ *
+ * @see story-025 (LoadingStateManager - Threshold Loading Indicators)
+ */
+export interface LoadingState {
+  /** Unique identifier for this loading operation */
+  id: string;
+
+  /** Timestamp when the operation started (ms since epoch) */
+  startTime: number;
+
+  /** Timeout ID for delayed indicator display, null if indicator already visible */
+  timeoutId: ReturnType<typeof setTimeout> | null;
+
+  /** Whether the loading indicator is currently visible */
+  isVisible: boolean;
+}
