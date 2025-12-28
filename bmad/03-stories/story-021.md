@@ -1,12 +1,12 @@
 ---
 id: story-021
 title: "Initial Wizard Content (Particle Concepts)"
-status: Ready
+status: QA Pass
 priority: P1
 estimate: L
 created: 2025-12-27
-updated: 2025-12-27
-assignee:
+updated: 2025-12-28
+assignee: Dev
 pr_link:
 epic: Wizard Content
 depends_on: [story-019, story-020]
@@ -28,27 +28,27 @@ prd_requirement: FR-001, FR-002, FR-003, FR-006
 
 > Each criterion must be specific, testable, and traceable to PRD requirements.
 
-- [ ] **AC1**: Micro-level particle concepts are defined
+- [x] **AC1**: Micro-level particle concepts are defined
   - Given: The wizard content exists
   - When: I view micro concepts
   - Then: I see foundational topics like particle lifecycle, emission, velocity (FR-006)
 
-- [ ] **AC2**: Medium-level particle concepts are defined
+- [x] **AC2**: Medium-level particle concepts are defined
   - Given: The wizard content exists
   - When: I view medium concepts
   - Then: I see combined topics like forces, color/size over time, pooling (FR-006)
 
-- [ ] **AC3**: Advanced particle concepts are defined
+- [x] **AC3**: Advanced particle concepts are defined
   - Given: The wizard content exists
   - When: I view advanced concepts
   - Then: I see integration topics like mouse interaction, performance optimization (FR-006)
 
-- [ ] **AC4**: Each step has code snippets from actual ParticleDemo
+- [x] **AC4**: Each step has code snippets from actual ParticleDemo
   - Given: A particle concept step
   - When: I view the code
   - Then: It displays actual code from ParticleDemo.ts (FR-002)
 
-- [ ] **AC5**: Each step has explanatory annotations
+- [x] **AC5**: Each step has explanatory annotations
   - Given: A particle concept step with code
   - When: I view the code
   - Then: Key lines have annotations explaining the concept (FR-003)
@@ -61,54 +61,54 @@ prd_requirement: FR-001, FR-002, FR-003, FR-006
 
 ### Implementation Tasks
 
-- [ ] **Task 1**: Define Micro particle concepts (AC: 1)
-  - [ ] Subtask 1.1: Create step: "What is a Particle?" (particle data structure)
-  - [ ] Subtask 1.2: Create step: "Particle Lifecycle" (birth, update, death)
-  - [ ] Subtask 1.3: Create step: "Emission Basics" (creating particles over time)
-  - [ ] Subtask 1.4: Create step: "Initial Velocity" (direction and spread)
-  - [ ] Subtask 1.5: Create step: "BufferGeometry for Particles" (efficient rendering)
+- [x] **Task 1**: Define Micro particle concepts (AC: 1)
+  - [x] Subtask 1.1: Create step: "What is a Particle?" (particle data structure)
+  - [x] Subtask 1.2: Create step: "Particle Lifecycle" (birth, update, death)
+  - [x] Subtask 1.3: Create step: "Emission Basics" (creating particles over time)
+  - [x] Subtask 1.4: Create step: "Initial Velocity" (direction and spread)
+  - [x] Subtask 1.5: Create step: "BufferGeometry for Particles" (efficient rendering)
 
-- [ ] **Task 2**: Define Medium particle concepts (AC: 2)
-  - [ ] Subtask 2.1: Create step: "Applying Forces" (gravity, acceleration)
-  - [ ] Subtask 2.2: Create step: "Color Over Lifetime" (fading, color changes)
-  - [ ] Subtask 2.3: Create step: "Size Over Lifetime" (growing/shrinking)
-  - [ ] Subtask 2.4: Create step: "Object Pooling" (memory efficiency)
-  - [ ] Subtask 2.5: Create step: "Particle Materials" (PointsMaterial options)
+- [x] **Task 2**: Define Medium particle concepts (AC: 2)
+  - [x] Subtask 2.1: Create step: "Applying Forces" (gravity, acceleration)
+  - [x] Subtask 2.2: Create step: "Color Over Lifetime" (fading, color changes)
+  - [x] Subtask 2.3: Create step: "Size Over Lifetime" (growing/shrinking)
+  - [x] Subtask 2.4: Create step: "Object Pooling" (memory efficiency)
+  - [x] Subtask 2.5: Create step: "Particle Materials" (PointsMaterial options)
 
-- [ ] **Task 3**: Define Advanced particle concepts (AC: 3)
-  - [ ] Subtask 3.1: Create step: "Mouse Interaction" (attractor/repulsor)
-  - [ ] Subtask 3.2: Create step: "Performance Optimization" (max particles, culling)
-  - [ ] Subtask 3.3: Create step: "Putting It Together" (complete particle system)
+- [x] **Task 3**: Define Advanced particle concepts (AC: 3)
+  - [x] Subtask 3.1: Create step: "Mouse Interaction" (attractor/repulsor)
+  - [x] Subtask 3.2: Create step: "Performance Optimization" (max particles, culling)
+  - [x] Subtask 3.3: Create step: "Putting It Together" (complete particle system)
 
-- [ ] **Task 4**: Write code snippet references (AC: 4)
-  - [ ] Subtask 4.1: Analyze ParticleDemo.ts for relevant code regions
-  - [ ] Subtask 4.2: Create CodeSnippetRef for each concept's code
-  - [ ] Subtask 4.3: Define focusLines for key lines
+- [x] **Task 4**: Write code snippet references (AC: 4)
+  - [x] Subtask 4.1: Analyze ParticleDemo.ts for relevant code regions
+  - [x] Subtask 4.2: Create CodeSnippetRef for each concept's code
+  - [x] Subtask 4.3: Define focusLines for key lines
 
-- [ ] **Task 5**: Write annotations (AC: 5)
-  - [ ] Subtask 5.1: Write conceptual annotations for each step
-  - [ ] Subtask 5.2: Write pattern annotations for framework usage
-  - [ ] Subtask 5.3: Write tip annotations for best practices
-  - [ ] Subtask 5.4: Ensure annotations explain "why" not just "what"
+- [x] **Task 5**: Write annotations (AC: 5)
+  - [x] Subtask 5.1: Write conceptual annotations for each step
+  - [x] Subtask 5.2: Write pattern annotations for framework usage
+  - [x] Subtask 5.3: Write tip annotations for best practices
+  - [x] Subtask 5.4: Ensure annotations explain "why" not just "what"
 
-- [ ] **Task 6**: Define parameter bindings (AC: 4)
-  - [ ] Subtask 6.1: Map emissionRate to code location
-  - [ ] Subtask 6.2: Map lifetime to code location
-  - [ ] Subtask 6.3: Map initialSpeed to code location
-  - [ ] Subtask 6.4: Map gravity to code location
-  - [ ] Subtask 6.5: Map size to code location
+- [x] **Task 6**: Define parameter bindings (AC: 4)
+  - [x] Subtask 6.1: Map emissionRate to code location
+  - [x] Subtask 6.2: Map lifetime to code location
+  - [x] Subtask 6.3: Map initialSpeed to code location
+  - [x] Subtask 6.4: Map gravity to code location
+  - [x] Subtask 6.5: Map size to code location
 
-- [ ] **Task 7**: Register content in ConceptRegistry
-  - [ ] Subtask 7.1: Create `src/wizard-data/steps/particle-steps.ts`
-  - [ ] Subtask 7.2: Export all particle WizardStep objects
-  - [ ] Subtask 7.3: Add to registry in wizard-data/index.ts
+- [x] **Task 7**: Register content in ConceptRegistry
+  - [x] Subtask 7.1: Create `src/wizard-data/steps/particle-steps.ts`
+  - [x] Subtask 7.2: Export all particle WizardStep objects
+  - [x] Subtask 7.3: Add to registry in wizard-data/index.ts
 
 ### Testing Tasks
 
-- [ ] **Test Task 1**: Verify all steps load correctly
-- [ ] **Test Task 2**: Verify code snippets extract correctly
-- [ ] **Test Task 3**: Verify annotations render at correct lines
-- [ ] **Test Task 4**: Verify parameter bindings work
+- [x] **Test Task 1**: Verify all steps load correctly
+- [x] **Test Task 2**: Verify code snippets extract correctly
+- [x] **Test Task 3**: Verify annotations render at correct lines
+- [x] **Test Task 4**: Verify parameter bindings work
 
 ---
 
@@ -153,14 +153,14 @@ Per Architecture recommendations, start with 5-7 concepts per demo. Organize fro
 
 > All items must be checked before moving to "In Review"
 
-- [ ] All tasks checked off
-- [ ] All acceptance criteria verified
-- [ ] Code implemented following project patterns
-- [ ] Unit tests written and passing
-- [ ] Integration tests written (if applicable)
-- [ ] All existing tests still pass (no regressions)
-- [ ] File List section updated
-- [ ] Dev Agent Record completed
+- [x] All tasks checked off
+- [x] All acceptance criteria verified
+- [x] Code implemented following project patterns
+- [x] Unit tests written and passing
+- [x] Integration tests written (if applicable)
+- [x] All existing tests still pass (no regressions)
+- [x] File List section updated
+- [x] Dev Agent Record completed
 
 ---
 
@@ -194,16 +194,21 @@ Per Architecture recommendations, start with 5-7 concepts per demo. Organize fro
 
 > Populated by Dev agent during implementation
 
-- **Model**:
-- **Session Date**:
-- **Tasks Completed**:
-- **Implementation Notes**:
+- **Model**: Claude Opus 4.5
+- **Session Date**: 2025-12-28
+- **Tasks Completed**: All 7 implementation tasks + 4 testing tasks
+- **Implementation Notes**: Created 13 comprehensive wizard steps organized by complexity tier (5 micro, 5 medium, 3 advanced). Each step includes code snippets referencing actual ParticleDemo.ts line numbers, educational annotations explaining "why" not just "what", and parameter bindings for interactive controls.
 
 ### Decisions Made
-- [Decision 1]: [Rationale]
+- Used actual line numbers from ParticleDemo.ts (e.g., lines 45-52 for particle interface, 78-95 for emission logic)
+- Organized prerequisites as a logical chain: what-is → lifecycle → emission → velocity → geometry, etc.
+- Included parameter bindings for 5 key parameters: emissionRate, lifetime, initialSpeed, gravity, size
+- Created helper functions (getMicroParticleSteps, etc.) for tier-based filtering
+- Maintained legacy exports (sampleSteps, sampleRegistry) for backward compatibility
 
 ### Issues Encountered
-- [Issue 1]: [Resolution]
+- Build error with unused imports (DemoType, ComplexityTier): Removed unused imports from index.ts
+- Test error with CommonJS require(): Changed to ES module dynamic import() syntax
 
 ---
 
@@ -212,10 +217,11 @@ Per Architecture recommendations, start with 5-7 concepts per demo. Organize fro
 > Populated by Dev agent - list all created/modified files
 
 ### Created Files
-- `path/to/new/file` - [description]
+- `src/wizard-data/steps/particle-steps.ts` - 13 wizard steps with code snippets, annotations, and parameter bindings
+- `tests/wizard-data/particle-steps.test.ts` - 39 unit tests covering all acceptance criteria
 
 ### Modified Files
-- `path/to/existing/file` - [what changed]
+- `src/wizard-data/index.ts` - Added particle step imports, exports, helper functions, and legacy compatibility exports
 
 ---
 
@@ -224,6 +230,9 @@ Per Architecture recommendations, start with 5-7 concepts per demo. Organize fro
 | Date | From | To | By | Note |
 |------|------|----|----|------|
 | 2025-12-27 | - | Ready | Scrum | Created |
+| 2025-12-28 | Ready | In Progress | Dev | Started implementation |
+| 2025-12-28 | In Progress | In Review | Dev | Implementation complete, 39 tests passing |
+| 2025-12-28 | In Review | QA Pass | QA | All ACs verified, code quality approved |
 
 ---
 

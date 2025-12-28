@@ -56,7 +56,16 @@ Creates if missing:
 5. **Create bmad/05-runlogs/README.md** if missing
 
 6. **Validate .claude/ structure**
-   - Confirm commands exist
+   - Confirm commands exist:
+     - `analyst.md` - Problem framing
+     - `pm.md` - Requirements
+     - `architect.md` - Technical design
+     - `scrum.md` - Story creation
+     - `dev.md` - Implementation
+     - `qa.md` - Review
+     - `ship.md` - Merge and deploy
+     - `bmad-status.md` - Status display
+     - `bmad-init.md` - This file
    - Confirm agents exist
    - Confirm skills exist
 

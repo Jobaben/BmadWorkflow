@@ -32,6 +32,7 @@ bmad/
 | Scrum     | PRD.md, ARCHITECTURE.md        | bmad/03-stories/story-###.md   | Direct implementation  |
 | Dev       | One story, architecture        | Code, tests, story status      | Multi-story work       |
 | QA        | Story, PRD, ARCHITECTURE, diff | bmad/04-qa/review-story-###.md | Code changes           |
+| Ship      | Stories (all), git status      | Git ops, story status          | Code changes           |
 
 ## Core Rules
 
@@ -50,6 +51,7 @@ bmad/
 - `/scrum` - Activate Scrum Master for story creation
 - `/dev <story-id>` - Activate Dev role for specific story
 - `/qa <story-id>` - Activate QA role for story review
+- `/ship <story-id>` - Ship QA-passed story (commit, PR, merge, next branch)
 - `/bmad-status` - Display artifact and story status
 
 ## Quality Gates
