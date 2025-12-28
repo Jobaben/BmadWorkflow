@@ -1,7 +1,7 @@
 ---
 id: story-027
 title: "AsyncContentLoader - Wizard Content Pipeline"
-status: QA Pass
+status: Done
 priority: P0
 estimate: M
 created: 2025-12-28
